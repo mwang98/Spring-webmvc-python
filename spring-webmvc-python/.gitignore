@@ -1,0 +1,14 @@
+.idea/
+.DS_Store
+
+# Python stuff
+# Byte-compiled / optimized / DLL files
+__pycache__/
+.ipynb_checkpoints/
+
+# Distribution / packaging
+*.egg-info/
+
+Pipfile.lock
+
+data
