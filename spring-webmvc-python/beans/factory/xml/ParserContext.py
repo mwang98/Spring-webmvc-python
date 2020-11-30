@@ -4,7 +4,6 @@ from beans.factory.config import BeanDefinition
 class ParserContext():
     
     def __init__(self, readerContext, delegate, containingBeanDefinition=None):
-        
         self._readerContext = readerContext
         self._delegate = delegate
         self._containingBeanDefinition = containingBeanDefinition
