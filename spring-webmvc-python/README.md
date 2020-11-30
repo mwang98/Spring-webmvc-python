@@ -1,8 +1,17 @@
 # Getting Started / Install
 
-Run this commands to install the projects as python packages into a virtual env.
+Run this command to install the python packages for virtual env.
 ```
 make init-python
+```
+
+Run this command to install the projects as python packages into virtual env.
+```
+make install
+```
+
+Run this command activate virtual env.
+```
 make shell
 ```
 
