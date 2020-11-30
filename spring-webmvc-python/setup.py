@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="spring-webmvc-python",
+    name="spring-framework-python",
     version="1.0",
     author="SED2020Group4",
     author_email="",

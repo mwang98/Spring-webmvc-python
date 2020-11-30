@@ -1,4 +1,4 @@
-from beans.factory.config import BeanDefinition
+from springframework.beans.factory.config import BeanDefinition
 #from beans.factory.parsing import *
 
 class ParserContext():

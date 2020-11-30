@@ -1,5 +1,5 @@
-from beans.factory.config import BeanDefinition
-from beans.factory.xml import ParseContext
+from springframework.beans.factory.config import BeanDefinition
+from springframework.beans.factory.xml import ParseContext
 from xml.etree.ElementTree import Element
 
 class BeanDefinitionParser():

@@ -1,12 +1,12 @@
-from beans.factory.config import BeanDefinition
-from beans.factory.xml import BeanDefinitionParser
+from springframework.beans.factory.config import BeanDefinition
+from springframework.beans.factory.xml import BeanDefinitionParser
 from xml.etree.ElementTree import Element
 
 # below no implement
-from beans.factory import BeanDefinitionStoreException
-from beans.factory.config import BeanDefinitionHolder
-from beans.factory.parsing import BeanComponentDefinition
-from beans.factory.support import AbstractBeanDefinition, BeanDefinitionReaderUtils, BeanDefinitionRegistry
+from springframework.beans.factory import BeanDefinitionStoreException
+from springframework.beans.factory.config import BeanDefinitionHolder
+from springframework.beans.factory.parsing import BeanComponentDefinition
+from springframework.beans.factory.support import AbstractBeanDefinition, BeanDefinitionReaderUtils, BeanDefinitionRegistry
 
 
 class AbstractBeanDefinitionParser(BeanDefinitionParser):
