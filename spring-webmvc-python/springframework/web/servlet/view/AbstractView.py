@@ -1,0 +1,1 @@
+class AbstractView(metaclass=WebApplicationObjectSupport)

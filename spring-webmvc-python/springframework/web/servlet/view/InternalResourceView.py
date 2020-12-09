@@ -1,0 +1,1 @@
+class InternalResourceView(metaclass=AbstractUrlBasedView)

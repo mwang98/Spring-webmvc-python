@@ -1,0 +1,1 @@
+class AbstractUrlBasedView(metaclass=AbstractView)
