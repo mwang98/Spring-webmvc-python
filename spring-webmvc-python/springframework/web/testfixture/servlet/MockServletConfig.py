@@ -1,4 +1,3 @@
-from unittest import mock
 from .MockServletContext import MockServletContext
 
 
@@ -20,7 +19,7 @@ class MockServletConfig():
     def getServletContext(self) -> str:
         return self.servletContext
 
-    def addInitParameter(seflf, name: str, value: str) -> None:
+    def addInitParameter(self, name: str, value: str) -> None:
         assert name is not None, "Parameter name must not be null"
         self.initParameters[name] = value
 

@@ -86,11 +86,12 @@ class MockHttpServletRequest():
     # Principal
     # HeaderValueHolder : set
     # HttpHeaders
-    # DispatcherType
+    # DispatcherType : Enum
     # AsyncContext : MockAsyncContext
     # RequestDispatcher : MockRequestDispatcher
     # BufferedReader
     # ServletInputStream
+    # Part : MockPart
     # ServletContext : MockServletContext
     # ---------------------------------------------------------------------
 
