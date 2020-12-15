@@ -4,6 +4,14 @@ from abc import abstractmethod, ABC
 
 from springframework.web.servlet import View
 
+# mock objects
+RequestContext = mock.MagicMock()
+RequestContext.configure_mock(name='RequestContext')
+ContextExposingHttpServletRequest = mock.MagicMock()
+ContextExposingHttpServletRequest.configure_mock(name='ContextExposingHttpServletRequest')
+mediaType = mock.MagicMock()
+mediaType.configure_mock(name="mediaType")
+
 
 class AbstractView(metaclass=WebApplicationObjectSupport):
     DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
@@ -71,7 +79,6 @@ class AbstractView(metaclass=WebApplicationObjectSupport):
         return self.beanName
 
     def render(self, model: dict, request, response) -> None:
-        # self.formatViewName() use mock
         logging.debug(
             "View " +
             self.formatViewName() +
@@ -106,8 +113,6 @@ class AbstractView(metaclass=WebApplicationObjectSupport):
 
     def createRequestContext(self, request, response, model: dict) -> RequestContext:
         # RequestContext use mock
-        RequestContext = mock.MagicMock()
-        mock.configure_mock(name='RequestContext')
         return RequestContext(request, response, self.getServletContext(), model)
 
     def prepareResponse(self, request, response) -> None:
@@ -121,12 +126,11 @@ class AbstractView(metaclass=WebApplicationObjectSupport):
     # return type : HttpServletRequest
     def getRequestToExpose(self, originalRequest):
         if self.exposeContextBeansAsAttributes or self.exposedContextBeanNames is not None:
-            wac = self.getWebApplicationContext();
+            # TODO: getWebApplicationContext
+            wac = getWebApplicationContext()
             assert wac is not None, "No WebApplicationContext"
             # ContextExposingHttpServletRequest use mock
-            ContextExposingHttpServletRequest = mock.MagicMock()
-            mock.configure_mock(name='ContextExposingHttpServletRequest')
-            return ContextExposingHttpServletRequest(originalRequest, wac, this.exposedContextBeanNames)
+            return ContextExposingHttpServletRequest(originalRequest, wac, self.exposedContextBeanNames)
         return originalRequest
 
     @abstractmethod
@@ -156,7 +160,7 @@ class AbstractView(metaclass=WebApplicationObjectSupport):
 
     def setResponseContentType(self, request, response) -> None:
         # mediaType use mock
-        mediaType = request.getAttribute(View.SELECTED_CONTENT_TYPE)
+        mediaType = request.getattr(View.SELECTED_CONTENT_TYPE)
         if mediaType is not None and mediaType.isConcrete():
             response.setContentType(mediaType.toString())
         else:
@@ -169,10 +173,4 @@ class AbstractView(metaclass=WebApplicationObjectSupport):
         if self.getBeanName() is not None:
             return "name '" + self.getBeanName() + "'"
         else:
-            return "[" + self.__class__.__name__ + "]"
-
-
-
-
-
-
+            return "[" + self.__class__.__name__ + 
