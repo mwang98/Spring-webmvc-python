@@ -1,8 +1,10 @@
+from springframework.function.support.multiple import MultipleMeta
 
 
-
-class MessageSourceAccessor():
-    def __init__(self, message_source: MessageSource, default_locale: Locale = None):
+class MessageSourceAccessor(MultipleMeta):
+    def __init__(self, message_source: MessageSource):
+        self._message_source: MessageSource = message_source
+    def __init__(self, message_source: MessageSource, default_locale: Locale):
         self._message_source: MessageSource = message_source
         self._default_locale: Locale = default_locale
 
@@ -13,5 +15,4 @@ class MessageSourceAccessor():
         msg = self._message_source.get_message(code, None, default_message, self.get_default_locale())
         return msg if msg is not None else ''
 
-    # TODO: solve the function overloading issue
-    # def get_message(self, code: str, args: list[object], default_message: str) -> str:
+    def get_message(self, code: str, args: list[object], default_message: str) -> str:
