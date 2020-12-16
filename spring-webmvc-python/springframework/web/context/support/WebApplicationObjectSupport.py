@@ -1,1 +1,3 @@
-class WebApplicationObjectSupport(metaclass=ApplicationObjectSupport)
+
+
+class WebApplicationObjectSupport(ApplicationObjectSupport)
