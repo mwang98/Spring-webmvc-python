@@ -1,5 +1,6 @@
 from abc import ABC
 
 
-class Aware(metaclass=ABC):
-    pass
+class Aware(ABC):
+    def __init__(self):
+        pass

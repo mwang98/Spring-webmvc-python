@@ -2,7 +2,7 @@ import logging
 from springframework.web.servlet.view import AbstractUrlBasedView
 
 
-class InternalResourceView(metaclass=AbstractUrlBasedView):
+class InternalResourceView(AbstractUrlBasedView):
 
     alwaysInclude = False
     preventDispatchLoop = False

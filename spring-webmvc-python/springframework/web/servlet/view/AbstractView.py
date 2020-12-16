@@ -2,6 +2,8 @@ from unittest import mock
 import logging
 from abc import abstractmethod, ABC
 
+from context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from factory.BeanNameAware import BeanNameAware
 from springframework.web.servlet import View
 
 # mock objects
@@ -13,7 +15,7 @@ mediaType = mock.MagicMock()
 mediaType.configure_mock(name="mediaType")
 
 
-class AbstractView(metaclass=WebApplicationObjectSupport):
+class AbstractView(WebApplicationObjectSupport,View,BeanNameAware,ABC):
     DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
     OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096
     contentType = DEFAULT_CONTENT_TYPE
