@@ -1,7 +1,10 @@
+from abc import ABC
+
 from springframework.web.servlet.view import AbstractView
+from springframework.beans.factory import InitializingBean
 
 
-class AbstractUrlBasedView(metaclass=AbstractView):
+class AbstractUrlBasedView(AbstractView, InitializingBean, ABC):
 
     url: str = None
 

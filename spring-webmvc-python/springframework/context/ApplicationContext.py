@@ -1,7 +1,9 @@
 from abc import ABC, ABCMeta, abstractmethod
 
+from core.env import EnvironmentCapable
 
-class ApplicationContext(metaclass=EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
+
+class ApplicationContext(EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
                          MessageSource, ApplicationEventPublisher, ResourcePatternResolver):
     def __init__(self):
         super().__init__()
@@ -23,7 +25,7 @@ class ApplicationContext(metaclass=EnvironmentCapable, ListableBeanFactory, Hier
         raise NotImplementedError
 
     @abstractmethod
-    def get_parent(self) -> object:
+    def get_parent(self) -> ApplicationContext:
         raise NotImplementedError
 
     @abstractmethod
