@@ -108,10 +108,10 @@ class MockHttpServletRequest():
     # Lifecycle methods
     # ---------------------------------------------------------------------
 
-    def getServletContext(self):
+    def get_servlet_context(self):
         return self.servletContext
 
-    def isActive(self) -> bool:
+    def is_active(self) -> bool:
         return self.active
 
     def close(self) -> None:
@@ -119,44 +119,44 @@ class MockHttpServletRequest():
 
     def invalidate(self) -> None:
         self.close()
-        self.clearAttributes()
+        self.clear_attributes()
 
-    def checkActive(self) -> None:
+    def check_active(self) -> None:
         assert self.active,"Request is not active anymore"
 
     # ServletRequest interface
-    def getAttribute(self, name: str):
-        self.checkActive()
+    def get_attribute(self, name: str):
+        self.check_active()
         return self.attributes.get(name)
 
-    def getAttributeNames(self) -> list:
-        self.checkActive()
+    def get_attribute_names(self) -> list:
+        self.check_active()
         return list(self.attributes.keys())
 
-    def getCharacterEncoding(self) -> str:
+    def get_character_encoding(self) -> str:
         return self.characterEncoding
 
-    def setCharacterEncoding(self, characterEncoding: str) -> None:
+    def set_character_encoding(self, characterEncoding: str) -> None:
         self.characterEncoding = characterEncoding
-        self.updateContentTypeHeader()
+        self.update_content_type_header()
 
-    def updateContentTypeHeader(self) -> None:
+    def update_content_type_header(self) -> None:
         if self.contentType is not None:
             value = self.contentType
             if (self.characterEncoding is not None) and (self.CHARSET_PREFIX not in this.contentType.lower()):
                 value += f";{self.CHARSET_PREFIX}{self.characterEncoding}"
             # TODO: HttpHeaders
-            self.doAddHeaderValue(HttpHeaders.CONTENT_TYPE, value, True)
+            self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
 
-    def setContent(self, context: bytes) -> None:
+    def set_content(self, context: bytes) -> None:
         self.context = context
         self.inputStream = None
         self.reader = None
 
-    def getContentAsByteArray(self) -> bytes:
+    def get_content_as_byte_array(self) -> bytes:
         return self.content
 
-    def getContentAsString(self) -> str:
+    def get_content_as_string(self) -> str:
         error_msg = """
         Cannot get content as a String for a null character encoding.
         Consider setting the characterEncoding in the request."
@@ -166,13 +166,13 @@ class MockHttpServletRequest():
             return None
         return self.content.decode + self.characterEncoding
 
-    def getContentLength(self) -> int:
+    def get_content_length(self) -> int:
         return -1 if (self.context is None) else len(self.content)
 
-    def getContentLengthLong(self) -> int:
+    def get_content_length_long(self) -> int:
         return self.getContentLength()
 
-    def setContentType(self, contentType: str = None) -> None:
+    def set_content_type(self, contentType: str = None) -> None:
         self.contentType = contentType
         if contentType is not None:
             try:
@@ -187,12 +187,12 @@ class MockHttpServletRequest():
                 except Exception:
                     pass
 
-            self.updateContentTypeHeader()
+            self.update_content_type_header()
 
-    def getContentType(self) -> str:
+    def get_content_type(self) -> str:
         return self.contentType
 
-    def getInputStream(self):
+    def get_input_stream(self):
         if self.inputStream is not None:
             return self.inputStream
         elif self.reader is not None:
@@ -205,13 +205,13 @@ class MockHttpServletRequest():
             self.inputStream = self.EMPTY_SERVLET_INPUT_STREAM
         return self.inputStream
 
-    def setParameter(self, name, value) -> None:
+    def set_parameter(self, name, value) -> None:
         if isinstance(name, dict):
             for key in name:
                 assert key is not None, "Parameter map must not be null"
                 value = name.get(key)
                 if isinstance(value, str) or isinstance(value, list):
-                    self.setParameter(key, value)
+                    self.set_parameter(key, value)
                 else:
                     raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
         elif isinstance(name, str):
@@ -222,13 +222,13 @@ class MockHttpServletRequest():
             else:
                 raise ValueError("!!!")
 
-    def addParameter(self, name, value) -> None:
+    def add_parameter(self, name, value) -> None:
         if isinstance(name, dict):
             for key in name:
                 assert key is not None, "Parameter map must not be null"
                 value = name.get(key)
                 if isinstance(value, str) or isinstance(value, list):
-                    self.addParameter(key, value)
+                    self.add_parameter(key, value)
                 else:
                     raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
         elif isinstance(name, str):
@@ -240,45 +240,45 @@ class MockHttpServletRequest():
             else:
                 raise ValueError("!!!")
 
-    def removeParameter(self, name: str) -> None:
+    def remove_parameter(self, name: str) -> None:
         assert name is not None, "Parameter name must not be null"
         self.parameters.pop(name)
 
-    def removeAllParameters(self) -> None:
+    def remove_all_parameters(self) -> None:
         self.parameters.clear()
 
-    def getParameter(self, name: str) -> None:
+    def get_parameter(self, name: str) -> None:
         assert name is not None, "Parameter name must not be null"
         return self.parameters.get(name)
 
-    def getParameterNames(self) -> list:
+    def get_parameter_names(self) -> list:
         return list(self.parameters.keys())
 
-    def getParameterValues(self, name: str) -> list:
+    def get_parameter_values(self, name: str) -> list:
         assert name is not None, "Parameter name must not be null"
         return self.parameters.get(name)
 
-    def getParameterMap(self) -> dict:
+    def get_parameter_map(self) -> dict:
         return self.parameters
 
-    def setProtocol(self, protocol: str) -> None:
+    def set_protocol(self, protocol: str) -> None:
         self.protocol = protocol
 
-    def getProtocol(self) -> str:
+    def get_protocol(self) -> str:
         return self.protocol
 
-    def setScheme(self, scheme: str) -> None:
+    def set_scheme(self, scheme: str) -> None:
         self.scheme = scheme
 
-    def getScheme(self) -> str:
+    def get_scheme(self) -> str:
         return self.scheme
 
-    def setServerName(self, serverName: str) -> None:
+    def set_server_name(self, serverName: str) -> None:
         self.serverName = serverName
 
-    def getServerName(self) -> str:
+    def get_server_name(self) -> str:
         # TODO: HttpHeaders
-        rawHostHeader: str = self.getHeader(HttpHeaders.HOST)
+        rawHostHeader: str = self.get_header(HttpHeaders.HOST)
         host = rawHostHeader
         if host is not None:
             host = host.strip()
@@ -292,7 +292,7 @@ class MockHttpServletRequest():
 
         return self.serverPort
 
-    def getReader(self):
+    def get_reader(self):
         if self.reader is not None:
             return self.reader
         elif self.inputStream is not None:
@@ -310,19 +310,19 @@ class MockHttpServletRequest():
             self.reader = self.EMPTY_BUFFERED_READER
         return self.reader
 
-    def setRemoteAddr(self, remoteAddr: str):
+    def set_remote_addr(self, remoteAddr: str):
         self.remoteAddr = remoteAddr
 
-    def getRemoteAddr(self) -> str:
+    def get_remote_addr(self) -> str:
         return self.remoteAddr
 
-    def setRemoteHost(self, remoteHost: str) -> None:
+    def set_remote_host(self, remoteHost: str) -> None:
         self.remoteHost = remoteHost
 
-    def getRemoteHost(self) -> str:
+    def get_remote_host(self) -> str:
         return self.remoteHost
 
-    def setAttribute(self, name: str, value=None) -> None:
+    def set_attribute(self, name: str, value=None) -> None:
         self.checkActive()
         assert name is not None, "Attribute name must not be null"
         if value is not None:
@@ -330,69 +330,69 @@ class MockHttpServletRequest():
         else:
             self.attributes.pop(name)
 
-    def removeAttribute(self, name: str) -> None:
+    def remove_attribute(self, name: str) -> None:
         self.checkActive()
         assert name is not None, "Attribute name must not be null"
         self.attributes.pop(name)
 
-    def clearAttributes(self) -> None:
+    def clear_attributes(self) -> None:
         self.attributes.clear()
 
-    def addPreferredLocale(self, locales: list) -> None:
+    def add_preferred_locale(self, locales: list) -> None:
         assert locales, "Locale list must not be empty"
         self.locales.clear()
         self.locales.extend(locales)
         self.updateAcceptLanguageHeader()
 
-    def updateAcceptLanguageHeader(self) -> None:
+    def update_accept_language_header(self) -> None:
         # TODO: HttpHeaders
         headers = HttpHeaders()
         headers.setAcceptLanguageAsLocales(self.locales)
         self.doAddHeaderValue(HttpHeaders.ACCEPT_LANGUAGE, headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True)
 
-    def getLocale(self):
+    def get_locale(self):
         return self.locales[:1]
 
-    def getLocales(self) -> list:
+    def get_locales(self) -> list:
         return self.locales
 
-    def setSecure(self, secure: bool) -> None:
+    def set_secure(self, secure: bool) -> None:
         self.secure = secure
 
-    def isSecure(self) -> bool:
+    def is_secure(self) -> bool:
         return self.secure or self.HTTPS == self.scheme
 
-    def getRequestDispatcher(self, path: str):
+    def get_request_dispatcher(self, path: str):
         return MockRequestDispatcher(path)
 
-    def getRealPath(self, path: str) -> str:
+    def get_real_path(self, path: str) -> str:
         return self.servletContext.getRealPath(path)
 
-    def setRemotePort(self, remotePort: int) -> None:
+    def set_remote_port(self, remotePort: int) -> None:
         self.remotePort = remotePort
 
-    def getRemotePort(self) -> str:
+    def get_remote_port(self) -> str:
         return self.remotePort
 
-    def setLocalName(self, localName: str) -> None:
+    def set_local_name(self, localName: str) -> None:
         self.localName = localName
 
-    def getLocalName(self) -> str:
+    def get_local_name(self) -> str:
         return self.localName
 
-    def setLocalAddr(self, localAddr: str) -> None:
+    def set_local_addr(self, localAddr: str) -> None:
         self.localAddr = localAddr
 
-    def getLocalAddr(self) -> str:
+    def get_local_addr(self) -> str:
         return self.localAddr
 
-    def setLocalPort(self, port: int) -> None:
+    def set_local_port(self, port: int) -> None:
         self.localPort = localPort
 
-    def getLocalPort(self) -> int:
+    def get_local_port(self) -> int:
         return self.localPort
 
-    def startAsync(self, request=None, response=None):
+    def start_async(self, request=None, response=None):
         request = self is request is None
         assert self.asyncSupported, "Async not supported"
         self.asyncStarted = True
@@ -400,62 +400,62 @@ class MockHttpServletRequest():
         self.asyncContext = MockAsyncContext(request, response)
         return self.asyncContext
 
-    def setAsyncStarted(self, asyncStarted: bool) -> None:
+    def set_async_started(self, asyncStarted: bool) -> None:
         self.asyncStarted = asyncStarted
 
-    def isAsyncStarted(self) -> bool:
+    def is_async_started(self) -> bool:
         return self.asyncStarted
 
-    def setAsyncSupported(self, asyncSupported: bool) -> None:
+    def set_async_supported(self, asyncSupported: bool) -> None:
         self.asyncSupported = asyncSupported
 
-    def isAsyncSupported(self) -> bool:
+    def is_async_supported(self) -> bool:
         return self.asyncSupported
 
-    def setAsyncContext(self, asyncContext: MockAsyncContext) -> None:
+    def set_async_context(self, asyncContext: MockAsyncContext) -> None:
         self.asyncContext = asyncContext
 
-    def getAsyncContext(self):
+    def get_async_context(self):
         return self.asyncContext
 
-    def setDispatcherType(self, dispatcherType) -> None:
+    def set_dispatcher_type(self, dispatcherType) -> None:
         self.dispatcherType = dispatcherType
 
-    def getDispatcherType(self):
+    def get_dispatcher_type(self):
         return self.dispatcherType
 
     # ---------------------------------------------------------------------
     # HttpServletRequest interface
     # ---------------------------------------------------------------------
 
-    def setAuthType(self, authType: str = None) -> None:
+    def set_auth_type(self, authType: str = None) -> None:
         self.authType = authType
 
-    def getAuthType(self) -> str:
+    def get_auth_type(self) -> str:
         return self.authType
 
-    def setCookies(self, cookies: list) -> None:
+    def set_cookies(self, cookies: list) -> None:
         self.cookies = cookies
         if cookies:
             self.doAddHeaderValue(HttpHeaders.COOKIE, encodeCookies(self.cookies), True)
         else:
             self.removeHeader(HttpHeaders.COOKIE)
 
-    def encodeCookies(self, cookies: list) -> str:
+    def encode_cookies(self, cookies: list) -> str:
         output = []
         for c in cookies:
             value = "" if c.getValue() is None else c.getValue()
             output.append(f"{c.getName()} = {value}")
         return "; ".join(output)
 
-    def getCookies(self) -> list:
+    def get_cookies(self) -> list:
         return self.cookies
 
-    def addHeader(self, name: str, value) -> None:
+    def add_header(self, name: str, value) -> None:
         # TODO
         pass
 
-    def doAddHeaderValue(self, name: str, value=None, replace: bool) -> None:
+    def do_add_header_value(self, name: str, value=None, replace: bool) -> None:
         header: HeaderValueHolder = self.headers.get(name)
         assert value is not None, "Header value must not be null"
         if header is None or replace:
@@ -468,11 +468,11 @@ class MockHttpServletRequest():
         else:
             header.add(value)
 
-    def removeHeader(self, name: str) -> None:
+    def remove_header(self, name: str) -> None:
         assert name is not None, "Header name must not be null"
         self.headers.remove(name)
 
-    def getDateHeader(self, name: str) -> int:
+    def get_date_header(self, name: str) -> int:
         header: HeaderValueHolder = self.headers.get(name)
         value = None if header is None else header.getValue()
         if isinstance(value, datetime):
@@ -486,7 +486,7 @@ class MockHttpServletRequest():
         else:
             return -1
 
-    def parseDateHeader(self, name: str, value: str) -> int:
+    def parse_date_header(self, name: str, value: str) -> int:
         for dateFormat in self.DATE_FORMATS:
             try:
                 date = datetime.strptime(value, dateFormat)
@@ -497,18 +497,18 @@ class MockHttpServletRequest():
 
         raise ValueError(f"Cannot parse date value '{value}' for '{name}' header")
 
-    def getHeader(self, name: str) -> str:
+    def get_header(self, name: str) -> str:
         header: HeaderValueHolder = self.headers.get(name)
         return None if header is None else header.__str__()
 
-    def getHeaders(self, name: str) -> list:
+    def get_headers(self, name: str) -> list:
         header: HeaderValueHolder = self.headers.get(name)
         return [i.__str__() for i in header]
 
-    def getHeaderNames(self) -> list:
+    def get_header_names(self) -> list:
         return list(self.headers.key())
 
-    def getIntHeader(self, name: str) -> int:
+    def get_int_header(self, name: str) -> int:
         header: HeaderValueHolder = self.headers.get(name)
         value = None if header is None else header.getValue()
         if isinstance(value, (int, float, str)):
@@ -518,66 +518,66 @@ class MockHttpServletRequest():
         else:
             return -1
 
-    def setMethod(self, method: str = None) -> None:
+    def set_method(self, method: str = None) -> None:
         self.method = method
 
-    def getMethod(self) -> str:
+    def get_method(self) -> str:
         return self.method
 
-    def setPathInfo(self, pathInfo: str) -> None:
+    def set_path_info(self, pathInfo: str) -> None:
         self.pathInfo = pathInfo
 
-    def getPathInfo(self) -> str:
+    def get_path_info(self) -> str:
         return self.pathInfo
 
-    def getPathTranslated(self):
+    def get_path_translated(self):
         return None if self.pathInfo is None else self.getRealPath(self.pathInfo)
 
-    def setContextPath(self, contextPath: str) -> None:
+    def set_context_path(self, contextPath: str) -> None:
         self.contextPath = contextPath
 
-    def getContextPath(self) -> str:
+    def get_context_path(self) -> str:
         return self.contextPath
 
-    def setQueryString(self, queryString: str = None) -> None:
+    def set_query_string(self, queryString: str = None) -> None:
         self.queryString = queryString
 
-    def getQueryString(self) -> str:
+    def get_query_string(self) -> str:
         return self.queryString
 
-    def setRemoteUser(self, remoteUser: str = None) -> None:
+    def set_remote_user(self, remoteUser: str = None) -> None:
         self.remoteUser = remoteUser
 
-    def getRemoteUser(self) -> str:
+    def get_remote_user(self) -> str:
         return self.remoteUser
 
-    def addUserRole(self, role: str) -> None:
+    def add_user_role(self, role: str) -> None:
         self.userRoles.add(role)
 
-    def isUserInRole(self, role: str) -> bool:
+    def is_user_in_role(self, role: str) -> bool:
         return role in self.userRoles or \
             (isinstance(MockServletContext, self.servletContext) and
                 self.servletContext.getDeclaredRoles().contains(role))
 
-    def setUserPrincipal(self, userPrincipal=None) -> None:
+    def set_user_principal(self, userPrincipal=None) -> None:
         self.userPrincipal = userPrincipal
 
-    def getUserPrincipal(self):
+    def get_user_principal(self):
         return self.userPrincipal
 
-    def setRequestedSessionId(self, requestedSessionId: str = None):
+    def set_requested_session_id(self, requestedSessionId: str = None):
         self.requestedSessionId = requestedSessionId
 
-    def getRequestedSessionId(self) -> str:
+    def get_requested_session_id(self) -> str:
         return self.requestedSessionId
 
-    def setRequestURI(self, requestURI: str = None) -> None:
+    def set_request_uri(self, requestURI: str = None) -> None:
         self.requestURI = requestURI
 
-    def getRequestURI(self) -> str:
+    def get_request_uri(self) -> str:
         return self.requestURI
 
-    def getRequestURL(self) -> str:
+    def get_request_url(self) -> str:
         scheme = self.getScheme()
         server = self.getServerName()
         port = self.getServerPort()
@@ -592,19 +592,19 @@ class MockHttpServletRequest():
             url += uri
         return url
 
-    def setServletPath(self, servletPath: str) -> None:
+    def set_servlet_path(self, servletPath: str) -> None:
         self.servletPath = servletPath
 
-    def getServletPath(self) -> str:
+    def get_servlet_path(self) -> str:
         return self.servletPath
 
     # return type HttpSession
-    def setSession(self, session):
+    def set_session(self, session):
         self.session = session
         if isinstance(session, MockHttpSession):
             session.access()
 
-    def getSession(self, create: bool = True):
+    def get_session(self, create: bool = True):
         self.checkActive()
         if isinstance(session, MockHttpSession) and self.session.isInvalid():
             self.session = None
@@ -612,32 +612,29 @@ class MockHttpServletRequest():
             self.session = MockHttpSession(self.servletContext)
         return self.session
 
-    def changeSessionId(self) -> str:
+    def change_session_id(self) -> str:
         assert self.session is not None, "The request does not have a session"
         if isinstance(session, MockHttpSession):
             return self.session.changeSessionId()
         return self.session.getId()
 
-    def setRequestedSessionIdValid(self, requestedSessionIdValid: bool) -> None:
+    def set_requested_session_id_valid(self, requestedSessionIdValid: bool) -> None:
         self.requestedSessionIdValid = requestedSessionIdValid
 
-    def isRequestedSessionIdValid(self) -> bool:
+    def is_requested_session_id_valid(self) -> bool:
         return self.isRequestedSessionIdValid
 
-    def setRequestedSessionIdFromCookie(self, requestedSessionIdFromCookie) -> None:
+    def set_requested_session_id_from_cookie(self, requestedSessionIdFromCookie) -> None:
         self.requestedSessionIdFromCookie = requestedSessionIdFromCookie
 
-    def isRequestedSessionIdFromCookie(self) -> bool:
+    def is_requested_session_id_from_cookie(self) -> bool:
         return self.isRequestedSessionIdFromCookie
 
-    def setRequestedSessionIdFromURL(self, requestedSessionIdFromURL: bool) -> None:
+    def set_requested_session_id_from_url(self, requestedSessionIdFromURL: bool) -> None:
         self.requestedSessionIdFromURL = requestedSessionIdFromURL
 
-    def isRequestedSessionIdFromURL(self) -> bool:
-        return self.isRequestedSessionIdFromURL
-
-    def isRequestedSessionIdFromUrl(self) -> bool:
-        return isRequestedSessionIdFromURL()
+    def is_requested_session_id_from_url(self) -> bool:
+        return self.requestedSessionIdFromURL
 
     def authenticate(self, response) -> bool:
         raise ValueError("UnsupportedOperationException")
@@ -647,17 +644,17 @@ class MockHttpServletRequest():
         self.remoteUser = None
         self.authType = None
 
-    def addPart(self, part) -> None:
+    def add_part(self, part) -> None:
         self.parts.add(part.getName(), part)
 
     # return type Part
-    def getPart(self, name: str):
+    def get_part(self, name: str):
         tmp = list(self.parts.keys())
         if tmp:
             return tmp[0]
         return None
 
-    def getParts(self) -> set:
+    def get_parts(self) -> set:
         result = []
         for part_list in self.parts.values():
             result.extend(part_list)
