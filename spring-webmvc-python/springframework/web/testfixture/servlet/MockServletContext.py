@@ -1,6 +1,7 @@
 import os
 import logging
 import tempfile
+from unittest import mock
 from springframework.utils.mock.inst import SessionTrackingMode, \
     DefaultResourceLoader, MediaTypeFactory, MediaType, Resource, RequestDispatcher
 
@@ -48,62 +49,62 @@ class MockServletContext():
             self.resourceLoader = DefaultResourceLoader()
         else:
             self.resourceLoader = resourceLoader
-        self.registerNamedDispatcher(self.defaultServletName, MockRequestDispatcher(self.defaultServletName))
+        self.register_named_dispatcher(self.defaultServletName, MockRequestDispatcher(self.defaultServletName))
 
-    def getResourceLocation(self, path: str) -> str:
+    def get_resource_location(self, path: str) -> str:
         if not path.startswith('/'):
             path = "/" + path
         return self.resourceBasePath + path
 
-    def setContextPath(self, contextPath: str) -> None:
+    def set_context_path(self, contextPath: str) -> None:
         self.contextPath = contextPath
 
-    def getContextPath(self) -> str:
+    def get_context_path(self) -> str:
         return self.contextPath
 
-    def registerContext(self, contextPath: str, context) -> None:
+    def register_context(self, contextPath: str, context) -> None:
         self.contexts[contextPath] = context
 
-    def getContext(self, contextPath: str):
+    def get_context(self, contextPath: str):
         if self.contextPath == contextPath:
             return contextPath
         return self.contexts.get(contextPath)
 
-    def setMajorVersion(self, majorVersion: int):
+    def set_major_version(self, majorVersion: int):
         self.majorVersion = majorVersion
 
-    def getMajorVersion(self) -> int:
+    def get_major_version(self) -> int:
         return self.majorVersion
 
-    def setMinorVersion(self, minorVersion: int) -> None:
+    def set_minor_version(self, minorVersion: int) -> None:
         self.minorVersion = minorVersion
 
-    def getMinorVersion(self) -> int:
+    def get_minor_version(self) -> int:
         return self.minorVersion
 
-    def setEffectiveMajorVersion(self, effectiveMajorVersion: int) -> None:
+    def set_effective_major_version(self, effectiveMajorVersion: int) -> None:
         self.effectiveMajorVersion = effectiveMajorVersion
 
-    def getEffectiveMajorVersion(self) -> int:
+    def get_effective_major_version(self) -> int:
         return self.effectiveMajorVersion
 
-    def getMimeType(self, filePath: str) -> str:
+    def get_mime_type(self, filePath: str) -> str:
         filename, extension = os.path.splitext(filePath)
         if extension in self.mimeTypes:
             return str(self.mimeTypes.get(extension))
         else:
             return str(MediaTypeFactory.getMediaType(filePath))
 
-    def addMimeType(self, fileExtension: str, mimeType: MediaType) -> None:
+    def add_mime_type(self, fileExtension: str, mimeType: MediaType) -> None:
         assert fileExtension is not None, "'fileExtension' must not be null"
         self.mimeTypes[fileExtension] = mimeType
 
-    def getResourcePaths(self, path: str) -> set:
+    def get_resource_paths(self, path: str) -> set:
         actualPath = path if path.endswith("/") else path + '/'
-        resourceLocation = self.getResourceLocation(actualPath)
+        resourceLocation = self.get_resource_location(actualPath)
         resource: Resource = None
         try:
-            resource = self.resourceLoader.getResource(resourceLocation)
+            resource = self.resourceLoader.get_resource(resourceLocation)
             file = resource.getFile()
             fileList = file.list()
             if not fileList:
@@ -121,11 +122,11 @@ class MockServletContext():
             self.logger.warning(f"Could not get resource paths for {resource}. {str(e)}")
             return None
 
-    def getResource(self, path: str):
-        resourceLocation = self.getResourceLocation(path)
+    def get_resource(self, path: str):
+        resourceLocation = self.get_resource_location(path)
         resource: Resource = None
         try:
-            resource = self.resourceLoader.getResource(resourceLocation)
+            resource = self.resourceLoader.get_resource(resourceLocation)
             if not resource.exists():
                 return None
             return resource.getURL()
@@ -134,11 +135,11 @@ class MockServletContext():
             self.logger.warning(f"Could not get URL for resource {resource}. {str(e)}")
             return None
 
-    def getResourceAsStream(self, path: str):
-        resourceLocation = self.getResourceLocation(path)
+    def get_resource_as_stream(self, path: str):
+        resourceLocation = self.get_resource_location(path)
         resource: Resource = None
         try:
-            resource = self.resourceLoader.getResource(resourceLocation)
+            resource = self.resourceLoader.get_resource(resourceLocation)
             if not resource.exists():
                 return None
             return resource.getInputStream()
@@ -147,143 +148,143 @@ class MockServletContext():
             self.logger.warning(f"Could not get URL for resource {resource}. {str(e)}")
             return None
 
-    def getRequestDispatcher(self, path: str) -> RequestDispatcher:
+    def get_request_dispatcher(self, path: str) -> RequestDispatcher:
         assert path.startswith('/'), f"RequestDispatcher path [ {path} ] at ServletContext level must start with '/'"
         return MockRequestDispatcher(path)
 
-    def getNamedDispatcher(self, path: str) -> RequestDispatcher:
+    def get_named_dispatcher(self, path: str) -> RequestDispatcher:
         return self.namedRequestDispatchers.get(path)
 
-    def registerNamedDispatcher(self, name: str, requestDispatcher: RequestDispatcher) -> None:
+    def register_named_dispatcher(self, name: str, requestDispatcher: RequestDispatcher) -> None:
         assert name is not None, "RequestDispatcher name must not be null"
         assert requestDispatcher is not None, "RequestDispatcher must not be null"
         self.namedRequestDispatchers[name] = requestDispatcher
 
-    def unregisterNamedDispatcher(self, name: str) -> None:
+    def unregister_named_dispatcher(self, name: str) -> None:
         assert name is not None, "RequestDispatcher name must not be null"
         self.namedRequestDispatchers.pop(name)
 
-    def getDefaultServletName(self) -> str:
+    def get_default_servlet_name(self) -> str:
         return self.defaultServletName
 
-    def setDefaultServletName(self, defaultServletName: str):
+    def set_default_servlet_name(self, defaultServletName: str):
         assert defaultServletName, "defaultServletName must not be null or empty"
-        self.unregisterNamedDispatcher(self.defaultServletName)
+        self.unregister_named_dispatcher(self.defaultServletName)
         self.defaultServletName = defaultServletName
-        self.registerNamedDispatcher(defaultServletName, MockRequestDispatcher(defaultServletName))
+        self.register_named_dispatcher(defaultServletName, MockRequestDispatcher(defaultServletName))
 
-    def getServlet(self, name: str):
+    def get_servlet(self, name: str):
         return None
 
-    def getServlets(self) -> list:
+    def get_servlets(self) -> list:
         return list()
 
-    def getServletNames(self) -> list:
+    def get_servlet_names(self) -> list:
         return list()
 
     def log(self, message: str) -> None:
         self.logger.info(message)
 
-    def getRealPath(self, path: str) -> str:
-        resourceLocation = self.getResourceLocation(path)
+    def get_real_path(self, path: str) -> str:
+        resourceLocation = self.get_resource_location(path)
         resource: Resource = None
         try:
-            resource = self.resourceLoader.getResource(resourceLocation)
+            resource = self.resourceLoader.get_resource(resourceLocation)
             return resource.getFile().getAbsolutePath()
         except IOError as e:
             resource = resource if resource is not None else resourceLocation
             self.logger.warning(f"Could not determine real path of resource {resource}. {str(e)}")
             return None
 
-    def getServerInfo(self) -> str:
+    def get_server_info(self) -> str:
         return "MockServletContext"
 
-    def getInitParameter(self, name: str) -> str:
+    def get_init_parameter(self, name: str) -> str:
         assert name is not None, "Parameter name must not be null"
         return self.initParameters.get(name)
 
-    def getInitParameterNames(self) -> list:
+    def get_init_parameter_names(self) -> list:
         return list(self.initParameters.keys())
 
-    def setInitParameter(self, name: str, value: str) -> bool:
+    def set_init_parameter(self, name: str, value: str) -> bool:
         assert name is not None, "Parameter name must not be null"
         if name in self.initParameters:
             return False
         self.initParameters[name] = value
         return True
 
-    def addInitParameter(self, name: str, value: str) -> None:
+    def add_init_parameter(self, name: str, value: str) -> None:
         assert name is not None, "Parameter name must not be null"
         self.initParameters[name] = value
 
-    def getAttribute(self, name: str):
+    def get_attribute(self, name: str):
         assert name is not None, "Attribute name must not be null"
         return self.attributes.get(name)
 
-    def getAttributeNames(self) -> list:
+    def get_attribute_names(self) -> list:
         return list(self.attributes.keys())
 
-    def setAttribute(self, name: str, value=None) -> None:
+    def set_attribute(self, name: str, value=None) -> None:
         assert name is not None, "Attribute name must not be null"
         if value is not None:
             self.attributes[name] = value
         else:
             self.attributes.pop(name)
 
-    def removeAttribute(self, name: str) -> None:
+    def remove_attribute(self, name: str) -> None:
         assert name is not None, "Attribute name must not be null"
         self.attributes.pop(name)
 
-    def setServletContextName(self, servletContextName: str) -> None:
+    def set_servlet_context_name(self, servletContextName: str) -> None:
         self.servletContextName = servletContextName
 
-    def getServletContextName(self) -> str:
-        return self.getServletContextName
+    def get_servlet_context_name(self) -> str:
+        return self.servletContextName
 
-    def getClassLoader(self):
+    def get_class_loader(self):
         # TODO
-        assert False
+        return mock.MagicMock(name="ClassUtils.getDefaultClassLoader()")
 
-    def declareRoles(self, roleNames: list) -> None:
+    def declare_roles(self, roleNames: list) -> None:
         assert roleNames is not None, "Role names array must not be null"
         for roleName in roleNames:
             assert roleName, "Role name must not be empty"
             self.declaredRoles.add(roleName)
 
-    def getDeclaredRoles(self) -> set:
+    def get_declared_roles(self) -> set:
         return set(self.declaredRoles).copy()
 
-    def setSessionTrackingModes(self, sessionTrackingModes: set) -> None:
+    def set_session_tracking_modes(self, sessionTrackingModes: set) -> None:
         self.sessionTrackingModes = sessionTrackingModes
 
-    def getDefaultSessionTrackingModes(self) -> set:
+    def get_default_dession_tracking_modes(self) -> set:
         return self.DEFAULT_SESSION_TRACKING_MODES
 
-    def getEffectiveSessionTrackingModes(self) -> set:
+    def get_effective_session_tracking_modes(self) -> set:
         if self.sessionTrackingModes is None:
             return self.DEFAULT_SESSION_TRACKING_MODES
         return self.sessionTrackingModes
 
-    def getSessionCookieConfig(self):
+    def get_session_cookie_config(self):
         return self.sessionCookieConfig
 
-    def setSessionTimeout(self, sessionTimeout: int) -> None:
+    def set_session_timeout(self, sessionTimeout: int) -> None:
         self.sessionTimeout = sessionTimeout
 
-    def getSessionTimeout(self) -> int:
+    def get_session_timeout(self) -> int:
         return self.sessionTimeout
 
-    def setRequestCharacterEncoding(self, requestCharacterEncoding: str = None) -> None:
+    def set_request_character_rncoding(self, requestCharacterEncoding: str = None) -> None:
         self.requestCharacterEncoding = requestCharacterEncoding
 
-    def getRequestCharacterEncoding(self) -> str:
+    def get_request_character_rncoding(self) -> str:
         self.requestCharacterEncoding
 
-    def setResponseCharacterEncoding(self, responseCharacterEncoding: str = None) -> None:
+    def set_response_character_encoding(self, responseCharacterEncoding: str = None) -> None:
         self.responseCharacterEncoding = responseCharacterEncoding
 
-    def getResponseCharacterEncoding(self) -> str:
-        return self.getResponseCharacterEncoding
+    def get_response_character_encoding(self) -> str:
+        return self.responseCharacterEncoding
 
     # ---------------------------------------------------------------------
     #  Unsupported Servlet 3.0 registration methods
