@@ -52,5 +52,3 @@ class ParserContext():
         #  TODO
         # BeanDefinitionReaderUtils.registerBeanDefinition(component, self.getRegistry())
         self.registerComponent(component)
-
-        

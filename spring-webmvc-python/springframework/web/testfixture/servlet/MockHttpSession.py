@@ -1,10 +1,6 @@
-from unittest import mock
 from datetime import datetime
-
-# mock
-HttpSessionBindingEvent = type("HttpSessionBindingEvent", (mock.MagicMock, ), {})
-HttpSessionBindingListener = type("HttpSessionBindingListener", (mock.MagicMock,), {})
-Serializable = type("Serializable", (mock.MagicMock,), {})
+from springframework.utils.mock.inst import HttpSessionBindingEvent as HttpSessionBindingEvent
+from springframework.utils.mock.type import HttpSessionBindingListener, Serializable
 
 
 class MockHttpSession():
@@ -28,14 +24,14 @@ class MockHttpSession():
         else:
             self.id = id
 
-    def getCreationTime(self) -> int:
-        self.assertIsValid()
+    def get_creation_time(self) -> int:
+        self.assert_is_valid()
         return self.creationTime
 
-    def getId(self) -> str:
+    def get_id(self) -> str:
         return self.id
 
-    def changeSessionId(self) -> str:
+    def change_session_id(self) -> str:
         self.id = str(self.nextId)
         self.nextId += 1
         return self.id
@@ -44,43 +40,43 @@ class MockHttpSession():
         self.lastAccessedTime = int(datetime.now().tiemstamp())
         self.isNew = False
 
-    def getLastAccessedTime(self) -> int:
-        self.assertIsValid()
+    def get_last_accessed_time(self) -> int:
+        self.assert_is_valid()
         return self.lastAccessedTime
 
-    def getServletContext(self):
+    def get_servlet_context(self):
         self.servletContext
 
-    def setMaxInactiveInterval(self, interval: int) -> None:
+    def set_max_inactive_Interval(self, interval: int) -> None:
         self.maxInactiveInterval = interval
 
-    def getMaxInactiveInterval(self) -> int:
+    def get_max_inactive_Interval(self) -> int:
         return self.maxInactiveInterval
 
-    def getSessionContext(self):
+    def get_session_context(self):
         raise ValueError("UnsupportedOperationException(getSessionContext")
 
-    def getAttribute(self, name: str):
-        self.assertIsValid()
+    def get_attribute(self, name: str):
+        self.assert_is_valid()
         assert name is not None, "Attribute name must not be null"
         return self.attributes.get(name)
 
     def getValue(self, name: str):
-        return self.getAttribute(name)
+        return self.get_attribute(name)
 
-    def getAttributeNames(self) -> list:
-        self.assertIsValid()
+    def get_attribute_names(self) -> list:
+        self.assert_is_valid()
         return list(self.attributes.keys())
 
-    def getValueNames(self) -> list:
-        self.assertIsValid()
+    def get_value_names(self) -> list:
+        self.assert_is_valid()
         return list(self.attributes.keys())
 
-    def setAttribute(self, name: str, value=None) -> None:
-        self.assertIsValid()
+    def set_attribute(self, name: str, value=None) -> None:
+        self.assert_is_valid()
         assert name is not None, "Attribute name must not be null"
         if value is None:
-            self.removeAttribute(name)
+            self.remove_attribute(name)
         else:
             oldValue = self.attributes.get(name)
             if oldValue != value:
@@ -89,64 +85,54 @@ class MockHttpSession():
                 if isinstance(value, HttpSessionBindingListener):
                     value.valuebound(HttpSessionBindingEvent(self, name, value))
 
-    def putValue(self, name: str, value) -> None:
-        self.setAttribute(name, value)
+    def put_value(self, name: str, value) -> None:
+        self.set_attribute(name, value)
 
-    def removeAttribute(self, name: str) -> None:
-        self.assertIsValid()
+    def remove_attribute(self, name: str) -> None:
+        self.assert_is_valid()
         assert name is not None, "Attribute name must not be null"
         value = self.attributes.pop(name)
         if isinstance(value, HttpSessionBindingListener):
             value.valueUnbound(HttpSessionBindingEvent(self, name, value))
 
-    def removeValue(self, name: str) -> None:
-        self.removeAttribute(name)
+    def remove_value(self, name: str) -> None:
+        self.remove_attribute(name)
 
-    def clearAttributes(self) -> None:
+    def clear_attributes(self) -> None:
         for name, value in self.attributes.items():
             if isinstance(value, HttpSessionBindingListener):
                 value.valuebound(HttpSessionBindingEvent(self, name, value))
         self.attributes.clear()
 
     def invalidate(self) -> None:
-        self.assertIsValid()
+        self.assert_is_valid()
         self.invalid = True
-        self.clearAttributes()
+        self.clear_attributes()
 
-    def isInvalid(self) -> bool:
+    def is_invalid(self) -> bool:
         return self.invalid
 
-    def assertIsValid(self) -> None:
-        assert (not self.isInvalid), "The session has already been invalidated"
+    def assert_is_valid(self) -> None:
+        assert (not self.is_invalid), "The session has already been invalidated"
 
-    def setNew(self, value: bool) -> None:
+    def set_new(self, value: bool) -> None:
         self.isNew = value
 
-    def isNew(self) -> bool:
-        self.assertIsValid()
+    def is_new(self) -> bool:
+        self.assert_is_valid()
         return self.isNew
 
-    def serializeState(self):
+    def serialize_state(self):
         state = dict()
         for name, value in self.attributes.items():
             if isinstance(value, Serializable):
                 state[name] = value
             elif isinstance(value, HttpSessionBindingListener):
-                value.valueUnbound(HttpSessionBindingListener(self, name, value))
+                value.valueUnbound(HttpSessionBindingEvent(self, name, value))
 
         self.attributes.clear()
         return state
 
-    def deserializeState(self, state: Serializable) -> None:
-        assert isinstance(state, dict), "Serialized state needs to be of type [java.util.Map]");
+    def deserialize_state(self, state: Serializable) -> None:
+        assert isinstance(state, dict), "Serialized state needs to be of type [java.util.Map]"
         self.attributes.update(state)
-
-
-
-
-
-
-
-
-
-

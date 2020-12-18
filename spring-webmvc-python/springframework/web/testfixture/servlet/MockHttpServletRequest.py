@@ -4,6 +4,25 @@ from collections import defaultdict
 from datetime import datetime
 
 from .MockServletContext import MockServletContext
+from .MockAsyncContext import MockAsyncContext
+
+from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
+    DispatcherType, DelegatingServletInputStream, InputStreamReader, MediaType
+
+# mock class
+# ---------------------------------------------------------------------
+# HttpSession : MockHttpSession
+# Principal
+# HeaderValueHolder : set
+# HttpHeaders
+# DispatcherType : Enum
+# AsyncContext : MockAsyncContext
+# RequestDispatcher : MockRequestDispatcher
+# BufferedReader
+# ServletInputStream
+# Part : MockPart
+# ServletContext : MockServletContext
+# ---------------------------------------------------------------------
 
 
 # inherit HttpServletRequestInterface
@@ -13,8 +32,8 @@ class MockHttpServletRequest():
     HTTPS = "https"
     CHARSET_PREFIX = "charset"
     GMT = pytz.timezone('GMT')
-    EMPTY_SERVLET_INPUT_STREAM = mock.MagicMock(name=EMPTY_SERVLET_INPUT_STREAM)
-    EMPTY_BUFFERED_READER: mock.MagicMock(name=EMPTY_BUFFERED_READER)
+    EMPTY_SERVLET_INPUT_STREAM = DelegatingServletInputStream()
+    EMPTY_BUFFERED_READER = BufferedReader()
     DATE_FORMATS = [
         "%a %b %d %H:%M:%S %Y",
         "%a, %d-%b-%y %H:%M:%S %Z",
@@ -80,21 +99,6 @@ class MockHttpServletRequest():
     requestedSessionIdFromURL = True
     parts = dict()
 
-    # mock class
-    # ---------------------------------------------------------------------
-    # HttpSession : MockHttpSession
-    # Principal
-    # HeaderValueHolder : set
-    # HttpHeaders
-    # DispatcherType : Enum
-    # AsyncContext : MockAsyncContext
-    # RequestDispatcher : MockRequestDispatcher
-    # BufferedReader
-    # ServletInputStream
-    # Part : MockPart
-    # ServletContext : MockServletContext
-    # ---------------------------------------------------------------------
-
     def __init__(self, servletContext=None, method: str = None, requestURI: str = None):
         if servletContext is None:
             self.servletContext = MockServletContext()  # mock
@@ -102,7 +106,7 @@ class MockHttpServletRequest():
             self.servletContext = servletContext
         self.method = method
         self.requestURI = requestURI
-        self.locales.append("EN")
+        self.locales.append(Locale.ENGLISH)
 
     # ---------------------------------------------------------------------
     # Lifecycle methods
@@ -122,7 +126,7 @@ class MockHttpServletRequest():
         self.clear_attributes()
 
     def check_active(self) -> None:
-        assert self.active,"Request is not active anymore"
+        assert self.active, "Request is not active anymore"
 
     # ServletRequest interface
     def get_attribute(self, name: str):
@@ -143,9 +147,9 @@ class MockHttpServletRequest():
     def update_content_type_header(self) -> None:
         if self.contentType is not None:
             value = self.contentType
-            if (self.characterEncoding is not None) and (self.CHARSET_PREFIX not in this.contentType.lower()):
+            if (self.characterEncoding is not None) and \
+                    (self.CHARSET_PREFIX not in this.contentType.lower()):
                 value += f";{self.CHARSET_PREFIX}{self.characterEncoding}"
-            # TODO: HttpHeaders
             self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
 
     def set_content(self, context: bytes) -> None:
@@ -170,13 +174,12 @@ class MockHttpServletRequest():
         return -1 if (self.context is None) else len(self.content)
 
     def get_content_length_long(self) -> int:
-        return self.getContentLength()
+        return self.get_content_length()
 
     def set_content_type(self, contentType: str = None) -> None:
         self.contentType = contentType
         if contentType is not None:
             try:
-                # TODO
                 mediaType = MediaType.parseMediaType(contentType)
                 if mediaType.getCharset() is not None:
                     self.characterEncoding = mediaType.getCharset().name()
@@ -199,22 +202,13 @@ class MockHttpServletRequest():
             raise ValueError("Cannot call getInputStream() after getReader() has already been called for the current request")
 
         if self.content is not None:
-            # TODO
             self.inputStream = DelegatingServletInputStream(ByteArrayInputStream(self.content))
         else:
             self.inputStream = self.EMPTY_SERVLET_INPUT_STREAM
         return self.inputStream
 
     def set_parameter(self, name, value) -> None:
-        if isinstance(name, dict):
-            for key in name:
-                assert key is not None, "Parameter map must not be null"
-                value = name.get(key)
-                if isinstance(value, str) or isinstance(value, list):
-                    self.set_parameter(key, value)
-                else:
-                    raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
-        elif isinstance(name, str):
+        if isinstance(name, str):
             if isinstance(value, str):
                 self.parameters[name] = [value]
             elif isinstance(value, list):
@@ -222,16 +216,18 @@ class MockHttpServletRequest():
             else:
                 raise ValueError("!!!")
 
+    def set_parameters(self, params: dict) -> None:
+        assert params is not None, "Parameter map must not be null"
+        for name, value in params.items():
+            if isinstance(value, str):
+                self.set_parameter(name, value)
+            elif isinstance(value, list):
+                self.set_parameter(name, value)
+            else:
+                raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
+
     def add_parameter(self, name, value) -> None:
-        if isinstance(name, dict):
-            for key in name:
-                assert key is not None, "Parameter map must not be null"
-                value = name.get(key)
-                if isinstance(value, str) or isinstance(value, list):
-                    self.add_parameter(key, value)
-                else:
-                    raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
-        elif isinstance(name, str):
+        if isinstance(name, str):
             if isinstance(value, str):
                 self.parameters[name] = [value]
             elif isinstance(value, list):
@@ -239,6 +235,16 @@ class MockHttpServletRequest():
                 self.parameters[name] = old_value + value
             else:
                 raise ValueError("!!!")
+
+    def add_parameters(self, params: dict) -> None:
+        assert params is not None, "Parameter map must not be null"
+        for name, value in params.items():
+            if isinstance(value, str):
+                self.add_parameter(name, value)
+            elif isinstance(value, list):
+                self.add_parameter(name, value)
+            else:
+                raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
 
     def remove_parameter(self, name: str) -> None:
         assert name is not None, "Parameter name must not be null"
@@ -277,18 +283,37 @@ class MockHttpServletRequest():
         self.serverName = serverName
 
     def get_server_name(self) -> str:
-        # TODO: HttpHeaders
         rawHostHeader: str = self.get_header(HttpHeaders.HOST)
         host = rawHostHeader
         if host is not None:
             host = host.strip()
             if host.startswith('['):
+                assert ']' in host, f"Invalid Host header: {rawHostHeader}"
                 indexOfClosingBracket = host.index('[')
+                host = host[:indexOfClosingBracket + 1]
+            elif ':' in host:
+                host = host = host[:, host.index(':') + 1]
+            return host[idx+1:]
+
+        return self.serverName
+
+    def set_server_port(self) -> None:
+        self.serverPort = serverPort
+
+    def get_server_port(self) -> int:
+        rawHostHeader: str = self.get_header(HttpHeaders.HOST)
+        host = rawHostHeader
+        if host is not None:
+            host = host.strip()
+            if host.startswith('['):
+                assert ']' in host, f"Invalid Host header: {rawHostHeader}"
+                indexOfClosingBracket = host.index(']')
                 if ':' in host:
                     idx = host[indexOfClosingBracket:].index(':')
-            if ':' in host::
+                    return host[idx + 1:]
+            elif ':' in host:
                 idx = host.index(':')
-            return host[idx+1:]
+                return host[idx + 1:]
 
         return self.serverPort
 
@@ -299,7 +324,6 @@ class MockHttpServletRequest():
             raise ValueError("Cannot call getReader() after getInputStream() has already been called for the current request")
 
         if self.content is not None:
-            # TODO
             sourceStream = ByteArrayInputStream(self.content)
             if self.characterEncoding is not None:
                 sourceReader = InputStreamReader(sourceStream, self.characterEncoding)
@@ -323,7 +347,7 @@ class MockHttpServletRequest():
         return self.remoteHost
 
     def set_attribute(self, name: str, value=None) -> None:
-        self.checkActive()
+        self.check_active()
         assert name is not None, "Attribute name must not be null"
         if value is not None:
             self.attributes[name] = value
@@ -331,24 +355,28 @@ class MockHttpServletRequest():
             self.attributes.pop(name)
 
     def remove_attribute(self, name: str) -> None:
-        self.checkActive()
+        self.check_active()
         assert name is not None, "Attribute name must not be null"
         self.attributes.pop(name)
 
     def clear_attributes(self) -> None:
         self.attributes.clear()
 
-    def add_preferred_locale(self, locales: list) -> None:
+    def add_preferred_locale(self, locale: Locale) -> None:
+        assert locale, "Locale must not be null"
+        self.locales.append(locale)
+        self.update_accept_language_header()
+
+    def add_preferred_locales(self, locales: list) -> None:
         assert locales, "Locale list must not be empty"
         self.locales.clear()
         self.locales.extend(locales)
-        self.updateAcceptLanguageHeader()
+        self.update_accept_language_header()
 
     def update_accept_language_header(self) -> None:
-        # TODO: HttpHeaders
         headers = HttpHeaders()
         headers.setAcceptLanguageAsLocales(self.locales)
-        self.doAddHeaderValue(HttpHeaders.ACCEPT_LANGUAGE, headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True)
+        self.do_add_header_value(HttpHeaders.ACCEPT_LANGUAGE, headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True)
 
     def get_locale(self):
         return self.locales[:1]
@@ -437,9 +465,9 @@ class MockHttpServletRequest():
     def set_cookies(self, cookies: list) -> None:
         self.cookies = cookies
         if cookies:
-            self.doAddHeaderValue(HttpHeaders.COOKIE, encodeCookies(self.cookies), True)
+            self.do_add_header_value(HttpHeaders.COOKIE, encodeCookies(self.cookies), True)
         else:
-            self.removeHeader(HttpHeaders.COOKIE)
+            self.remove_header(HttpHeaders.COOKIE)
 
     def encode_cookies(self, cookies: list) -> str:
         output = []
@@ -452,8 +480,25 @@ class MockHttpServletRequest():
         return self.cookies
 
     def add_header(self, name: str, value) -> None:
-        # TODO
-        pass
+        if HttpHeaders.CONTENT_TYPE == name and \
+                not self.headers.containsKey(HttpHeaders.CONTENT_TYPE):
+            self.set_content_type(str(value))
+        elif HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(name) and \
+                not self.headers.containsKey(HttpHeaders.ACCEPT_LANGUAGE):
+            try:
+                headers = HttpHeaders()
+                headers.add(HttpHeaders.ACCEPT_LANGUAGE, str())
+                locales: list = headers.getAcceptLanguageAsLocales()
+                self.locales.clear()
+                self.locales.extend(locales)
+                if not locales:
+                    locales.append(Locale.ENGLISH)
+            except Exception:
+                # Invalid Accept-Language format -> just store plain header
+                pass
+            self.do_add_header_value(name, value, True)
+        else:
+            self.do_add_header_value(name, value, False)
 
     def do_add_header_value(self, name: str, value=None, replace: bool) -> None:
         header: HeaderValueHolder = self.headers.get(name)
@@ -479,7 +524,7 @@ class MockHttpServletRequest():
             return datetime.timestamp()
         elif isinstance(value, (int, float)):
             return value
-        else isinstance(value, str):
+        elif isinstance(value, str):
             return self.parseDateHeader(name, value)
         elif value is not None:
             raise ValueError(f"Value for header '{name}' + is not a Date, Number, or String: {value}")
@@ -531,7 +576,7 @@ class MockHttpServletRequest():
         return self.pathInfo
 
     def get_path_translated(self):
-        return None if self.pathInfo is None else self.getRealPath(self.pathInfo)
+        return None if self.pathInfo is None else self.get_real_path(self.pathInfo)
 
     def set_context_path(self, contextPath: str) -> None:
         self.contextPath = contextPath
@@ -578,10 +623,10 @@ class MockHttpServletRequest():
         return self.requestURI
 
     def get_request_url(self) -> str:
-        scheme = self.getScheme()
-        server = self.getServerName()
-        port = self.getServerPort()
-        uri = self.getRequestURI()
+        scheme = self.get_scheme()
+        server = self.get_server_name()
+        port = self.get_server_port()
+        uri = self.get_request_uri()
 
         url = scheme + "://" + server
         if port > 0 and \
@@ -605,7 +650,7 @@ class MockHttpServletRequest():
             session.access()
 
     def get_session(self, create: bool = True):
-        self.checkActive()
+        self.check_active()
         if isinstance(session, MockHttpSession) and self.session.isInvalid():
             self.session = None
         if self.session is None and create:
