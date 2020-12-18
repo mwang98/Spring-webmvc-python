@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+import MessageSourceResolvable
 from mock.inst import Locale
 
 
