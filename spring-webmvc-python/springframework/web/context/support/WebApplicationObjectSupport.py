@@ -1,11 +1,13 @@
 from abc import ABC
 
-from context import ServletContextAware
-from support import ApplicationObjectSupport
+from ApplicationContext import ApplicationContext
+from context.ServletContextAware import ServletContextAware
+from support.ApplicationObjectSupport import ApplicationObjectSupport
 
 
 class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware, ABC):
     def __init__(self):
+        super().__init__()
         self._servlet_context: ServletContext = None
 
     def set_servlet_context(self, servlet_context: ServletContext) -> None:
@@ -16,7 +18,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
     def is_context_required(self) -> bool:
         return True
 
-    def init_application_context(self, context: ApplicationContext) -> None:
+    def init_application_context(self, context: ApplicationContext = None) -> None:
         super(ApplicationObjectSupport, self).init_application_context(context)
         if self._servlet_context is None and isinstance(context, WebApplicationContext):
             self._servlet_context = context.get_servlet_context()

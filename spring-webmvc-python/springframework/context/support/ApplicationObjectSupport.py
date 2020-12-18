@@ -16,7 +16,7 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
         elif self._application_context is None:
             if not isinstance(self.required_context_class(), context):
                 raise ValueError(
-                    "Invalid application context: needs to be of type [" + str(self.required_context_class()) + "]")
+                    "Invalid application context: needs to be of type [" + self.required_context_class().__name__ + "]")
             self._application_context = context
             self._message_source_accessor = MessageSourceAccessor(context)
             self.init_application_context(context)
@@ -31,7 +31,7 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
     def required_context_class(self):
         return ApplicationContext.__class__
 
-    def init_application_context(self, context: ApplicationContext = None):
+    def init_application_context(self, context: ApplicationContext = None) -> None:
         if context is not None:
             self.init_application_context()
 
