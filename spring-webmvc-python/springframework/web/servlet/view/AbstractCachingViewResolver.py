@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 import threading
 
+from mock.inst import Locale
 from context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
@@ -15,7 +16,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     # Dummy marker object for unresolved views in the cache Maps.
     def getContentType() -> str:
         return None
-    def render(model, request, response) -> None:
+    def render(model: dict, request: HttpServletRequest, response: HttpServletResponse) -> None:
         pass
     _UNRESOLVED_VIEW = type('view', View, {'getContentType': getContentType, 'render': render})
 
@@ -42,7 +43,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     #Specify the maximum number of entries for the view cache.
     #Default is 1024.
-    def setCacheLimit(cacheLimit) -> None:
+    def setCacheLimit(cacheLimit: int) -> None:
         self.cacheLimit = cacheLimit
 
     # Return the maximum number of entries for the view cache.
@@ -51,28 +52,28 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     # Enable or disable caching.
     # Disable this only for debugging and development.
-    def setCache(cache) -> None:
+    def setCache(cache: bool) -> None:
         self.cacheLimit = (cache ? DEFAULT_CACHE_LIMIT : 0)
 
     # Return if caching is enabled.
     def isCache() -> bool:
         return (self.cacheLimit > 0)
 
-    def setCacheUnresolved(cacheUnresolved) -> None:
+    def setCacheUnresolved(cacheUnresolved: bool) -> None:
         self.cacheUnresolved = cacheUnresolved
 
     # Return if caching of unresolved views is enabled.
     def isCacheUnresolved() -> bool:
         return self.cacheUnresolved
 
-    def setCacheFilter(cacheFilter) -> None:
+    def setCacheFilter(cacheFilter: CacheFilter) -> None:
         assert cacheFilter != None
         self.cacheFilter = cacheFilter
 
     def getCacheFilter() -> CacheFilter:
         return self.cacheFilter
 
-    def resolveViewName(viewName, locale) -> View:
+    def resolveViewName(viewName: str, locale: Locale) -> View:
         if (not isCache()):
             return createView(viewName, locale)
 
@@ -94,13 +95,13 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
             return (view if view != UNRESOLVED_VIEW else None)
     
-    def _formatKey(cacheKey) -> str:
+    def _formatKey(cacheKey: object) -> str:
         return "View with key [" + cacheKey + "] "
 
-    def getCacheKey(viewName, locale) -> object:
+    def getCacheKey(viewName: str, locale: Locale) -> object:
         return viewName + '_' + locale
 
-    def removeFromCache(viewName, locale) -> None:
+    def removeFromCache(viewName: str, locale: Locale) -> None:
         if isCache():
             cacheKey = getCacheKey(viewName, locale)
             with lock:
@@ -112,11 +113,11 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
             self.viewAccessCache = dict()
             self.viewCreationCache = dict()
 
-    def createView(viewName, locale) -> View:
+    def createView(viewName: str, locale: Locale) -> View:
         return loadView(viewName, locale)
 
     @abstractmethod
-    def loadView(viewName, locale) -> View:
+    def loadView(viewName: str, locale: Locale) -> View:
         pass
 
     class CacheFilter():
