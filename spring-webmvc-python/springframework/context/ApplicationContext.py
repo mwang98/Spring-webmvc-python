@@ -1,6 +1,6 @@
 from abc import ABC, ABCMeta, abstractmethod
 
-from core.env import EnvironmentCapable
+from core.env.EnvironmentCapable import EnvironmentCapable
 
 
 class ApplicationContext(EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,

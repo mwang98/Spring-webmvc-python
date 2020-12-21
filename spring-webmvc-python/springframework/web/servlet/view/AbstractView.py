@@ -2,9 +2,9 @@ from unittest import mock
 import logging
 from abc import abstractmethod, ABC
 
-from context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
-from factory.BeanNameAware import BeanNameAware
-from springframework.web.servlet import View
+from web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from beans.factory.BeanNameAware import BeanNameAware
+from springframework.web.servlet.View import View
 
 # mock objects
 RequestContext = mock.MagicMock()
@@ -15,7 +15,7 @@ mediaType = mock.MagicMock()
 mediaType.configure_mock(name="mediaType")
 
 
-class AbstractView(WebApplicationObjectSupport,View,BeanNameAware,ABC):
+class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
     OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096
     contentType = DEFAULT_CONTENT_TYPE
@@ -43,7 +43,8 @@ class AbstractView(WebApplicationObjectSupport,View,BeanNameAware,ABC):
                 if "=" not in token:
                     raise ValueError("Expected '=' in attributes CSV string '" + propString + "'")
                 if token.index("=") >= (len(token) - 2):
-                    raise ValueError("At least 2 characters ([]) required in attributes CSV string '" + propString + "'")
+                    raise ValueError(
+                        "At least 2 characters ([]) required in attributes CSV string '" + propString + "'")
                 name, value = token.split("=")
                 self.addStaticAttribute(name, value)
 
@@ -128,8 +129,8 @@ class AbstractView(WebApplicationObjectSupport,View,BeanNameAware,ABC):
     # return type : HttpServletRequest
     def getRequestToExpose(self, originalRequest):
         if self.exposeContextBeansAsAttributes or self.exposedContextBeanNames is not None:
-            # TODO: getWebApplicationContext
-            wac = getWebApplicationContext()
+            # wac = getWebApplicationContext()
+            wac = self.get_web_application_context()
             assert wac is not None, "No WebApplicationContext"
             # ContextExposingHttpServletRequest use mock
             return ContextExposingHttpServletRequest(originalRequest, wac, self.exposedContextBeanNames)
@@ -175,4 +176,4 @@ class AbstractView(WebApplicationObjectSupport,View,BeanNameAware,ABC):
         if self.getBeanName() is not None:
             return "name '" + self.getBeanName() + "'"
         else:
-            return "[" + self.__class__.__name__ + 
+            return "[" + self.__class__.__name__ + "]"

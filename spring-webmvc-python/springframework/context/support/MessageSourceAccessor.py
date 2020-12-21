@@ -1,5 +1,5 @@
-import MessageSource
-import MessageSourceResolvable
+from MessageSource import MessageSource
+from MessageSourceResolvable import MessageSourceResolvable
 from typing import List
 
 
