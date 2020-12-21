@@ -1,10 +1,12 @@
 from abc import ABC, ABCMeta, abstractmethod
 
+from MessageSource import MessageSource
 from core.env.EnvironmentCapable import EnvironmentCapable
 
 
+# TODO: solve dependencies
 class ApplicationContext(EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
-                         MessageSource, ApplicationEventPublisher, ResourcePatternResolver):
+                         MessageSource, ApplicationEventPublisher, ResourcePatternResolver, ABC):
     def __init__(self):
         super().__init__()
 
@@ -25,7 +27,7 @@ class ApplicationContext(EnvironmentCapable, ListableBeanFactory, HierarchicalBe
         raise NotImplementedError
 
     @abstractmethod
-    def get_parent(self) -> ApplicationContext:
+    def get_parent(self):
         raise NotImplementedError
 
     @abstractmethod

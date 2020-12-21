@@ -1,4 +1,4 @@
-from springframework.beans.factory import Aware
+from springframework.beans.factory.Aware import Aware
 from abc import ABC, abstractmethod
 
 

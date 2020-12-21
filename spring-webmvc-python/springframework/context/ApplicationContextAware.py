@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
-import ApplicationContext
-from springframework.beans.factory import Aware
+from ApplicationContext import ApplicationContext
+from springframework.beans.factory.Aware import Aware
 
 
 class ApplicationContextAware(Aware):

@@ -29,13 +29,14 @@ class WebUtils(ABC):
     SUBMIT_IMAGE_SUFFIXES = ['.x', '.y']
     SESSION_MUTEX_ATTRIBUTE = 'WebUtils' + '.MUTEX'
 
-    def set_web_app_root_system_property(servlet_context: ServletContext) -> None:
+    @classmethod
+    def set_web_app_root_system_property(cls, servlet_context: ServletContext) -> None:
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
         root = servlet_context.get_real_path('/')
         if root is None:
             raise InterruptedError('Cannot set web app root system property when WAR file is not expanded')
-        param = servlet_context.get_init_parameter(WebUtils.WEB_APP_ROOT_KEY_PARAM)
+        param = servlet_context.get_init_parameter(cls.WEB_APP_ROOT_KEY_PARAM)
         key = param if param is not None else WebUtils.DEFAULT_WEB_APP_ROOT_KEY
         old_value = os.getenv(key)
         if old_value is not None and os.path.normcase(old_value) != os.path.normcase(root):
@@ -44,31 +45,35 @@ class WebUtils(ABC):
                                    "Choose unique values for the 'webAppRootKey' context-param in your web.xml files!")
         os.putenv(key, root)
 
-    def remove_web_app_root_system_property(servlet_context: ServletContext) -> None:
+    @classmethod
+    def remove_web_app_root_system_property(cls, servlet_context: ServletContext) -> None:
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
-        param = servlet_context.get_init_parameter(WebUtils.WEB_APP_ROOT_KEY_PARAM)
-        key = param if param is not None else WebUtils.DEFAULT_WEB_APP_ROOT_KEY
+        param = servlet_context.get_init_parameter(cls.WEB_APP_ROOT_KEY_PARAM)
+        key = param if param is not None else cls.DEFAULT_WEB_APP_ROOT_KEY
         os.unsetenv(key)
 
-    def get_default_html_escape(servlet_context: ServletContext):
+    @classmethod
+    def get_default_html_escape(cls, servlet_context: ServletContext):
         if servlet_context is None:
             return None
-        param: str = servlet_context.get_init_parameter(WebUtils.HTML_ESCAPE_CONTEXT_PARAM)
+        param: str = servlet_context.get_init_parameter(cls.HTML_ESCAPE_CONTEXT_PARAM)
         return bool(param) if len(param.replace(' ', '')) > 0 else None
 
     def get_response_encoded_html_escape(servlet_context: ServletContext):
         if servlet_context is None:
             return None
-        param: str = servlet_context.get_init_parameter(WebUtils.RESPONSE_ENCODED_HTML_ESCAPE_CONTEXT_PARAM)
+        param: str = servlet_context.get_init_parameter(cls.RESPONSE_ENCODED_HTML_ESCAPE_CONTEXT_PARAM)
         return bool(param) if len(param.replace(' ', '')) > 0 else None
 
-    def get_temp_dir(servlet_context: ServletContext):
+    @classmethod
+    def get_temp_dir(cls, servlet_context: ServletContext):
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
-        return servlet_context.get_attribute(WebUtils.TEMP_DIR_CONTEXT_ATTRIBUTE)
+        return servlet_context.get_attribute(cls.TEMP_DIR_CONTEXT_ATTRIBUTE)
 
-    def get_real_path(servlet_context: ServletContext, path: str):
+    @classmethod
+    def get_real_path(cls, servlet_context: ServletContext, path: str):
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
         if not path.startswith('/'):
@@ -80,25 +85,29 @@ class WebUtils(ABC):
                 "web application archive not expanded?")
         return real_path
 
-    def get_session_id(request: HttpServletRequest):
+    @classmethod
+    def get_session_id(cls, request: HttpServletRequest):
         if request is None:
             raise AssertionError('Request must not be null')
         session: HttpSession = request.get_session(False)
         return session.get_id() if session is not None else None
 
-    def get_session_attribute(request: HttpServletRequest, name: str):
+    @classmethod
+    def get_session_attribute(cls, request: HttpServletRequest, name: str):
         if request is None:
             raise AssertionError('Request must not be null')
         session: HttpSession = request.get_session(False)
         return session.get_attribute(name) if session is not None else None
 
-    def get_required_session_attribute(request: HttpServletRequest, name: str):
-        attr = WebUtils.get_session_attribute(request, name)
+    @classmethod
+    def get_required_session_attribute(cls, request: HttpServletRequest, name: str):
+        attr = cls.get_session_attribute(request, name)
         if attr is None:
             raise InterruptedError("No session attribute '" + name + "' found")
         return attr
 
-    def set_session_attribute(request: HttpServletRequest, name: str, value):
+    @classmethod
+    def set_session_attribute(cls, request: HttpServletRequest, name: str, value):
         if request is None:
             raise AssertionError('Request must not be null')
         if value is not None:
@@ -108,15 +117,17 @@ class WebUtils(ABC):
             if session is not None:
                 session.remove_attribute(name)
 
-    def get_session_mutex(session: HttpSession):
+    @classmethod
+    def get_session_mutex(cls, session: HttpSession):
         if session is None:
             raise AssertionError('Session must not be null')
-        mutex = session.get_attribute(WebUtils.SESSION_MUTEX_ATTRIBUTE)
+        mutex = session.get_attribute(cls.SESSION_MUTEX_ATTRIBUTE)
         if mutex is None:
             mutex = session
         return mutex
 
-    def get_native_request(request: ServletRequest, request_type):
+    @classmethod
+    def get_native_request(cls, request: ServletRequest, request_type):
         if request_type is not None:
             if isinstance(request_type, request.__class__):
                 return request
