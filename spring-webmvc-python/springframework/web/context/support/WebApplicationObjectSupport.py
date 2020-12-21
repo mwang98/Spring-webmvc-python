@@ -4,7 +4,7 @@ from ApplicationContext import ApplicationContext
 from util.WebUtils import WebUtils
 from web.context.support.WebApplicationContext import WebApplicationContext
 from web.context.ServletContextAware import ServletContextAware
-from support.ApplicationObjectSupport import ApplicationObjectSupport
+from springframework.context.support.ApplicationObjectSupport import ApplicationObjectSupport
 
 
 class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware, ABC):
@@ -36,7 +36,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
             return self.get_application_context()
         else:
             if self.is_context_required():
-                raise ValueError('WebApplicationObjectSupport instance [' + self +
+                raise ValueError('WebApplicationObjectSupport instance [' + str(self) +
                                  '] does not run in a WebApplicationContext but in: ' + ctx)
             else:
                 return None
@@ -49,7 +49,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
         if wac is not None:
             servlet_context = self.get_web_application_context()
         if servlet_context is None and self.is_context_required():
-            raise ValueError("WebApplicationObjectSupport instance [" + self +
+            raise ValueError("WebApplicationObjectSupport instance [" + str(self) +
                              "] does not run within a ServletContext. Make sure the object is fully configured!")
         return servlet_context
 

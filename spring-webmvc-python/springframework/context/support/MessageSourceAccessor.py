@@ -2,6 +2,8 @@ from MessageSource import MessageSource
 from MessageSourceResolvable import MessageSourceResolvable
 from typing import List
 
+from mock.inst import Locale
+
 
 class MessageSourceAccessor():
     def __init__(self, message_source: MessageSource, default_locale: Locale = None):

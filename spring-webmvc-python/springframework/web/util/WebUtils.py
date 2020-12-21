@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import os
-
+from testfixture.servlet.MockHttpSession import MockHttpSession as HttpSession
+from testfixture.servlet.MockServletContext import MockServletContext as ServletContext
+from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
 
 class WebUtils(ABC):
     INCLUDE_REQUEST_URI_ATTRIBUTE = 'javax.servlet.include.request_uri'
@@ -60,7 +62,8 @@ class WebUtils(ABC):
         param: str = servlet_context.get_init_parameter(cls.HTML_ESCAPE_CONTEXT_PARAM)
         return bool(param) if len(param.replace(' ', '')) > 0 else None
 
-    def get_response_encoded_html_escape(servlet_context: ServletContext):
+    @classmethod
+    def get_response_encoded_html_escape(cls, servlet_context: ServletContext):
         if servlet_context is None:
             return None
         param: str = servlet_context.get_init_parameter(cls.RESPONSE_ENCODED_HTML_ESCAPE_CONTEXT_PARAM)
@@ -132,7 +135,7 @@ class WebUtils(ABC):
             if isinstance(request_type, request.__class__):
                 return request
             elif isinstance(request, ServletRequestWrapper):
-                return get_native_request(((ServletRequestWrapper)request).get_request(), request_type)
+                return get_native_request(request.get_request(), request_type)
         return None
 
     # TODO: Line 480

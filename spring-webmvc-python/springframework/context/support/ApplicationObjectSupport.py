@@ -2,11 +2,12 @@ from abc import ABC
 
 from ApplicationContextAware import ApplicationContextAware
 from ApplicationContext import ApplicationContext
-from support.MessageSourceAccessor import MessageSourceAccessor
+from springframework.context.support.MessageSourceAccessor import MessageSourceAccessor
 
 
 class ApplicationObjectSupport(ApplicationContextAware, ABC):
     def __init__(self):
+        super().__init__()
         self._application_context: ApplicationContext
         self._message_source_accessor: MessageSourceAccessor
 
@@ -37,7 +38,8 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
 
     def get_application_context(self):
         if self._application_context is None and self.is_context_required():
-            raise ValueError("ApplicationObjectSupport instance [" + self + "] does not run in an ApplicationContext")
+            raise ValueError(
+                "ApplicationObjectSupport instance [" + str(self) + "] does not run in an ApplicationContext")
         return self._application_context
 
     def obtain_application_context(self):
@@ -48,5 +50,6 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
 
     def get_message_source_accessor(self):
         if self._message_source_accessor is None and self.is_context_required():
-            raise ValueError("ApplicationObjectSupport instance [" + self + "] does not run in an ApplicationContext")
+            raise ValueError(
+                "ApplicationObjectSupport instance [" + str(self) + "] does not run in an ApplicationContext")
         return self._message_source_accessor
