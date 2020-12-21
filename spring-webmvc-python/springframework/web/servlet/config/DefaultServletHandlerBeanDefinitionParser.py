@@ -22,7 +22,7 @@ class DefaultServletHandlerBeanDefinitionParser(BeanDefinitionParser):
 
         defaultServletHandlerName: str = parserContext.getReaderContext().generateBeanName(defaultServletHandlerDef)
         parserContext.getRegistry().registerBeanDefinition(defaultServletHandlerName, defaultServletHandlerDef)
-        parserContext.registerComponent(new BeanComponentDefinition(defaultServletHandlerDef, defaultServletHandlerName))
+        parserContext.registerComponent(BeanComponentDefinition(defaultServletHandlerDef, defaultServletHandlerName))
 
         urlMap = dict()
         urlMap['/**'] = defaultServletHandlerName
@@ -34,7 +34,7 @@ class DefaultServletHandlerBeanDefinitionParser(BeanDefinitionParser):
 
         handlerMappingBeanName: str = parserContext.getReaderContext().generateBeanName(handlerMappingDef)
         parserContext.getRegistry().registerBeanDefinition(handlerMappingBeanName, handlerMappingDef)
-        parserContext.registerComponent(new BeanComponentDefinition(handlerMappingDef, handlerMappingBeanName))
+        parserContext.registerComponent(BeanComponentDefinition(handlerMappingDef, handlerMappingBeanName))
 
         # Ensure BeanNameUrlHandlerMapping (SPR-8289) and default HandlerAdapters are not "turned off"
         registerDefaultComponents(parserContext, source)

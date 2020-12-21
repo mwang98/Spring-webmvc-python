@@ -1,14 +1,14 @@
 from abc import ABC
 
-from springframework.web.servlet.view import AbstractView
-from springframework.beans.factory import InitializingBean
+from springframework.web.servlet.view.AbstractView import AbstractView
+from springframework.beans.factory.InitializingBean import InitializingBean
 
 
 class AbstractUrlBasedView(AbstractView, InitializingBean, ABC):
-
     url: str = None
 
     def __init__(self, url: str):
+        super().__init__()
         self.url = url
 
     def setUrl(self, url: str) -> None:
