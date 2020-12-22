@@ -11,7 +11,7 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
         self._application_context: ApplicationContext
         self._message_source_accessor: MessageSourceAccessor
 
-    def set_application_context(self, context: ApplicationContext = None):
+    def set_application_context(self, context: ApplicationContext = None) -> None:
         if context is None and not self.is_context_required():
             self._application_context, self._message_source_accessor = None, None
         elif self._application_context is None:
