@@ -10,48 +10,48 @@ class InternalResourceView(AbstractUrlBasedView):
         super().__init__(url)
         self.alwaysInclude = alwaysInclude
 
-    def setAlwaysInclude(self, alwaysInclude: bool) -> None:
+    def set_always_include(self, alwaysInclude: bool) -> None:
         self.alwaysInclude = alwaysInclude
 
-    def setPreventDispatchLoop(self, preventDispatchLoop: bool):
+    def set_prevent_dispatch_loop(self, preventDispatchLoop: bool):
         self.preventDispatchLoop = preventDispatchLoop
 
-    def isContextRequired(self) -> bool:
+    def is_context_required(self) -> bool:
         return False
 
-    def renderMergedOutputModel(self, model: dict, request, response) -> None:
+    def render_merged_output_model(self, model: dict, request, response) -> None:
         # Expose the model object as request attributes.
-        self.exposeModelAsRequestAttributes(model, request)
+        self.expose_model_as_request_attributes(model, request)
 
         # Expose helpers as request attributes, if any.
-        self.exposeHelpers(request)
+        self.expose_helpers(request)
 
         # Determine the path for the request dispatcher.
-        dispatcherPath: str = self.prepareForRendering(request, response)
+        dispatcherPath: str = self.prepare_for_rendering(request, response)
 
         # Obtain a RequestDispatcher for the target resource (typically a JSP).
         # TODO: use mock
         # rd type: RequestDispatcher
-        rd = self.getRequestDispatcher(request, dispatcherPath)
+        rd = self.get_request_dispatcher(request, dispatcherPath)
         if rd is None:
-            raise ValueError(f"""Could not get RequestDispatcher for [{self.getUrl()}
+            raise ValueError(f"""Could not get RequestDispatcher for [{self.get_url()}
             ]: Check that the corresponding file exists within your web application archive!""")
 
         # If already included or response already committed, perform include, else forward.
-        if self.useInclude(request, response):
-            response.setContentType(self.getContentType())
-            logging.debug("Including [" + self.getUrl() + "]")
+        if self.use_include(request, response):
+            response.set_content_type(self.get_content_type())
+            logging.debug("Including [" + self.get_url() + "]")
             rd.include(request, response)
         else:
             # Note: The forwarded resource is supposed to determine the content type itself.
-            logging.debug("Forwarding to [" + self.getUrl() + "]")
+            logging.debug("Forwarding to [" + self.get_url() + "]")
             rd.forward(request, response)
 
-    def exposeHelpers(self, request) -> None:
+    def expose_helpers(self, request) -> None:
         pass
 
-    def prepareForRendering(self, request, response) -> str:
-        path: str = self.getUrl()
+    def prepare_for_rendering(self, request, response) -> str:
+        path: str = self.get_url()
         assert path is not None, "'url' not set"
 
         if self.preventDispatchLoop:
@@ -72,10 +72,10 @@ class InternalResourceView(AbstractUrlBasedView):
         return path
 
     # return type: RequestDispatcher
-    def getRequestDispatcher(self, request, path: str):
-        return request.getRequestDispatcher(path)
+    def get_request_dispatcher(self, request, path: str):
+        return request.get_request_dispatcher(path)
 
-    def useInclude(self, request, response):
+    def use_include(self, request, response):
         # TODO : WebUtils need handle
         # or WebUtils.isIncludeRequest(request)
-        return (self.alwaysInclude or response.isCommitted())
+        return self.alwaysInclude or response.isCommitted()

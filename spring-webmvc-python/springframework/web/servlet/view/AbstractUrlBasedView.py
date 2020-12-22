@@ -11,22 +11,22 @@ class AbstractUrlBasedView(AbstractView, InitializingBean, ABC):
         super().__init__()
         self.url = url
 
-    def setUrl(self, url: str) -> None:
+    def set_url(self, url: str) -> None:
         self.url = url
 
-    def getUrl(self) -> str:
+    def get_url(self) -> str:
         return self.url
 
-    def afterPropertiesSet(self) -> None:
-        if self.isUrlRequired() and self.getUrl() is None:
+    def after_properties_set(self) -> None:
+        if self.is_url_required() and self.get_url() is None:
             raise ValueError("Property 'url' is required")
 
-    def isUrlRequired(self) -> bool:
+    def is_url_required(self) -> bool:
         return True
 
-    def checkResource(self, locale) -> bool:
+    def check_resource(self, locale) -> bool:
         # local type: Locale
         return True
 
-    def toString(self) -> str:
-        return super().toString() + f"; URL [{self.getUrl()}]"
+    def __str__(self) -> str:
+        return super().__str__() + f"; URL [{self.get_url()}]"
