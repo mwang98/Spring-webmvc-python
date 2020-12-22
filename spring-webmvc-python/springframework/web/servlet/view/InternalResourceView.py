@@ -6,7 +6,7 @@ class InternalResourceView(AbstractUrlBasedView):
     alwaysInclude = False
     preventDispatchLoop = False
 
-    def __init__(self, url: str, alwaysInclude: bool) -> None:
+    def __init__(self, url: str = None, alwaysInclude: bool = False) -> None:
         super().__init__(url)
         self.alwaysInclude = alwaysInclude
 

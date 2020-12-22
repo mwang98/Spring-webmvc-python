@@ -7,7 +7,8 @@ from .MockServletContext import MockServletContext
 from .MockAsyncContext import MockAsyncContext
 
 from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
-    DispatcherType, DelegatingServletInputStream, InputStreamReader, MediaType
+    DispatcherType, DelegatingServletInputStream, InputStreamReader, MediaType, Locale, ByteArrayInputStream
+
 
 # mock class
 # ---------------------------------------------------------------------
@@ -148,7 +149,7 @@ class MockHttpServletRequest():
         if self.contentType is not None:
             value = self.contentType
             if (self.characterEncoding is not None) and \
-                    (self.CHARSET_PREFIX not in this.contentType.lower()):
+                    (self.CHARSET_PREFIX not in self.contentType.lower()):
                 value += f";{self.CHARSET_PREFIX}{self.characterEncoding}"
             self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
 
