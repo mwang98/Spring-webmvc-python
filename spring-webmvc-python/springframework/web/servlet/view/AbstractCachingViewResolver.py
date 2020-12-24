@@ -53,7 +53,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     # Enable or disable caching.
     # Disable this only for debugging and development.
     def setCache(cache: bool) -> None:
-        self.cacheLimit = (cache ? DEFAULT_CACHE_LIMIT : 0)
+        self.cacheLimit = (DEFAULT_CACHE_LIMIT if cache else 0)
 
     # Return if caching is enabled.
     def isCache() -> bool:
