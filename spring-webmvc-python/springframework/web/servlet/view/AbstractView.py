@@ -20,23 +20,23 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096
     contentType = DEFAULT_CONTENT_TYPE
     staticAttributes = dict()
-    exposePathVariables = dict()
+    exposePathVariables = True
     exposeContextBeansAsAttributes = False
     exposedContextBeanNames = set()
 
-    def setContentType(self, contentType: str = None) -> None:
+    def set_content_type(self, contentType: str = None) -> None:
         self.contentType = contentType
 
-    def getContentType(self) -> str:
+    def get_content_type(self) -> str:
         return self.contentType
 
-    def setRequestContextAttribute(self, requestContextAttribute: str) -> None:
+    def set_request_context_attribute(self, requestContextAttribute: str) -> None:
         self.requestContextAttribute = requestContextAttribute
 
-    def getRequestContextAttribute(self) -> str:
+    def get_request_context_attribute(self) -> str:
         return self.requestContextAttribute
 
-    def setAttributesCSV(self, propString: str = None) -> None:
+    def set_attributes_csv(self, propString: str = None) -> None:
         if propString is not None:
             token_list = propString.split(',')
             for token in token_list:
@@ -46,54 +46,54 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
                     raise ValueError(
                         "At least 2 characters ([]) required in attributes CSV string '" + propString + "'")
                 name, value = token.split("=")
-                self.addStaticAttribute(name, value)
+                self.add_static_attribute(name, value)
 
-    def setAttributes(self, attributes: dict) -> None:
+    def set_attributes(self, attributes: dict) -> None:
         self.staticAttributes.update(attributes)
 
-    def setAttributesMap(self, attributes: dict = None) -> None:
+    def set_attributes_map(self, attributes: dict = None) -> None:
         if attributes is not None:
             for name in attributes:
                 value = attributes[name]
-                self.addStaticAttribute(name, value)
+                self.add_static_attribute(name, value)
 
-    def getAttributesMap(self) -> dict:
+    def get_attributes_map(self) -> dict:
         return self.staticAttributes
 
-    def addStaticAttribute(self, name: str, value) -> None:
+    def add_static_attribute(self, name: str, value) -> None:
         self.staticAttributes[name] = value
 
-    def getStaticAttributes(self) -> dict:
+    def get_static_attributes(self) -> dict:
         return self.staticAttributes.copy()
 
-    def isExposePathVariables(self) -> bool:
+    def is_expose_path_variables(self) -> bool:
         return self.exposePathVariables
 
-    def setExposeContextBeansAsAttributes(self, exposeContextBeansAsAttributes: bool) -> None:
+    def set_expose_context_beans_as_attributes(self, exposeContextBeansAsAttributes: bool) -> None:
         self.exposeContextBeansAsAttributes = exposeContextBeansAsAttributes
 
-    def setExposedContextBeanNames(self, exposedContextBeanNames: list) -> None:
+    def set_exposed_context_bean_names(self, exposedContextBeanNames: list) -> None:
         self.exposedContextBeanNames = set(exposedContextBeanNames)
 
-    def setBeanName(self, beanName: str) -> None:
+    def set_bean_name(self, beanName: str) -> None:
         self.beanName = beanName
 
-    def getBeanName(self) -> str:
+    def get_bean_name(self) -> str:
         return self.beanName
 
-    def render(self, model: dict, request, response) -> None:
+    def render(self, request, response, model: dict = None) -> None:
         logging.debug(
             "View " +
-            self.formatViewName() +
+            self.format_view_name() +
             ", model " +
             str((dict() if model is None else model)) +
             str((", static attributes " + self.staticAttributes if self.staticAttributes else ""))
         )
-        mergedModel = self.createMergedOutputModel(model, request, response)
-        self.prepareResponse(request, response)
-        self.renderMergedOutputModel(mergedModel, self.getRequestToExpose(request), response)
+        mergedModel = self.create_merged_output_model(model, request, response)
+        self.prepare_response(request, response)
+        self.render_merged_output_model(mergedModel, self.get_request_to_expose(request), response)
 
-    def createMergedOutputModel(self, model: dict, request, response) -> dict:
+    def create_merged_output_model(self, model: dict, request, response) -> dict:
         pathVars = None
         if self.exposePathVariables:
             pathVars = request.getAttribute(View.PATH_VARIABLES)
@@ -109,25 +109,25 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
         # Expose RequestContext?
         if self.requestContextAttribute is not None:
-            value = self.createRequestContext(request, response, mergedModel)
+            value = self.create_request_context(request, response, mergedModel)
             mergedModel[self.requestContextAttribute] = value
 
         return mergedModel
 
-    def createRequestContext(self, request, response, model: dict) -> RequestContext:
+    def create_request_context(self, request, response, model: dict) -> RequestContext:
         # RequestContext use mock
-        return RequestContext(request, response, self.getServletContext(), model)
+        return RequestContext(request, response, self.get_servlet_context(), model)
 
-    def prepareResponse(self, request, response) -> None:
-        if self.generatesDownloadContent():
+    def prepare_response(self, request, response) -> None:
+        if self.generates_download_content():
             response.setHeader("Pragma", "private")
             response.setHeader("Cache-Control", "private, must-revalidate")
 
-    def generatesDownloadContent(self) -> bool:
+    def generates_download_content(self) -> bool:
         return False
 
     # return type : HttpServletRequest
-    def getRequestToExpose(self, originalRequest):
+    def get_request_to_expose(self, originalRequest):
         if self.exposeContextBeansAsAttributes or self.exposedContextBeanNames is not None:
             # wac = getWebApplicationContext()
             wac = self.get_web_application_context()
@@ -137,10 +137,10 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
         return originalRequest
 
     @abstractmethod
-    def renderMergedOutputModel(self, model: dict, request, response):
+    def render_merged_output_model(self, model: dict, request, response):
         raise NotImplementedError
 
-    def exposeModelAsRequestAttributes(self, model: dict, request):
+    def expose_model_as_request_attributes(self, model: dict, request):
         for name, value in model.items():
             # make sure request has this method
             if value is not None:
@@ -148,32 +148,32 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
             else:
                 request.removeAttribute(name)
 
-    def createTemporaryOutputStream(self) -> bytearray:
+    def create_temporary_output_stream(self) -> bytearray:
         return bytearray(self.OUTPUT_BYTE_ARRAY_INITIAL_SIZE)
 
-    def writeToResponse(self, response, baos: bytearray):
+    def write_to_response(self, response, baos: bytearray):
         # Write content type and also length (determined via byte array).
-        response.setContentType(self.getContentType())
-        response.setContentLength(baos.size())
+        response.set_content_type(self.get_content_type())
+        response.setContentLength(len(baos))
 
         # Flush byte array to servlet output stream.
         out = response.getOutputStream()
         baos.writeTo(out)
         out.flush()
 
-    def setResponseContentType(self, request, response) -> None:
+    def set_response_content_type(self, request, response) -> None:
         # mediaType use mock
         mediaType = request.getattr(View.SELECTED_CONTENT_TYPE)
         if mediaType is not None and mediaType.isConcrete():
-            response.setContentType(mediaType.toString())
+            response.set_content_type(mediaType.toString())
         else:
-            response.setContentType(self.getContentType())
+            response.set_content_type(self.get_content_type())
 
-    def toString(self) -> str:
-        return self.__class__.__qualname__ + ": " + self.formatViewName()
+    def __str__(self) -> str:
+        return self.__class__.__qualname__ + ": " + self.format_view_name()
 
-    def formatViewName(self) -> str:
-        if self.getBeanName() is not None:
-            return "name '" + self.getBeanName() + "'"
+    def format_view_name(self) -> str:
+        if self.get_bean_name() is not None:
+            return "name '" + self.get_bean_name() + "'"
         else:
             return "[" + self.__class__.__name__ + "]"

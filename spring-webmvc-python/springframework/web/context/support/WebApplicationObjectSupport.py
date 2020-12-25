@@ -5,12 +5,13 @@ from util.WebUtils import WebUtils
 from web.context.support.WebApplicationContext import WebApplicationContext
 from web.context.ServletContextAware import ServletContextAware
 from springframework.context.support.ApplicationObjectSupport import ApplicationObjectSupport
+from testfixture.servlet.MockServletContext import MockServletContext as ServletContext
 
 
 class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware, ABC):
     def __init__(self):
         super().__init__()
-        self._servlet_context: ServletContext = None
+        self._servlet_context = None
 
     def set_servlet_context(self, servlet_context: ServletContext) -> None:
         if servlet_context is not self._servlet_context:
@@ -21,7 +22,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
         return True
 
     def init_application_context(self, context: ApplicationContext = None) -> None:
-        super(ApplicationObjectSupport, self).init_application_context(context)
+        super(WebApplicationObjectSupport, self).init_application_context(context)
         if self._servlet_context is None and isinstance(context, WebApplicationContext):
             self._servlet_context = context.get_servlet_context()
             if self._servlet_context is not None:
@@ -44,7 +45,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
     def get_servlet_context(self):
         if self._servlet_context is not None:
             return self._servlet_context
-        servlet_context: ServletContext = None
+        servlet_context = None
         wac: WebApplicationContext = self.get_web_application_context()
         if wac is not None:
             servlet_context = self.get_web_application_context()
