@@ -5,9 +5,12 @@ from datetime import datetime
 
 from .MockServletContext import MockServletContext
 from .MockAsyncContext import MockAsyncContext
+from .MockHttpSession import MockHttpSession
+from .MockRequestDispatcher import MockRequestDispatcher
 
 from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
-    DispatcherType, DelegatingServletInputStream, InputStreamReader, MediaType
+    DispatcherType, DelegatingServletInputStream, InputStreamReader,\
+    MediaType, ByteArrayInputStream, Locale
 
 # mock class
 # ---------------------------------------------------------------------
@@ -23,6 +26,7 @@ from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
 # Part : MockPart
 # ServletContext : MockServletContext
 # ---------------------------------------------------------------------
+HeaderValueHolder = set
 
 
 # inherit HttpServletRequestInterface
@@ -148,7 +152,7 @@ class MockHttpServletRequest():
         if self.contentType is not None:
             value = self.contentType
             if (self.characterEncoding is not None) and \
-                    (self.CHARSET_PREFIX not in this.contentType.lower()):
+                    (self.CHARSET_PREFIX not in self.contentType.lower()):
                 value += f";{self.CHARSET_PREFIX}{self.characterEncoding}"
             self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
 
@@ -293,11 +297,11 @@ class MockHttpServletRequest():
                 host = host[:indexOfClosingBracket + 1]
             elif ':' in host:
                 host = host = host[:, host.index(':') + 1]
-            return host[idx+1:]
+            return host
 
         return self.serverName
 
-    def set_server_port(self) -> None:
+    def set_server_port(self, serverPort: int) -> None:
         self.serverPort = serverPort
 
     def get_server_port(self) -> int:
@@ -414,7 +418,7 @@ class MockHttpServletRequest():
     def get_local_addr(self) -> str:
         return self.localAddr
 
-    def set_local_port(self, port: int) -> None:
+    def set_local_port(self, localPort: int) -> None:
         self.localPort = localPort
 
     def get_local_port(self) -> int:
@@ -465,7 +469,7 @@ class MockHttpServletRequest():
     def set_cookies(self, cookies: list) -> None:
         self.cookies = cookies
         if cookies:
-            self.do_add_header_value(HttpHeaders.COOKIE, encodeCookies(self.cookies), True)
+            self.do_add_header_value(HttpHeaders.COOKIE, self.encode_cookies(self.cookies), True)
         else:
             self.remove_header(HttpHeaders.COOKIE)
 
@@ -500,7 +504,7 @@ class MockHttpServletRequest():
         else:
             self.do_add_header_value(name, value, False)
 
-    def do_add_header_value(self, name: str, value=None, replace: bool) -> None:
+    def do_add_header_value(self, name: str, value, replace: bool) -> None:
         header: HeaderValueHolder = self.headers.get(name)
         assert value is not None, "Header value must not be null"
         if header is None or replace:
@@ -651,7 +655,7 @@ class MockHttpServletRequest():
 
     def get_session(self, create: bool = True):
         self.check_active()
-        if isinstance(session, MockHttpSession) and self.session.isInvalid():
+        if isinstance(self.session, MockHttpSession) and self.session.isInvalid():
             self.session = None
         if self.session is None and create:
             self.session = MockHttpSession(self.servletContext)
@@ -659,7 +663,7 @@ class MockHttpServletRequest():
 
     def change_session_id(self) -> str:
         assert self.session is not None, "The request does not have a session"
-        if isinstance(session, MockHttpSession):
+        if isinstance(self.session, MockHttpSession):
             return self.session.changeSessionId()
         return self.session.getId()
 

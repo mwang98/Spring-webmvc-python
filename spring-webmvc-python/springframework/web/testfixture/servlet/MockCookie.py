@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from unittest import mock
 from springframework.untils.mock.inst import ResourceBundle
 
 
