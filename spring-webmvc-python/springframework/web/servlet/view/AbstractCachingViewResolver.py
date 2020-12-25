@@ -14,11 +14,11 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     lock = threading.Lock()
 
     # Dummy marker object for unresolved views in the cache Maps.
-    def getContentType(self) -> str:
+    def get_content_type(self) -> str:
         return None
     def render(self, model: dict, request: HttpServletRequest, response: HttpServletResponse) -> None:
         pass
-    _UNRESOLVED_VIEW = type('view', View, {'getContentType': AbstractCachingViewResolver.getContentType, 'render': render})
+    _UNRESOLVED_VIEW = type('view', View, {'get_content_type': AbstractCachingViewResolver.get_content_type, 'render': render})
 
     # Default cache filter that always caches.
     # todo 
@@ -43,49 +43,49 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     #Specify the maximum number of entries for the view cache.
     #Default is 1024.
-    def setCacheLimit(self, cacheLimit: int) -> None:
+    def set_cache_limit(self, cacheLimit: int) -> None:
         self.cacheLimit = cacheLimit
 
     # Return the maximum number of entries for the view cache.
-    def getCacheLimit(self) -> int:
+    def getcache_limit(self) -> int:
         return self.cacheLimit
 
     # Enable or disable caching.
     # Disable this only for debugging and development.
-    def setCache(self, cache: bool) -> None:
+    def set_cache(self, cache: bool) -> None:
         self.cacheLimit = (DEFAULT_CACHE_LIMIT if cache else 0)
 
     # Return if caching is enabled.
-    def isCache(self) -> bool:
+    def is_cache(self) -> bool:
         return (self.cacheLimit > 0)
 
-    def setCacheUnresolved(self, cacheUnresolved: bool) -> None:
+    def set_cache_unresolved(self, cacheUnresolved: bool) -> None:
         self.cacheUnresolved = cacheUnresolved
 
     # Return if caching of unresolved views is enabled.
-    def isCacheUnresolved(self) -> bool:
+    def is_cache_unresolved(self) -> bool:
         return self.cacheUnresolved
 
-    def setCacheFilter(self, cacheFilter: CacheFilter) -> None:
+    def set_cache_filter(self, cacheFilter: CacheFilter) -> None:
         assert cacheFilter is not None
         self.cacheFilter = cacheFilter
 
-    def getCacheFilter(self) -> CacheFilter:
+    def get_cache_filter(self) -> CacheFilter:
         return self.cacheFilter
 
-    def resolveViewName(self, viewName: str, locale: Locale) -> View:
-        if (not isCache()):
-            return self.createView(viewName, locale)
+    def resolve_view_name(self, viewName: str, locale: Locale) -> View:
+        if (not self.is_cache()):
+            return self.create_view(viewName, locale)
 
         else:
-            cacheKey = self.getCacheKey(viewName, locale)
+            cacheKey = self.get_cache_key(viewName, locale)
             view = self.viewAccessCache.get(cacheKey)
             if (view == None):
-                with lock:
+                with self.lock:
                     view = self.viewCreationCache.get(cacheKey)
                     if (view == None):
                         # Ask the subclass to create the View object.
-                        view = self.createView(viewName, locale)
+                        view = self.create_view(viewName, locale)
                         if (view == None and self.cacheUnresolved):
                             view = self._UNRESOLVED_VIEW
                         
@@ -95,29 +95,29 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
             return (view if view != self._UNRESOLVED_VIEW else None)
     
-    def _formatKey(self, cacheKey: object) -> str:
+    def _format_key(self, cacheKey: object) -> str:
         return "View with key [" + cacheKey + "] "
 
-    def getCacheKey(self, viewName: str, locale: Locale) -> object:
+    def get_cache_key(self, viewName: str, locale: Locale) -> object:
         return viewName + '_' + locale
 
-    def removeFromCache(self, viewName: str, locale: Locale) -> None:
+    def remove_from_cache(self, viewName: str, locale: Locale) -> None:
         if isCache():
-            cacheKey = self.getCacheKey(viewName, locale)
+            cacheKey = self.get_cache_key(viewName, locale)
             with self.lock:
                 self.viewAccessCache.pop(cacheKey, None)
                 cachedView = self.viewCreationCache.pop(cacheKey, None)
 
-    def clearCache(self) -> None:
+    def clear_cache(self) -> None:
         with self.lock:
             self.viewAccessCache = dict()
             self.viewCreationCache = dict()
 
-    def createView(self, viewName: str, locale: Locale) -> View:
+    def create_view(self, viewName: str, locale: Locale) -> View:
         return self.loadView(viewName, locale)
 
     @abstractmethod
-    def loadView(self, viewName: str, locale: Locale) -> View:
+    def load_view(self, viewName: str, locale: Locale) -> View:
         pass
 
     class CacheFilter():

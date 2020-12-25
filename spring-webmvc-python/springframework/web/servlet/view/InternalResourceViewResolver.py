@@ -6,28 +6,27 @@ class InternalResourceViewResolver(UrlBasedViewResolver):
 
     # (bool)alwaysInclude
 
-    #todo
     def __init__(self):
-        viewClase = self.requiredViewClass()
-        if (InternalResourceView.class == viewClass and jstlPresent):
-            viewClass = JstlView.class
+        viewClase = self.required_view_class()
+        if (isinstance(InternalResourceView, viewClass) and jstlPresent):
+            viewClass = JstlView.__class__
 
-        self.setViewClass(viewClass)
+        self.set_view_class(viewClass)
 
-    def setAlwaysInclude(self, alwaysInclude: bool) -> None:
+    def set_always_include(self, alwaysInclude: bool) -> None:
         self.alwaysInclude = alwaysInclude
 
-    def requiredViewClass(self) -> class:
-        return InternalResourceView.class
+    def required_view_class(self) -> class:
+        return InternalResourceView.__class__
 
-    def instantiateView(self) -> AbstractUrlBasedView:
-        return (InternalResourceVIew() if self.getViewClass() == InternalResourceView.class else
-            (JstlView() if self.getViewClass() == JstlView.class else super.instantiateView()))
+    def instantiate_view(self) -> AbstractUrlBasedView:
+        return (InternalResourceView() if self.get_view_class() == InternalResourceView.__class__ else
+            (JstlView() if self.get_view_class() == JstlView.__class__ else super().instantiate_view()))
 
-    def buildView(self, viewName: str) -> AbstractUrlBasedView:
-        view = (InternalResourceView) super().buildView(viewName)
+    def build_view(self, viewName: str) -> AbstractUrlBasedView:
+        view = (InternalResourceView) super().build_view(viewName)
         if (self.alwaysInclude != None):
-            view.setAlwaysInclude(self.alwaysInclude)
+            view.set_always_include(self.alwaysInclude)
 
-        view.setPreventDispatchLoop(True)
+        view.set_prevent_dispatch_loop(True)
         return view
