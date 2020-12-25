@@ -1,37 +1,32 @@
 from abc import abstractmethod, ABC
-from springframework.web.servelt import View
-#import redirectView
+from springframework.web.servlet import View
+from springframework.web.servlet import RedirectView
+from springframework.utils.mock.inst import Ordered, PatternMatchUtils, BeanUtils
+
 
 class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
     REDIRECT_URL_PREFIX = "redirect:"
     FORWARD_URL_PREFIX = "forward:"
-
-    # _viewClass
     _prefix = ""
     _suffix = ""
-    #_contentType
     _redirectContextRelative = True
     _redirectHttp10Compatible = True
-    #_redirectHosts
-    #_requestContextAttribute
-
     _staticAttributes = dict()
-
-    # _order = Ordered.LOWEST_PRECEDENCE todo(core.Ordered)
+    _order = Ordered.LOWEST_PRECEDENCE
 
     def set_view_class(self, viewClass) -> None:
-        # isAssignableFrom()? and getName()?
-        # if (viewClass != None and not self.required_view_class().isAssignableFrom(viewClass)):
+        # TODO: isAssignableFrom()? and getName()?
+        # if (viewClass is not None and not self.required_view_class().isAssignableFrom(viewClass)):
         #     raise Exception("Given view class[" + viewClass.getName() +
-		# 			"] is not of type [" + self.required_view_class().getName() + "]"))
+        # 			"] is not of type [" + self.required_view_class().getName() + "]"))
 
         self.viewClass = viewClass
 
-    def get_view_class(self) -> object:
+    def get_view_class(self):
         return self.viewClass
 
     def set_prefix(self, prefix) -> None:
-        self.prefix = (prefix if prefix != None else "")
+        self.prefix = (prefix if prefix is not None else "")
 
     def get_prefix(self) -> str:
         return self.prefix
@@ -65,7 +60,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
 
     def get_redirect_hosts(self) -> list:
         return self._redirectHosts
-    
+
     def set_request_context_attribute(self, requestContextAttribute) -> None:
         self._requestContextAttribute = requestContextAttribute
 
@@ -112,7 +107,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
 
     def init_application_context(self) -> None:
         super().init_application_context()
-        if (get_view_class() == None):
+        if (get_view_class() is None):
             raise Exception("Property 'viewClass' is required")
 
     def get_cache_key(self, viewName, locale) -> object:
@@ -125,12 +120,12 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
         # Check for special "redirect:" prefix.
         if (viewName.startsWith(REDIRECT_URL_PREFIX)):
             redirectUrl = viewName[:len(REDIRECT_URL_PREFIX)]
-            view = RedirectView(redirectUrl, 
-                    self.is_redirect_context_relative(), self.is_redirect_http10_compatible())
+            view = RedirectView(redirectUrl,
+                                self.is_redirect_context_relative(), self.is_redirect_http10_compatible())
             hosts = self.get_redirect_hosts()
-            if (hosts != None):
+            if (hosts is not None):
                 view.set_hosts(hosts)
-            
+
             return self.apply_lifecycle_methods(REDIRECT_URL_PREFIX, view)
 
         # check for special "forward:" prefix.
@@ -144,18 +139,16 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
 
     def can_handle(self, viewName, locale) -> bool:
         viewNames = self.get_view_names()
-        # TODO: sptringframework.util.PatternMatchUtils
-        # return (viewNames == None or PatternMatchUtils.simpleMatch(viewNames, viewName))
+        return (viewNames is None or PatternMatchUtils.simpleMatch(viewNames, viewName))
         return false
 
     def required_view_class(self) -> class:
         return AbstractUrlBasedView.__class__
 
-    #todo beans.BeanUtils
-    # def instantiate_view():
-    #     viewClass = get_view_class()
-    #     assert viewClass != None
-    #     return BeanUtils.instantiateClass(viewClass)
+    def instantiate_view():
+        viewClass = self.get_view_class()
+        assert viewClass is not None
+        return BeanUtils.instantiateClass(viewClass)
 
     def load_view(self, viewName, locale) -> View:
         view = self.build_view(viewName)
@@ -168,35 +161,34 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
         view.set_attributes_map(self.get_attributes_map())
 
         contentType = self.get_content_type()
-        if (contentType != None):
+        if (contentType is not None):
             view.set_content_type(contentType)
 
         requestContextAttribute = self.get_request_context_attribute()
-        if (requestContextAttribute != None):
+        if (requestContextAttribute is not None):
             view.set_request_context_attribute(requestContextAttribute)
 
         exposePathVariables = self.get_expose_path_variables()
-        if (exposePathVariables != None):
+        if (exposePathVariables is not None):
             view.set_expose_path_variables(exposePathVariables)
 
         exposeContextBeansAsAttributes = self.get_expose_context_beans_as_attributes()
-        if (exposeContextBeansAsAttributes != None):
-            view.set_expose_context_beans_as_attributes(exposeContextBeansAsAttributes)
+        if (exposeContextBeansAsAttributes is not None):
+            view.set_expose_context_beans_as_attributes(
+                exposeContextBeansAsAttributes)
 
         exposedContextBeanNames = self.get_exposed_context_bean_names()
-        if (exposedContextBeanNames != None):
+        if (exposedContextBeanNames is not None):
             view.set_exposed_context_bean_names(exposedContextBeanNames)
 
         return view
 
-    # TODO: casting / beanfactory
-    def apply_lifecycle_methods(viewName, view):
-    #     context = self.get_application_conext()
-    #     if (context != None):
-    #         initialized = context.get_autowire_capable_bean_factory().initialize_bean(view, viewName)
-    #         if (initialized instanceof View):
-    #             return (View) initialized
+    def apply_lifecycle_methods(viewName: str, view: AbstractUrlBasedView) -> View:
+        # TODO: getApplicationContext
+        # context = self.getApplicationConext()
+        # if (context is not None):
+        #     initialized = context.get_autowire_capable_bean_factory().initialize_bean(view, viewName)
+        #     if (initialized instanceof View):
+        #         return initialized
 
         return view
-
-    

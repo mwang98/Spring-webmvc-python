@@ -6,8 +6,9 @@ from context.support.WebApplicationObjectSupport import WebApplicationObjectSupp
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
 
+
 class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC):
-    
+
     # Default maximum number of entries for the view cache: 1024.
 	DEFAULT_CACHE_LIMIT = 1024
 
@@ -21,7 +22,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     _UNRESOLVED_VIEW = type('view', View, {'get_content_type': AbstractCachingViewResolver.get_content_type, 'render': render})
 
     # Default cache filter that always caches.
-    # todo 
+    # TODO: 
     # private static final CacheFilter DEFAULT_CACHE_FILTER = (view, viewName, locale) -> true;
     # _DEFAULT_CACHE_FILTER = (view, viewName, locale)
 
@@ -39,10 +40,10 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     # Map from view key to View instance, synchronized for View creation.
     _viewCreationCache = dict.fromkeys(range(DEFAULT_CACHE_LIMIT), 0.75, True):
-    # todo
+    # TODO
 
-    #Specify the maximum number of entries for the view cache.
-    #Default is 1024.
+    # Specify the maximum number of entries for the view cache.
+    # Default is 1024.
     def set_cache_limit(self, cacheLimit: int) -> None:
         self.cacheLimit = cacheLimit
 
@@ -80,13 +81,13 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
         else:
             cacheKey = self.get_cache_key(viewName, locale)
             view = self.viewAccessCache.get(cacheKey)
-            if (view == None):
+            if (view is None):
                 with self.lock:
                     view = self.viewCreationCache.get(cacheKey)
-                    if (view == None):
+                    if (view is None):
                         # Ask the subclass to create the View object.
                         view = self.create_view(viewName, locale)
-                        if (view == None and self.cacheUnresolved):
+                        if (view is None and self.cacheUnresolved):
                             view = self._UNRESOLVED_VIEW
                         
                         if (view != None and self.cacheFilter.filter(viewName, locale)):
