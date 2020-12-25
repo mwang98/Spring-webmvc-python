@@ -19,105 +19,105 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
 
     # _order = Ordered.LOWEST_PRECEDENCE todo(core.Ordered)
 
-    def setViewClass(viewClass) -> None:
-        if (viewClass != None and not requiredViewClass().isAssignableFrom(viewClass)):
+    def setViewClass(self, viewClass) -> None:
+        if (viewClass != None and not self.requiredViewClass().isAssignableFrom(viewClass)):
             raise Exception("Given view class[" + viewClass.getName() +
-					"] is not of type [" + requiredViewClass().getName() + "]"))
+					"] is not of type [" + self.requiredViewClass().getName() + "]"))
 
         self.viewClass = viewClass
 
-    def getViewClass() -> object:
+    def getViewClass(self) -> object:
         return self.viewClass
 
-    def setPrefix(prefix) -> None:
+    def setPrefix(self, prefix) -> None:
         self.prefix = (prefix if prefix != None else "")
 
-    def getPrefix() -> str:
+    def getPrefix(self) -> str:
         return self.prefix
 
-    def setSuffix(suffix) -> None:
+    def setSuffix(self, suffix) -> None:
         self.suffix = (suffix if suffix != None else "")
 
-    def getSuffix() -> str:
+    def getSuffix(self) -> str:
         return self.suffix
 
-    def setContentType(contentType) -> None:
+    def setContentType(self, contentType) -> None:
         self._contentType = contentType
 
-    def getContentType() -> str:
+    def getContentType(self) -> str:
         return self._contentType
 
-    def setRedirectContextRelative(redirectContextRelative) -> None:
+    def setRedirectContextRelative(self, redirectContextRelative) -> None:
         self._redirectContextRelative = redirectContextRelative
 
-    def isRedirectContextRelative() -> bool:
+    def isRedirectContextRelative(self) -> bool:
         return self._redirectContextRelative
 
-    def setRedirectHttp10Compatible(redirectHttp10Compatible) -> None:
+    def setRedirectHttp10Compatible(self, redirectHttp10Compatible) -> None:
         self._redirectHttp10Compatible = redirectHttp10Compatible
 
-    def isRedirectHttp10Compatible() -> bool:
+    def isRedirectHttp10Compatible(self) -> bool:
         return self._redirectHttp10Compatible
 
-    def setRedirectHosts(redirectHosts) -> None:
+    def setRedirectHosts(self, redirectHosts) -> None:
         self._redirectHosts = redirectHosts
 
-    def getRedirectHosts() -> list:
+    def getRedirectHosts(self) -> list:
         return self._redirectHosts
     
-    def setRequestContextAttribute(requestContextAttribute) -> None:
+    def setRequestContextAttribute(self, requestContextAttribute) -> None:
         self._requestContextAttribute = requestContextAttribute
 
-    def getRequestContextAttribute() -> str:
+    def getRequestContextAttribute(self) -> str:
         return self._requestContextAttribute
 
-    def setAttributesMap(attributes) -> None:
+    def setAttributesMap(self, attributes) -> None:
         if (attributes != None):
             self._staticAttributes.putAll(attributes)
 
-    def getAttributesMap() -> dict:
+    def getAttributesMap(self) -> dict:
         return self._staticAttributes
 
-    def setExposePathVariables(exposePathVariables) -> None:
+    def setExposePathVariables(self, exposePathVariables) -> None:
         self.exposePathVariables = exposePathVariables
 
-    def getExposePathVariables() -> bool:
+    def getExposePathVariables(self) -> bool:
         return self.exposePathVariables
 
-    def setExposeContextBeansAsAttributes(exposeContextBeansAsAttributes) -> None:
+    def setExposeContextBeansAsAttributes(self, exposeContextBeansAsAttributes) -> None:
         self.exposeContextBeansAsAttributes = exposeContextBeansAsAttributes
 
-    def getExposeContextBeansAsAttributes() -> bool:
+    def getExposeContextBeansAsAttributes(self) -> bool:
         return self.exposeContextBeansAsAttributes
 
-    def setExposedContextBeanNames(exposedContextBeanNames) -> None:
+    def setExposedContextBeanNames(self, exposedContextBeanNames) -> None:
         self.exposedContextBeanNames = exposedContextBeanNames
 
-    def getExposedContextBeanNames() -> list:
+    def getExposedContextBeanNames(self) -> list:
         return self.exposedContextBeanNames
 
-    def setViewNames(viewNames) -> None:
+    def setViewNames(self, viewNames) -> None:
         self.viewNames = viewNames
 
-    def getViewNames() -> list:
+    def getViewNames(self) -> list:
         return self.viewNames
 
-    def setOrder(order) -> None:
+    def setOrder(self, order) -> None:
         self.order = order
 
-    def getOrder():
+    def getOrder(self):
         return self.order
 
-    def initApplicationContext() -> None:
+    def initApplicationContext(self) -> None:
         super().initApplicationContext()
         if (getViewClass() == None):
             raise Exception("Property 'viewClass' is required")
 
-    def getCacheKey(viewName, locale) -> object:
+    def getCacheKey(self, viewName, locale) -> object:
         return viewName
 
-    def createView(viewName, locale) -> View:
-        if not canHandle(viewName, locale):
+    def createView(self, viewName, locale) -> View:
+        if not self.canHandle(viewName, locale):
             return None
 
         # Check for special "redirect:" prefix.
@@ -129,25 +129,25 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
             if (hosts != None):
                 view.setHosts(hosts)
             
-            return applyLifecycleMethods(REDIRECT_URL_PREFIX, view)
+            return self.applyLifecycleMethods(REDIRECT_URL_PREFIX, view)
 
         # check for special "forward:" prefix.
         if (viewName.startsWith(FORWARD_URL_PREFIX)):
             forwardUrl = viewName[:len(FORWARD_URL_PREFIX)]
             view = InternalResourceView(forwardUrl)
-            return applyLifecycleMethods(FORWARD_URL_PREFIX, view)
+            return self.applyLifecycleMethods(FORWARD_URL_PREFIX, view)
 
         # Else fall back to superclass implementation: calling loadView.
         return super().createView(viewName, locale)
 
-    def canHandle(viewName, locale) -> bool:
-        viewNames = getViewNames()
+    def canHandle(self, viewName, locale) -> bool:
+        viewNames = self.getViewNames()
         # todo sptringframework.util.PatternMatchUtils
         return (viewNames == None or PatternMatchUtils.simpleMatch(viewNames, viewName))
 
     #todo class?
-    # def requiredViewClass():
-    #     return AbstractUrlBasedView.class
+    def requiredViewClass(self) -> class:
+        return AbstractUrlBasedView.class
 
     #todo beans.BeanUtils
     # def instantiateView():
@@ -155,46 +155,46 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
     #     assert viewClass != None
     #     return BeanUtils.instantiateClass(viewClass)
 
-    def loadView(viewName, locale) -> View:
-        view = buildView(viewName)
-        result = applyLifecycleMethods(viewName, view)
+    def loadView(self, viewName, locale) -> View:
+        view = self.buildView(viewName)
+        result = self.applyLifecycleMethods(viewName, view)
         return (result if view.checkResource(locale) else None)
 
-    def buildView(viewName) -> AbstractUrlBasedView:
-        view = instantiateView()
+    def buildView(self, viewName) -> AbstractUrlBasedView:
+        view = self.instantiateView()
         view.setUrl(getPrefix() + viewName + getSuffix())
         view.setAttributesMap(getAttributesMap())
 
-        contentType = getContentType()
+        contentType = self.getContentType()
         if (contentType != None):
             view.setContentType(contentType)
 
-        requestContextAttribute = getRequestContextAttribute()
+        requestContextAttribute = self.getRequestContextAttribute()
         if (requestContextAttribute != None):
             view.setRequestContextAttribute(requestContextAttribute)
 
-        exposePathVariables = getExposePathVariables()
+        exposePathVariables = self.getExposePathVariables()
         if (exposePathVariables != None):
             view.setExposePathVariables(exposePathVariables)
 
-        exposeContextBeansAsAttributes = getExposeContextBeansAsAttributes()
+        exposeContextBeansAsAttributes = self.getExposeContextBeansAsAttributes()
         if (exposeContextBeansAsAttributes != None):
             view.setExposeContextBeansAsAttributes(exposeContextBeansAsAttributes)
 
-        exposedContextBeanNames = getExposedContextBeanNames()
+        exposedContextBeanNames = self.getExposedContextBeanNames()
         if (exposedContextBeanNames != None):
             view.setExposedContextBeanNames(exposedContextBeanNames)
 
         return view
 
     # todo casting / beanfactory
-    # def applyLifecycleMethods(viewName, view):
+    def applyLifecycleMethods(viewName, view):
     #     context = getApplicationConext()
     #     if (context != None):
     #         initialized = context.getAutowireCapableBeanFactory().initializeBean(view, viewName)
     #         if (initialized instanceof View):
     #             return (View) initialized
 
-    #     return view
+        return view
 
     

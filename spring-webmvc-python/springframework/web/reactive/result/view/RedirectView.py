@@ -8,46 +8,46 @@ class RedirectView(AbstractUrlBasedView):
     _contextRelative = True
     _propagateQuey = False
     
-    __init__(self, redirectUrl: str = None, statusCode: HttpStatus = None):
-        super(redirectUrl)
-        setStatusCode(statusCode)
+    def __init__(self, redirectUrl: str = None, statusCode: HttpStatus = None):
+        super().__init__(redirectUrl)
+        self.setStatusCode(statusCode)
 
-    def setStatusCode(statusCode: HttpStatus) -> None:
-        assert statusCode.is3xxRedirection()
+    def setStatusCode(self, statusCode: HttpStatus) -> None:
+        assert statusCode.is3xxRedirection(), "Not a redirect status code"
         self.statusCode = statusCode
 
-    def getStatusCode() -> HttpStatus:
+    def getStatusCode(self) -> HttpStatus:
         return self.statusCode
 
-    def setContextRelative(contextRelative: bool) -> None:
+    def setContextRelative(self, contextRelative: bool) -> None:
         self.contextRelative = contextRelative
 
-    def isContextRelative() -> bool:
+    def isContextRelative(self) -> bool:
         return self.contextRelative
 
-    def isPropogateQuery() -> bool:
+    def isPropogateQuery(self) -> bool:
         return self.propagateQuery
 
-    def setHosts(hosts: list) -> None:
+    def setHosts(self, hosts: list) -> None:
         self.hosts = hosts
     
-    def getHosts() -> list:
+    def getHosts(self) -> list:
         return self.hosts
 
-    def afterPropertiesSet() -> None:
-        super.afterPropertiesSet()
+    def afterPropertiesSet(self) -> None:
+        super().afterPropertiesSet()
 
-    def isRedirectView() -> bool:
+    def isRedirectView(self) -> bool:
         return True
 
-    def checkResourceExists(locale: Locale) -> bool:
+    def checkResourceExists(self, locale: Locale) -> bool:
         return True
 
-    def renderInternal(model: dict, contenType: object, exchange: ServerWebExchange) -> dict:
-        return sendRedirect(targetUrl, exchange)
+    def renderInternal(self, model: dict, contenType: object, exchange: ServerWebExchange) -> dict:
+        return self.sendRedirect(targetUrl, exchange)
 
-    def createTargetUrl(model: dict, exchange: ServerWebExchange) -> str:
-        url = getUrl()
+    def createTargetUrl(self, model: dict, exchange: ServerWebExchange) -> str:
+        url = self.getUrl()
         assert url is not None, "'url' not set"
 
         request = exchange.getRequest()
@@ -57,26 +57,30 @@ class RedirectView(AbstractUrlBasedView):
         #     targetUrl.append()
 
 
-    def getCurrentUriVariables(exchange: ServerWebExchange) -> dict:
-        name = HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE
-        return exchange.getAttributeOrDefault(name, Collections.emptyMap())
+    def getCurrentUriVariables(self, exchange: ServerWebExchange) -> dict:
+        # TODO: HandlerMapping
+        pass
+        # name = HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE
+        # return exchange.getattr(name, Collections.emptyMap())
 
     # def expandTargetUrlTemplate()
 
-    def encodeUriVariable(text: str) -> str:
-        return UriUtils.encode(text, StandardCharsts.UTF_8)
+    def encodeUriVariable(self, text: str) -> str:
+        # TODO: UriUtils
+        pass
+        # return UriUtils.encode(text, StandardCharsts.UTF_8)
 
     # def appendCurrentRequestQuery()
 
     # def sendRedirect()
 
-    def isRemoteHost(targetUrl: str) -> bool:
-        if (ObjectUtils.isEmpty(self.hosts)):
+    def isRemoteHost(self, targetUrl: str) -> bool:
+        if self.hosts is not None:
             return False
-        
-        targetHost = UriCoponentsBuilder.fromUriString(targetUrl).build().getHost()
-        if not StringUtils.hasLength(targetHost):
-            return False
+        # TODO: UricomponentsBuilder
+        # targetHost = UriComponentsBuilder.fromUriString(targetUrl).build().getHost()
+        # if not StringUtils.hasLength(targetHost):
+        #     return False
 
         for host in self.hosts:
             if targetHost == host:
