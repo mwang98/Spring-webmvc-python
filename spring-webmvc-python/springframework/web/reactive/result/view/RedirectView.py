@@ -53,6 +53,7 @@ class RedirectView(AbstractUrlBasedView):
 
         request = exchange.getRequest()
 
+        # TODO:
         # targetUrl = StringBuilder()
         # if (self.is_context_relative() and url.startsWith("/")):
         #     targetUrl.append()
@@ -67,8 +68,10 @@ class RedirectView(AbstractUrlBasedView):
     def encode_uri_variable(self, text: str) -> str:
         return UriUtils.encode(text, StandardCharsts.UTF_8)
 
+    # TODO
     # def appendCurrentRequestQuery()
 
+    # TODO
     # def sendRedirect()
 
     def is_remote_host(self, targetUrl: str) -> bool:

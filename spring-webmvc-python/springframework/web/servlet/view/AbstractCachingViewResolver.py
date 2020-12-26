@@ -5,6 +5,8 @@ from mock.inst import Locale
 from context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
+from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
+from testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse as HttpServletResponse
 
 
 class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC):
