@@ -1,12 +1,18 @@
 from abc import abstractmethod, ABC
 import threading
 
-from mock.inst import Locale
-from context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from mock.inst import Locale, HttpServletRequest, HttpServletResponse
+from web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
-from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
-from testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse as HttpServletResponse
+
+
+class UnresolvedView(View):
+    def get_content_type(self) -> str:
+        return None
+
+    def render(self, model: dict, request: HttpServletRequest, response: HttpServletResponse) -> None:
+        pass
 
 
 class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC):
@@ -16,12 +22,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     lock = threading.Lock()
 
-    # Dummy marker object for unresolved views in the cache Maps.
-    def get_content_type(self) -> str:
-        return None
-    def render(self, model: dict, request: HttpServletRequest, response: HttpServletResponse) -> None:
-        pass
-    _UNRESOLVED_VIEW = type('view', View, {'get_content_type': AbstractCachingViewResolver.get_content_type, 'render': render})
+    _UNRESOLVED_VIEW = UnresolvedView()
 
     # Default cache filter that always caches.
     # TODO: 
