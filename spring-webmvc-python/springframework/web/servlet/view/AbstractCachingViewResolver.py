@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 import threading
 
-from mock.inst import Locale, HttpServletRequest, HttpServletResponse
-from web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from springframework.utils.mock.inst import Locale, HttpServletRequest, HttpServletResponse
+from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
 
