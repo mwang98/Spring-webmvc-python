@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 import threading
 
-from springframework.utils.mock.inst import Locale, HttpServletRequest, HttpServletResponse
+from springframework.utils.mock.inst import Locale
 from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
 from springframework.web.servlet import ViewResolver
@@ -11,7 +11,7 @@ class UnresolvedView(View):
     def get_content_type(self) -> str:
         return None
 
-    def render(self, model: dict, request: HttpServletRequest, response: HttpServletResponse) -> None:
+    def render(self, model: dict, request, response) -> None:
         pass
 
 
