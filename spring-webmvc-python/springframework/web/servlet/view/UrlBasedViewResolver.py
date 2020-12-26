@@ -36,7 +36,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
         return self.prefix
 
     def set_suffix(self, suffix: str) -> None:
-        self.suffix = (suffix if suffix != None else "")
+        self.suffix = (suffix if suffix is not None else "")
 
     def get_suffix(self) -> str:
         return self.suffix
