@@ -21,8 +21,9 @@ test:
   stage: test
   script:
     - pip install pytest pytest-cov
-    - pip install -e spring-webmvc-python/setup.py
-    - pytest --disable-warnings --cov=springframework spring-webmvc-python/springframework
+    - cd spring-webmvc-python
+    - pip install -e .
+    - pytest --disable-warnings --cov=springframework springframework
 
 success:
   stage: test
