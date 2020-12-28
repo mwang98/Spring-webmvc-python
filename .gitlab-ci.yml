@@ -28,5 +28,4 @@ test:
 success:
   stage: test
   script:
-    - pip install flake8==3.8.4
-    - flake8 spring-webmvc-python/springframework/web/testfixture/servlet/__init__.py
+    - echo "success"
