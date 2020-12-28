@@ -1,16 +1,17 @@
 from springframework.web.servlet import ModelAndView
 from springframework.web.servlet import HandlerAdapter
 from springframework.web.servlet.mvc import Controller
+from springframework.utils.mock.inst import HttpServletResponse, HttpServletRequest
 
-class SimpleControllerHandlerAdapter(HandlerAdapter){
-    def supports(handler) -> bool:
+
+class SimpleControllerHandlerAdapter(HandlerAdapter):
+    def supports(self, handler) -> bool:
         return isinstance(handler, Controller)
 
-    def handle(request: HttpServletRequest, response: HttpServletResponse, handler) -> ModelAndView:
+    def handle(self, request: HttpServletRequest, response: HttpServletResponse, handler) -> ModelAndView:
         return handler.handleRequest(request, response)
 
-    def getLastModified(request: HttpServletRequest, handler) -> long:
+    def get_last_modified(self, request: HttpServletRequest, handler) -> int:
         if isinstance(handler, Controller):
             return handler.getLastModified(request)
         return -1
-}
