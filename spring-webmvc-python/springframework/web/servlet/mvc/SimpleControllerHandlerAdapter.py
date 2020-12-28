@@ -1,6 +1,6 @@
 from springframework.web.servlet import ModelAndView
-from springframework.web.servlet import HandlerAdapter
-from springframework.web.servlet.mvc import Controller
+from springframework.web.servlet.HandlerAdapter import HandlerAdapter
+from springframework.web.servlet.mvc.Controller import Controller
 from springframework.utils.mock.inst import HttpServletResponse, HttpServletRequest
 
 
