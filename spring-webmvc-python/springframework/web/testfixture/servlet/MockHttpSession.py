@@ -8,9 +8,9 @@ class MockHttpSession():
     SESSION_COOKIE_NAME: str = "JSESSION"
     nextId: int = 1
     id: str = None
-    creationTime: int = int(datetime.now().tiemstamp())
+    creationTime: int = int(datetime.now().timestamp())
     maxInactiveInterval: int = None
-    lastAccessedTime: int = int(datetime.now().tiemstamp())
+    lastAccessedTime: int = int(datetime.now().timestamp())
     servletContext = None
     attributes: dict = dict()
     invalid: bool = False

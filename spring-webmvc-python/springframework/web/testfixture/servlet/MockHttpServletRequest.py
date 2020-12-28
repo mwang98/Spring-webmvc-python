@@ -3,10 +3,11 @@ import pytz
 from collections import defaultdict
 from datetime import datetime
 
-from .MockServletContext import MockServletContext
-from .MockAsyncContext import MockAsyncContext
-from .MockHttpSession import MockHttpSession
-from .MockRequestDispatcher import MockRequestDispatcher
+# from .MockServletContext import MockServletContext
+# from .MockAsyncContext import MockAsyncContext
+# from .MockHttpSession import MockHttpSession
+# from .MockRequestDispatcher import MockRequestDispatcher
+from springframework.web.testfixture.servlet import MockServletContext, MockAsyncContext, MockHttpSession, MockRequestDispatcher
 
 from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
     DispatcherType, DelegatingServletInputStream, InputStreamReader,\

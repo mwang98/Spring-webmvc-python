@@ -4,11 +4,12 @@ from datetime import datetime
 from time import mktime
 import time
 
-from springframework.web.testfixture.servlet.MockHttpServletRequest import HeaderValueHolder
 from springframework.web.util.WebUtils import WebUtils
 from springframework.web.testfixture.servlet.MockCookie import Cookie, MockCookie
 from springframework.utils.mock.inst import ByteArrayOutputStream, ResponseServletOutputStream, \
-	HttpHeaders, ServletOutputStream, MediaType, Locale
+	HttpHeaders, ServletOutputStream, MediaType, Locale, HeaderValueHolder
+
+# TODO : implement HeaderValueHolder
 
 
 class MockHttpServletResponse:
@@ -513,4 +514,3 @@ class MockHttpServletResponse:
 		}
 	}
 	'''
-

@@ -1,7 +1,6 @@
 import logging
 from springframework.utils.mock.type import HttpServletResponseWrapper
-
-from .MockHttpServletResponse import MockHttpServletResponse
+from springframework.web.testfixture.servlet import MockHttpServletResponse
 
 
 class MockRequestDispatcher():

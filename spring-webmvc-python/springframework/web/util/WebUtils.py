@@ -1,9 +1,9 @@
 from abc import ABC
 import os
-from testfixture.servlet.MockHttpSession import MockHttpSession as HttpSession
-from testfixture.servlet.MockServletContext import MockServletContext as ServletContext
-from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
-from springframework.utils.mock.inst import ServletRequest
+# from springframework.web.testfixture.servlet.MockHttpSession import MockHttpSession as HttpSession
+# from springframework.web.testfixture.servlet.MockServletContext import MockServletContext as ServletContext
+# from springframework.web.testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
+from springframework.utils.mock.inst import ServletRequest, HttpSession, ServletContext, HttpServletRequest
 from springframework.utils.mock.type import ServletRequestWrapper
 
 

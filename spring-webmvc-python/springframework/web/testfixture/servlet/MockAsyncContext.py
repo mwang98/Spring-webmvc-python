@@ -2,8 +2,8 @@ import threading
 from unittest import mock
 from springframework.utils.mock.inst import AsyncEvent
 
-from .MockHttpServletRequest import MockHttpServletRequest
-from .MockHttpServletResponse import MockHttpServletResponse
+from springframework.web.testfixture.servlet import MockHttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletResponse
 
 
 class MockAsyncContext():

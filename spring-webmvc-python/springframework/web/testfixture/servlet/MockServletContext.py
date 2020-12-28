@@ -5,11 +5,8 @@ from unittest import mock
 from springframework.utils.mock.inst import SessionTrackingMode, \
     DefaultResourceLoader, MediaTypeFactory, MediaType, Resource, RequestDispatcher
 
-
-from springframework.utils.mock.inst import SessionCookieConfig as MockSessionCookieConfig
-from springframework.utils.mock.inst import RequestDispatcher as MockRequestDispatcher
-# from .MockSessionCookieConfig import MockSessionCookieConfig
-# from .MockRequestDispatcher import MockRequestDispatcher
+from springframework.web.testfixture.servlet import MockSessionCookieConfig
+from springframework.web.testfixture.servlet import MockRequestDispatcher
 
 
 class MockServletContext():

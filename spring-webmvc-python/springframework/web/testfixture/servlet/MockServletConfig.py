@@ -1,4 +1,4 @@
-from .MockServletContext import MockServletContext
+from springframework.web.testfixture.servlet import MockServletContext
 
 
 # inherit from ServletConfigInterface

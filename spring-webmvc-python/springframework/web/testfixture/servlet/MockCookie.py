@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from springframework.untils.mock.inst import ResourceBundle
+from springframework.utils.mock.inst import ResourceBundle
 
 
 class Cookie():
