@@ -381,7 +381,7 @@ class MockHttpServletResponse:
 			language = headers.getContentLanguage()
 			self.set_locale( language if language != None else Locale.getDefault())
 			self.do_add_header_value(HttpHeaders.CONTENT_LANGUAGE, contentLanguages, True)
-			return True;
+			return True
 		elif HttpHeaders.SET_COOKIE.equalsIgnoreCase(name):
 			cookie = MockCookie.parse(str(value))
 			if replaceHeader:

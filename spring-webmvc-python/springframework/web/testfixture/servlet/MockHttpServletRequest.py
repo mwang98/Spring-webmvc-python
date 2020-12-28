@@ -485,10 +485,10 @@ class MockHttpServletRequest():
 
     def add_header(self, name: str, value) -> None:
         if HttpHeaders.CONTENT_TYPE == name and \
-                not self.headers.containsKey(HttpHeaders.CONTENT_TYPE):
+                HttpHeaders.CONTENT_TYPE not in self.headers:
             self.set_content_type(str(value))
         elif HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(name) and \
-                not self.headers.containsKey(HttpHeaders.ACCEPT_LANGUAGE):
+                HttpHeaders.ACCEPT_LANGUAGE not in self.headers:
             try:
                 headers = HttpHeaders()
                 headers.add(HttpHeaders.ACCEPT_LANGUAGE, str())
