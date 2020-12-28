@@ -11,7 +11,7 @@ start-spring-webmvc-local:
 
 init-python:
 	python3 -m pip install pipenv
-	@if [ -z "$(python -m pip list | grep pyenv)" ]; then \
+	@if [ -z "$(python -m pip list --disable-pip-version-check | grep pyenv)" ]; then \
 		curl https://pyenv.run | bash \
 	fi
 
