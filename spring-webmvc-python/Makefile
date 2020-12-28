@@ -11,8 +11,10 @@ start-spring-webmvc-local:
 
 init-python:
 	python3 -m pip install pipenv
-	curl https://pyenv.run | bash
-        
+	@if [ -z "$(python -m pip list --disable-pip-version-check | grep pyenv)" ]; then \
+		curl https://pyenv.run | bash \
+	fi
+
 install:
 	pipenv install --dev
 	pipenv run flake8 --version
@@ -20,7 +22,7 @@ install:
 
 shell:
 	pipenv shell
-    
+
 clean:
 	pipenv clean
 	pipenv --rm

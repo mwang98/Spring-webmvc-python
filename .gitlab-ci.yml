@@ -1,0 +1,28 @@
+image: python:3.7
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+before_script:
+  - python -V  # Print out python version for debugging
+
+linter:
+  stage: build
+  script:
+    - pip install flake8==3.8.4
+    - flake8 spring-webmvc-python/springframework
+
+test:
+  stage: test
+  script:
+    - pip install pytest pytest-cov
+    - pytest --disable-warnings --cov=springframework spring-webmvc-python/springframework
+
+success:
+  stage: test
+  script:
+    - flake8 spring-webmvc-python/springframework/web/testfixture/servlet/__init__.py

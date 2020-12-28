@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from ApplicationContext import ApplicationContext
+from springframework.context.ApplicationContext import ApplicationContext
+from springframework.web.testfixture.servlet import MockServletContext as ServletContext
 
 
 class WebApplicationContext(ApplicationContext, ABC):

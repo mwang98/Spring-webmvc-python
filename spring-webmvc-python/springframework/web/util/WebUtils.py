@@ -1,8 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import os
 from testfixture.servlet.MockHttpSession import MockHttpSession as HttpSession
 from testfixture.servlet.MockServletContext import MockServletContext as ServletContext
 from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
+from springframework.utils.mock.inst import ServletRequest
+from springframework.utils.mock.type import ServletRequestWrapper
+
 
 class WebUtils(ABC):
     INCLUDE_REQUEST_URI_ATTRIBUTE = 'javax.servlet.include.request_uri'
@@ -135,7 +138,7 @@ class WebUtils(ABC):
             if isinstance(request_type, request.__class__):
                 return request
             elif isinstance(request, ServletRequestWrapper):
-                return get_native_request(request.get_request(), request_type)
+                return cls.get_native_request(request.get_request(), request_type)
         return None
 
     # TODO: Line 480
