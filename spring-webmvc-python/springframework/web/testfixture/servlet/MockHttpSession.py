@@ -37,7 +37,7 @@ class MockHttpSession():
         return self.id
 
     def access(self) -> None:
-        self.lastAccessedTime = int(datetime.now().tiemstamp())
+        self.lastAccessedTime = int(datetime.now().timestamp())
         self.isNew = False
 
     def get_last_accessed_time(self) -> int:
