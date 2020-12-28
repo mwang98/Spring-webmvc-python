@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from .MockServletContext import MockServletContext
-from .MockAsyncContext import MockAsyncContext
+# from .MockAsyncContext import MockAsyncContext
 from .MockHttpSession import MockHttpSession
 from .MockRequestDispatcher import MockRequestDispatcher
 
