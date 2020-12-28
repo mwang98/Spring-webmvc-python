@@ -2,9 +2,12 @@ from unittest import mock
 
 HttpHeaders = mock.MagicMock(name="HttpSessionBindingEvent")
 ServletInputStream = mock.MagicMock(name="ServletInputStream")
+ServletOutputStream = mock.MagicMock(name="ServletOutputStream")
 DelegatingServletInputStream = mock.MagicMock(name="DelegatingServletInputStream")
+ResponseServletOutputStream = mock.MagicMock(name="ResponseServletOutputStream")
 BufferedReader = mock.MagicMock(name="BufferedReader")
 ByteArrayInputStream = mock.MagicMock(name="ByteArrayInputStream")
+ByteArrayOutputStream = mock.MagicMock(name="ByteArrayOutputStream")
 InputStreamReader = mock.MagicMock(name="InputStreamReader")
 MediaType = mock.MagicMock(name="MediaType")
 Locale = mock.MagicMock(name="Locale")

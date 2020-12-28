@@ -2,7 +2,7 @@ from .MockServletContext import MockServletContext
 
 
 # inherit from ServletConfigInterface
-class MockServletConfig():
+class MockServletConfig:
 
     initParameters = dict()
 
@@ -13,18 +13,18 @@ class MockServletConfig():
         else:
             self.servletContext = servletContext
 
-    def getServletName(self) -> str:
+    def get_servlet_name(self) -> str:
         return self.servletName
 
-    def getServletContext(self) -> str:
+    def get_servlet_context(self) -> str:
         return self.servletContext
 
-    def addInitParameter(self, name: str, value: str) -> None:
+    def add_init_parameter(self, name: str, value: str) -> None:
         assert name is not None, "Parameter name must not be null"
         self.initParameters[name] = value
 
-    def getInitParameter(self, name: str) -> str:
+    def get_init_parameter(self, name: str) -> str:
         return self.initParameters.get(name)
 
-    def getInitParameterNames(self) -> list:
+    def get_init_parameter_names(self) -> list:
         return self.initParameters.keys()

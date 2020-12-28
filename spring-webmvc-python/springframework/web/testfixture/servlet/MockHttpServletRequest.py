@@ -529,7 +529,7 @@ class MockHttpServletRequest():
         elif isinstance(value, (int, float)):
             return value
         elif isinstance(value, str):
-            return self.parseDateHeader(name, value)
+            return self.parse_date_header(name, value)
         elif value is not None:
             raise ValueError(f"Value for header '{name}' + is not a Date, Number, or String: {value}")
         else:
