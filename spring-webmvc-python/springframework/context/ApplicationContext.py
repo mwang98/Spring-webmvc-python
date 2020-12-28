@@ -1,4 +1,4 @@
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 from MessageSource import MessageSource
 from core.env.EnvironmentCapable import EnvironmentCapable
