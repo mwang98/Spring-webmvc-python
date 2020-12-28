@@ -12,6 +12,7 @@ before_script:
 
 linter:
   stage: build
+  allow_failure: true
   script:
     - pip install flake8==3.8.4
     - flake8 spring-webmvc-python/springframework

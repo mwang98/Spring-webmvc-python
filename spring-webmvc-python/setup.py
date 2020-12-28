@@ -8,5 +8,7 @@ setup(
     packages=find_packages('.'),
     python_requires='>=3.6.8',
     platforms=["any"],
-    install_requires=[],
+    install_requires=[
+    	"pytz"
+    ],
 )
