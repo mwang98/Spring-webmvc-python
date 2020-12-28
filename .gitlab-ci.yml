@@ -21,9 +21,11 @@ test:
   stage: test
   script:
     - pip install pytest pytest-cov
+    - pip install -e spring-webmvc-python/setup.py
     - pytest --disable-warnings --cov=springframework spring-webmvc-python/springframework
 
 success:
   stage: test
   script:
+    - pip install flake8==3.8.4
     - flake8 spring-webmvc-python/springframework/web/testfixture/servlet/__init__.py
