@@ -1,14 +1,17 @@
-from springframework.http import HttpStatus
-from springframework.ui import ModelMap
-from springFramework.util import CoolectionUtils
-
+from springframework.web.servlet import View
+from springframework.utils.mock.inst import HttpStatus
 
 class ModelAndView():
-    
-    def __init__(self, view=None, model=None, status=None):
+
+    _view = None
+    _model = None
+    _status = None
+    _cleared = False
+
+    def __init__(self, view=None, model: dict=None, status: HttpStatus=None):
         self._view = view
         self._model = model
         self._status = status
         self._cleared = False
-        
+
     def 

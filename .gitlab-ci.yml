@@ -9,14 +9,24 @@ cache:
 
 before_script:
   - python -V  # Print out python version for debugging
-  - pip install flake8==3.8.4
 
 linter:
   stage: build
+  allow_failure: true
   script:
+    - pip install flake8==3.8.4
     - flake8 spring-webmvc-python/springframework
+
+test:
+  stage: test
+  script:
+    - pip install pytest pytest-cov
+    - cd spring-webmvc-python
+    - pip install -e .
+    - pytest --disable-warnings --cov=springframework springframework
 
 success:
   stage: test
   script:
+    - pip install flake8==3.8.4
     - flake8 spring-webmvc-python/springframework/web/testfixture/servlet/__init__.py
