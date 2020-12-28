@@ -3,6 +3,8 @@ from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
 import time
+
+from springframework.web.testfixture.servlet.MockHttpServletRequest import HeaderValueHolder
 from springframework.web.util.WebUtils import WebUtils
 from springframework.web.testfixture.servlet.MockCookie import Cookie, MockCookie
 from springframework.utils.mock.inst import ByteArrayOutputStream, ResponseServletOutputStream, \
@@ -392,7 +394,7 @@ class MockHttpServletResponse:
 
 	def do_add_header_value(self, name: str, value, replace: bool) -> None:
 		assert value, "Header value must not be null"
-		header = self.headers.computeIfAbsent(name, key -> new HeaderValueHolder())
+		header = self.headers.computeIfAbsent(name, HeaderValueHolder())
 		if replace:
 			header.setValue(value)
 		else:
