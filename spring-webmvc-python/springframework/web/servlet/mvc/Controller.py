@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 
+# check for posiible recursive import
 from springframework.web.testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
 from springframework.web.testfixture.servlet.MockHttpServletRequest import MockHttpServletResponse as HttpServletResponse
 from springframework.web.servlet import ModelAndView
 
-class Controller(ABC){
+
+class Controller(ABC):
     @abstractmethod
     def handleRequest(request: HttpServletRequest, response: HttpServletResponse) -> ModelAndView:
         raise NotImplementedError
-}
