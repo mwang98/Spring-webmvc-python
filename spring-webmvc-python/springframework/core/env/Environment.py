@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from env.PropertyResolver import PropertyResolver
+
+
 class Environment(PropertyResolver):
     @abstractmethod
     def get_active_profiles(self) -> List[str]:
