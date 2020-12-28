@@ -14,4 +14,4 @@ before_script:
 linter:
   stage: build
   script:
-    - flake8 springframework
+    - flake8 spring-webmvc-python/springframework
