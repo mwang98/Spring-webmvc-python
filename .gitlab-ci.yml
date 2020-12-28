@@ -19,4 +19,4 @@ linter:
 success:
   stage: test
   script:
-    - echo "success"
+    - flake8 spring-webmvc-python/springframework/web/testfixture/servlet/__init__.py

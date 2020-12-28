@@ -2,8 +2,9 @@ import re
 from urllib.parse import quote_plus
 from springframework.web.servlet import SmartView, View
 from springframework.web.servlet.view import AbstractUrlBasedView
+from springframework.web.util import WebUtils
 from springframework.utils.mock.inst import HttpStatus, RequestContextUtils, \
-    WebUtils, UriComponentsBuilder, RequestDataValueProcessor, HandlerMapping
+    BeanUtils, UriComponentsBuilder, RequestDataValueProcessor, HandlerMapping
 
 
 class StringBuilder():
