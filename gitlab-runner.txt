@@ -1,0 +1,16 @@
+# gitlab 8.16.6 <=> gitlab-runner v1.11.x
+
+# create volumne
+sudo docker volume create gitlab-runner-config
+
+# install
+sudo docker run -p 8093:8093 -d --name gitlab-runner --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v gitlab-runner-config:/etc/gitlab-runner \
+    gitlab/gitlab-runner:ubuntu-v1.11.1
+
+# register
+sudo docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:ubuntu-v1.11.1 register
+
+# delete
+sudo docker stop gitlab-runner && sudo docker rm gitlab-runner
