@@ -15,3 +15,8 @@ linter:
   stage: build
   script:
     - flake8 spring-webmvc-python/springframework
+
+success:
+  stage: test
+  script:
+    - echo "success"
