@@ -20,10 +20,10 @@ linter:
 syntax:
   stage: test
   script:
-    - pip install pytest pytest-cov
+    - pip install pytest pytest-cov pytest-custom_exit_code
     - cd spring-webmvc-python
     - pip install -e .
-    - sh "python -m pytest --disable-warnings --cov=springframework springframework || [[ $? -eq 1 ]]"
+    - python -m pytest --suppress-no-test-exit-code --disable-warnings --cov=springframework springframework
 
 test:
   stage: test
