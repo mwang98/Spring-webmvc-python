@@ -17,13 +17,21 @@ linter:
     - pip install flake8==3.8.4
     - flake8 spring-webmvc-python/springframework
 
+syntax:
+  stage: test
+  script:
+    - pip install pytest pytest-cov
+    - cd spring-webmvc-python
+    - pip install -e .
+    - sh "pytest --disable-warnings --cov=springframework springframework || [[ $? -eq 1 ]]"
+
 test:
   stage: test
   script:
     - pip install pytest pytest-cov
     - cd spring-webmvc-python
     - pip install -e .
-    - pytest --disable-warnings --cov=springframework springframework
+    - pytest --disable-warnings --cov=springframework tests/
 
 success:
   stage: test
