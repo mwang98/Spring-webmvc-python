@@ -23,7 +23,7 @@ syntax:
     - pip install pytest pytest-cov
     - cd spring-webmvc-python
     - pip install -e .
-    - sh "pytest --disable-warnings --cov=springframework springframework || [[ $? -eq 1 ]]"
+    - sh "python -m pytest --disable-warnings --cov=springframework springframework || [[ $? -eq 1 ]]"
 
 test:
   stage: test
