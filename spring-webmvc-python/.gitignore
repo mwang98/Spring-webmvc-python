@@ -5,6 +5,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .ipynb_checkpoints/
+*.pyc
+*.pyo
 
 # Distribution / packaging
 *.egg-info/

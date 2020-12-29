@@ -1,5 +1,5 @@
 from unittest import TestCase
-from testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
 from InternalResourceView import InternalResourceView
 
 

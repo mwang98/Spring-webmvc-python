@@ -19,7 +19,7 @@ class UnresolvedView(View):
 
 class my_order_dict(OrderedDict):
     def __setitem__(self, key, value):
-        if self.size >= self.__len__():
+        if self.getcache_limit() <= self.__len__():
             self.popitem(last=False)
         return super().__setitem__(key, value)
 
@@ -56,6 +56,10 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
 
     # Map from view key to View instance, synchronized for View creation.
     _viewCreationCache = my_order_dict()
+
+    def __init__(self, *args, **kwargs):
+        super.__init__(*args, **kwargs)
+        self._viewCreationCache.getcache_limit = self.getcache_limit
 
     # Specify the maximum number of entries for the view cache.
     # Default is 1024.
