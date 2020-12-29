@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from env.PropertyResolver import PropertyResolver
+from springframework.core.env.Profiles import Profiles
+from springframework.core.env.PropertyResolver import PropertyResolver
 
 
-class Environment(PropertyResolver):
+class Environment(PropertyResolver, ABC):
     @abstractmethod
     def get_active_profiles(self) -> List[str]:
         raise NotImplementedError

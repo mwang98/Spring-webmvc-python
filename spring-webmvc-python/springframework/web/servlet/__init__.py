@@ -1,5 +1,9 @@
+from .SmartView import SmartView
 from .View import View
+from .ViewResolver import ViewResolver
 
 __all__ = [
-    "View"
+    "SmartView",
+    "View",
+    "ViewResolver"
 ]

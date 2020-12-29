@@ -1,7 +1,7 @@
 from abc import ABC
 
-from ApplicationContextAware import ApplicationContextAware
-from ApplicationContext import ApplicationContext
+from springframework.context.ApplicationContextAware import ApplicationContextAware
+from springframework.context.ApplicationContext import ApplicationContext
 from springframework.context.support.MessageSourceAccessor import MessageSourceAccessor
 
 

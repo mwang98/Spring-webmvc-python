@@ -6,7 +6,7 @@ from collections import OrderedDict
 from springframework.utils.mock.inst import Locale
 from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
-from springframework.web.servlet import ViewResolver
+from springframework.web.servlet.ViewResolver import ViewResolver
 
 
 class UnresolvedView(View):

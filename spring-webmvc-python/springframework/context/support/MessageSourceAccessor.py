@@ -1,8 +1,8 @@
-from MessageSource import MessageSource
-from MessageSourceResolvable import MessageSourceResolvable
+from springframework.context.MessageSource import MessageSource
+from springframework.context.MessageSourceResolvable import MessageSourceResolvable
 from typing import List
 
-from mock.inst import Locale
+from springframework.utils.mock.inst import Locale, LocaleContextHolder
 
 
 class MessageSourceAccessor():

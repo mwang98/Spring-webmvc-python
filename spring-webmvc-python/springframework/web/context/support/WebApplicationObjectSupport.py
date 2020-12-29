@@ -1,11 +1,11 @@
 from abc import ABC
 
-from ApplicationContext import ApplicationContext
-from util.WebUtils import WebUtils
-from web.context.support.WebApplicationContext import WebApplicationContext
-from web.context.ServletContextAware import ServletContextAware
+from springframework.context.ApplicationContext import ApplicationContext
+from springframework.web.util.WebUtils import WebUtils
+from springframework.web.context.support.WebApplicationContext import WebApplicationContext
+from springframework.web.context.ServletContextAware import ServletContextAware
 from springframework.context.support.ApplicationObjectSupport import ApplicationObjectSupport
-from testfixture.servlet.MockServletContext import MockServletContext as ServletContext
+from springframework.web.testfixture.servlet.MockServletContext import MockServletContext as ServletContext
 
 
 class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware, ABC):

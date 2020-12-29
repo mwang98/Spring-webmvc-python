@@ -15,6 +15,9 @@ colorama = "*"
 gunicorn = "*"
 pipdeptree = "*"
 pytest = '*'
+pytest-mock = "*"
+pytest-cov = "*"
+pytest-custom_exit_code = "*"
 
 [requires]
 python_version = "3.7"

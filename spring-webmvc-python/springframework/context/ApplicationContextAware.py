@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from ApplicationContext import ApplicationContext
+from springframework.context.ApplicationContext import ApplicationContext
 from springframework.beans.factory.Aware import Aware
 
 

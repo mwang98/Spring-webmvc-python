@@ -1,0 +1,2 @@
+class Profiles():
+    pass

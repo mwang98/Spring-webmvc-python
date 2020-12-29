@@ -15,6 +15,9 @@ init-python:
 		curl https://pyenv.run | bash \
 	fi
 
+test:
+	python -m pytest --suppress-no-test-exit-code --disable-warnings --cov=springframework tests/
+
 install:
 	pipenv install --dev
 	pipenv run flake8 --version
