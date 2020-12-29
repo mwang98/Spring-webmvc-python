@@ -1,68 +1,70 @@
 import logging
-
+# TODO: MatchableHandlerMapping, RequestMatchResult
 from sprngframework.web.servlet.handler import AbstractHandlerMapping, MatchableHandlerMapping, RequestMatchResult
+# TODO: RequestPath, ServletRequestPathUtils
 from springframework.utils.mock.inst import RequestPath, HttpServletRequest, ServletRequestPathUtils
-# TODOHandlerExecutionChain, HandlerInterceptor
-from springframework.web.servlet import HandlerExecutionChain, HandlerInterceptor
+# TODO: HandlerExecutionChain, HandlerInterceptor
+from springframework.web.servlet import HandlerExecutionChain
+from springframework.web.servlet import HandlerInterceptorInterface
 from springframework.web.util import UrlPathHelper
 
 
 class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping):
 
     rootHandler: object = None
-    _useTrailingSlashMatch: bool = False
+    useTrailingSlashMatch: bool = False
     lazyInitHandlers: bool = False
     handlerMap = dict()
     pathPatternHandlerMap: dict()
 
-    def setRootHandler(self, rootHandler: object) -> None:
+    def set_root_handler(self, rootHandler: object) -> None:
         self.rootHandler = rootHandler
 
-    def getRootHandler(self) -> object:
+    def get_root_handler(self) -> object:
         return self.rootHandler
 
-    def setUseTrailingSlashMatch(self, useTrailingSlashMatch: bool):
-        self._useTrailingSlashMatch = useTrailingSlashMatch
+    def set_use_trailing_slash_match(self, useTrailingSlashMatch: bool):
+        self.useTrailingSlashMatch = useTrailingSlashMatch
         if self.getPatternParser() is not None:
             self.getPatternParser().setMatchOptionalTrailingSeparator(useTrailingSlashMatch)
 
-    def useTrailingSlashMatch(self):
-        return self._useTrailingSlashMatch
+    def use_trailing_slash_match(self):
+        return self.useTrailingSlashMatch
 
-    def setLazyInitHandlers(self, lazyInitHandlers: bool):
+    def set_lazy_init_handlers(self, lazyInitHandlers: bool):
         self.lazyInitHandlers = lazyInitHandlers
 
-    def getHandlerInternal(self, request: HttpServletRequest) -> object:
+    def get_handler_internal(self, request: HttpServletRequest) -> object:
         lookupPath: str = self.initLookupPath(request)
         handler: object = None
         if self.usesPathPatterns():
             path: RequestPath = ServletRequestPathUtils.getParsedRequestPath(request)
-            handler = self.lookupHandler(path, lookupPath, request)
+            handler = self.lookup_handler(path, lookupPath, request)
         else:
-            handler = self.lookupHandler(lookupPath, request)
+            handler = self.lookup_handler(lookupPath, request)
 
         if handler is None:
             rawHandler: object = None
             if lookupPath == '/':
-                rawHandler = self.getRootHandler()
+                rawHandler = self.get_root_handler()
             if rawHandler is None:
                 rawHandler = self.getDefaultHandler()
             else:
                 if isinstance(rawHandler, str):
                     handlerName = str(rawHandler)
                     rawHandler = self.obtainApplicationContext().getBean(handlerName)
-                self.validateHandler(rawHandler, request)
-                handler = self.buildPathExposingHandler(rawHandler, lookupPath, lookupPath, None)
+                self.validate_handler(rawHandler, request)
+                handler = self.build_path_exposing_handler(rawHandler, lookupPath, lookupPath, None)
         return handler
 
-    def lookupHandler(self, arg1, arg2, arg3=None) -> object:
+    def lookup_handler(self, arg1, arg2, arg3=None) -> object:
         if isinstance(arg1, object) and isinstance(arg2, str):
 
             path = arg1
             lookupPath = arg2
             request = arg3
 
-            handler: object = self.getDirectMatch(lookupPath, request)
+            handler: object = self.get_direct_match(lookupPath, request)
             if handler is not None:
                 return handler
 
@@ -84,16 +86,16 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                 handlerName = handler
                 handler = self.obtainApplicationContext().getBean(handlerName)
 
-            self.validateHandler(handler, request)
+            self.validate_handler(handler, request)
             pathWithinMapping = pattern.extractPathWithinPattern(path)
-            return self.buildPathExposingHandler(handler, pattern.getPatternString(), pathWithinMapping.value(), None)
+            return self.build_path_exposing_handler(handler, pattern.getPatternString(), pathWithinMapping.value(), None)
 
         elif isinstance(arg1, str) and isinstance(arg2, object):
 
             lookupPath = arg1
             request = arg2
 
-            handler = self.getDirectMatch(lookupPath, request)
+            handler = self.get_direct_match(lookupPath, request)
             if handler is None:
                 return handler
 
@@ -101,7 +103,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             for registeredPattern in self.handlerMap.key():
                 if self.getPathMatcher().match(registeredPattern, lookupPath):
                     matchingPatterns.append(registeredPattern)
-                elif self.useTrailingSlashMatch():
+                elif self.use_trailing_slash_match():
                     if (not registeredPattern.endsWith("/")) and self.getPathMatcher().match(registeredPattern + "/", lookupPath):
                         matchingPatterns.add(registeredPattern + "/")
 
@@ -127,7 +129,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                     handlerName: str = handler
                     handler = self.obtainApplicationContext().getBean(handlerName)
 
-                self.validateHandler(handler, request)
+                self.validate_handler(handler, request)
                 pathWithinMapping = self.getPathMatcher().extractPathWithinPattern(bestMatch, lookupPath)
 
                 # There might be multiple 'best patterns', let's make sure we have the correct URI template variables
@@ -142,26 +144,26 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                 if uriTemplateVariables:
                     logging.info(f"URI variables {uriTemplateVariables}")
 
-                return self.buildPathExposingHandler(handler, bestMatch, pathWithinMapping, uriTemplateVariables)
+                return self.build_path_exposing_handler(handler, bestMatch, pathWithinMapping, uriTemplateVariables)
 
             # No handler found...
             return None
 
-    def getDirectMatch(self, urlPath: str, request: HttpServletRequest) -> object:
+    def get_direct_match(self, urlPath: str, request: HttpServletRequest) -> object:
         handler = self.handlerMap.get(urlPath)
         if handler is not None:
             # Bean name or resolved handler?
             if isinstance(handler, str):
                 handlerName: str = handler
                 handler = self.obtainApplicationContext().getBean(handlerName)
-            self.validateHandler(handler, request)
-            return self.buildPathExposingHandler(handler, urlPath, urlPath, None)
+            self.validate_handler(handler, request)
+            return self.build_path_exposing_handler(handler, urlPath, urlPath, None)
         return None
 
-    def validateHandler(self, handler: object, request) -> None:
+    def validate_handler(self, handler: object, request) -> None:
         pass
 
-    def buildPathExposingHandler(
+    def build_path_exposing_handler(
         self,
         rawHandler: object,
         bestMatchingPattern: str,
@@ -174,11 +176,11 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             chain.addInterceptor(UriTemplateVariablesHandlerInterceptor(uriTemplateVariables))
         return chain
 
-    def exposePathWithinMapping(self, bestMatchingPattern: str, pathWithinMapping: str, request) -> None:
+    def expose_path_within_mapping(self, bestMatchingPattern: str, pathWithinMapping: str, request) -> None:
         request.setAttribute(self.BEST_MATCHING_PATTERN_ATTRIBUTE, bestMatchingPattern)
         request.setAttribute(self.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping)
 
-    def exposeUriTemplateVariables(self, uriTemplateVariables: dict, request) -> None:
+    def expose_uri_template_variables(self, uriTemplateVariables: dict, request) -> None:
         request.setAttribute(self.URI_TEMPLATE_VARIABLES_ATTRIBUTE, uriTemplateVariables)
 
     def match(self, request, pattern: str):
@@ -186,16 +188,16 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
         lookupPath: str = UrlPathHelper.getResolvedLookupPath(request)
         if (self.getPathMatcher().match(pattern, lookupPath)):
             return RequestMatchResult(pattern, lookupPath, self.getPathMatcher())
-        elif self.useTrailingSlashMatch():
+        elif self.use_trailing_slash_match():
             if not pattern.endsWith("/") and self.getPathMatcher().match(pattern + "/", lookupPath):
                 return RequestMatchResult(pattern + "/", lookupPath, self.getPathMatcher())
         return None
 
-    def registerHandler(self, urlPaths: list, beanName: str):
+    def register_handler(self, urlPaths: list, beanName: str):
         assert urlPaths, "URL path array must not be null"
         if isinstance(urlPaths, list):
             for urlPath in urlPaths:
-                self.registerHandler(urlPath, beanName)
+                self.register_handler(urlPath, beanName)
         else:
             urlPath = urlPaths
             handler = beanName
@@ -211,57 +213,61 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                     resolvedHandler = applicationContext.getBean(handlerName)
 
             mappedHandler = self.handlerMap.get(urlPath)
-            if mappedHandler is nt None:
+            if mappedHandler is not None:
                 if mappedHandler != resolvedHandler:
                     raise Exception(f"""
-                        Cannot map {self.getHandlerDescription(handler)} to URL path [{urlPath}
-                        ]: There is already {self.getHandlerDescription(mappedHandler)} mapped."
+                        Cannot map {self.get_handler_description(handler)} to URL path [{urlPath}
+                        ]: There is already {self.get_handler_description(mappedHandler)} mapped."
                     """)
             else:
                 if urlPath == "/":
-                    logging.info(f"Root mapping to {getHandlerDescription(handler)}")
+                    logging.info(f"Root mapping to {self.get_handler_description(handler)}")
                 elif urlPath == "/*":
-                    logging.info(f"Default mapping to {getHandlerDescription(handler)}")
+                    logging.info(f"Default mapping to {self.get_handler_description(handler)}")
                     self.setDefaultHandler(resolvedHandler)
                 else:
                     self.handlerMap[urlPath] = resolvedHandler
                     if self.getPatternParser() is not None:
                         self.pathPatternHandlerMap[self.getPatternParser().parse(urlPath)] = resolvedHandler
-                    logger.info(f"Mapped [{urlPath}] onto {self.getHandlerDescription(handler)}")
+                    logging.info(f"Mapped [{urlPath}] onto {self.get_handler_description(handler)}")
 
-    def getHandlerDescription(self, handler: object) -> str:
+    def get_handler_description(self, handler: object) -> str:
         return f"'handler'" if isinstance(handler, str) else str(handler)
 
-    def getHandlerMap(self) -> dict:
+    def get_handler_map(self) -> dict:
         return self.handlerMap.copy()
 
-    def getPathPatternHandlerMap(self) -> dict:
+    def get_path_pattern_handler_map(self) -> dict:
         return self.pathPatternHandlerMap.copy()
 
-    def supportsTypeLevelMappings(self) -> bool:
+    def supports_type_level_mappings(self) -> bool:
         return False
 
 
-class PathExposingHandlerInterceptor(HandlerInterceptor):
+class PathExposingHandlerInterceptor(HandlerInterceptorInterface):
 
     def __init__(self, bestMatchingPattern: str, pathWithinMapping: str):
         self.bestMatchingPattern: str = bestMatchingPattern
         self.pathWithinMapping: str = pathWithinMapping
 
     def preHandle(self, request, response, handler):
-        self.exposePathWithinMapping(self.bestMatchingPattern, self.pathWithinMapping, request)
+        self.expose_path_within_mapping(self.bestMatchingPattern, self.pathWithinMapping, request)
         # TODO: BEST_MATCHING_HANDLER_ATTRIBUTE, INTROSPECT_TYPE_LEVEL_MAPPING
         # dont know where it is from
         request.setAttribute(self.BEST_MATCHING_HANDLER_ATTRIBUTE, handler)
-        request.setAttribute(self.INTROSPECT_TYPE_LEVEL_MAPPING, supportsTypeLevelMappings())
+        request.setAttribute(self.INTROSPECT_TYPE_LEVEL_MAPPING, self.supports_type_level_mappings())
         return True
 
+    supports_type_level_mappings = AbstractUrlHandlerMapping.supports_type_level_mappings
 
-class UriTemplateVariablesHandlerInterceptor(HandlerInterceptor):
+
+class UriTemplateVariablesHandlerInterceptor(HandlerInterceptorInterface):
 
     def __init__(self, uriTemplateVariables: dict):
         self.uriTemplateVariables = uriTemplateVariables
 
     def preHandle(self, request, response, handler):
-        self.exposeUriTemplateVariables(this.uriTemplateVariables, request);
+        self.expose_uri_template_variables(self.uriTemplateVariables, request)
         return True
+
+    expose_uri_template_variables = AbstractUrlHandlerMapping.expose_uri_template_variables

@@ -33,7 +33,3 @@ test:
     - pip install -e .
     - pytest --disable-warnings --cov=springframework tests/
 
-success:
-  stage: test
-  script:
-    - echo "success"
