@@ -2,8 +2,8 @@ from unittest import mock
 import logging
 from abc import abstractmethod, ABC
 
-from web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
-from beans.factory.BeanNameAware import BeanNameAware
+from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from springframework.beans.factory.BeanNameAware import BeanNameAware
 from springframework.web.servlet.View import View
 
 # mock objects

@@ -9,6 +9,6 @@ setup(
     python_requires='>=3.6.8',
     platforms=["any"],
     install_requires=[
-    	"pytz"
+        "pytz"
     ],
 )

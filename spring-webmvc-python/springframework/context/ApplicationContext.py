@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from MessageSource import MessageSource
-from core.env.EnvironmentCapable import EnvironmentCapable
+from .MessageSource import MessageSource
+from springframework.core.env.EnvironmentCapable import EnvironmentCapable
 
 
-# TODO: solve dependencies
-class ApplicationContext(EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
-                         MessageSource, ApplicationEventPublisher, ResourcePatternResolver, ABC):
+# TODO: solve dependencies: ListableBeanFactory, HierarchicalBeanFactory,
+# ApplicationEventPublisher, ResourcePatternResolver
+class ApplicationContext(EnvironmentCapable, MessageSource, ABC):
     def __init__(self):
         super().__init__()
 

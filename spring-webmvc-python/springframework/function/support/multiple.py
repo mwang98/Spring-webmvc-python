@@ -1,5 +1,6 @@
 import inspect
 import types
+from copy import deepcopy
 
 
 class MultiMethod:
@@ -11,6 +12,11 @@ class MultiMethod:
         self._methods = {}
         self.__name__ = name
 
+    def _register(self, types, meth):
+        if types in self._methods:
+            raise Exception(f"Duplicate signatures. {types}")
+        self._methods[types] = meth
+
     def register(self, meth):
         '''
         Register a new method as a multimethod
@@ -18,7 +24,7 @@ class MultiMethod:
         sig = inspect.signature(meth)
 
         # Build a type signature from the method's annotations
-        types = []
+        types = [[]]
         for name, parm in sig.parameters.items():
             if name == 'self':
                 continue
@@ -31,10 +37,23 @@ class MultiMethod:
                     'Argument {} annotation must be a type'.format(name)
                 )
             if parm.default is not inspect.Parameter.empty:
-                self._methods[tuple(types)] = meth
-            types.append(parm.annotation)
+                for i in types:
+                    self._register(tuple(i), meth)
 
-        self._methods[tuple(types)] = meth
+            new = deepcopy(types)
+
+            # append annotation
+            for i in types:
+                i.append(parm.annotation)
+
+            # append None type
+            if parm.default is not inspect.Parameter.empty and parm.default is None:
+                for i in new:
+                    i.append(type(None))
+                types += new
+
+        for i in types:
+            self._register(tuple(i), meth)
 
     def __call__(self, *args):
         '''

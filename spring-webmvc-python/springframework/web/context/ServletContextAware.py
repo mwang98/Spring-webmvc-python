@@ -1,5 +1,6 @@
 from springframework.beans.factory.Aware import Aware
 from abc import ABC, abstractmethod
+from springframework.utils.mock.inst import ServletContext
 
 
 class ServletContextAware(Aware, ABC):

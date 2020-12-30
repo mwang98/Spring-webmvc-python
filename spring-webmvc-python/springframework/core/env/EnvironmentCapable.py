@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from env.Environment import Environment
+from springframework.core.env.Environment import Environment
 
 
 class EnvironmentCapable(ABC):

@@ -1,6 +1,6 @@
 from unittest import mock
-from springframework.web.servlet import UrlBasedViewResolver
 from springframework.utils.mock.type import JstlView
+from springframework.web.servlet.view.UrlBasedViewResolver import UrlBasedViewResolver
 from springframework.web.servlet.view import InternalResourceView, AbstractUrlBasedView
 
 

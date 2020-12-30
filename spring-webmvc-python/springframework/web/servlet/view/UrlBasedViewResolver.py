@@ -1,13 +1,14 @@
 from abc import ABC
 from springframework.web.servlet import View
-from springframework.web.servlet import RedirectView
+from springframework.web.servlet.view import RedirectView
 from springframework.utils.mock.inst import Ordered, BeanUtils
-from .InternalResourceView import InternalResourceView
-from .AbstractCachingViewResolver import AbstractCachingViewResolver
-from .AbstractUrlBasedView import AbstractUrlBasedView
+from springframework.web.servlet.view.InternalResourceView import InternalResourceView
+from springframework.web.servlet.view.AbstractCachingViewResolver import AbstractCachingViewResolver
+from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
 
 
-class UrlBasedViewResolver(AbstractCachingViewResolver, Ordered, ABC):
+# Ordered
+class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
     REDIRECT_URL_PREFIX = "redirect:"
     FORWARD_URL_PREFIX = "forward:"
     _prefix = ""

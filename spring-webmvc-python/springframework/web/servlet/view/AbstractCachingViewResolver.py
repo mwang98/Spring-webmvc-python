@@ -6,7 +6,7 @@ from collections import OrderedDict
 from springframework.utils.mock.inst import Locale
 from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
 from springframework.web.servlet import View
-from springframework.web.servlet import ViewResolver
+from springframework.web.servlet.ViewResolver import ViewResolver
 
 
 class UnresolvedView(View):
@@ -15,13 +15,6 @@ class UnresolvedView(View):
 
     def render(self, model: dict, request, response) -> None:
         pass
-
-
-class my_order_dict(OrderedDict):
-    def __setitem__(self, key, value):
-        if self.getcache_limit() <= self.__len__():
-            self.popitem(last=False)
-        return super().__setitem__(key, value)
 
 
 class CacheFilter():
@@ -55,18 +48,23 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     _viewAccessCache = dict()
 
     # Map from view key to View instance, synchronized for View creation.
-    _viewCreationCache = my_order_dict()
+    # _viewCreationCache = my_order_dict()
 
     def __init__(self, *args, **kwargs):
         super.__init__(*args, **kwargs)
-        self._viewCreationCache.getcache_limit = self.getcache_limit
+
+        class my_order_dict(OrderedDict):
+            def __setitem__(self, key, value):
+                if self.getcache_limit() <= self.__len__():
+                    self.popitem(last=False)
+                return super().__setitem__(key, value)
+            getcache_limit = self.getcache_limit
+        self._viewCreationCache.getcache_limit = my_order_dict()
 
     # Specify the maximum number of entries for the view cache.
     # Default is 1024.
     def set_cache_limit(self, cacheLimit: int) -> None:
         self.cacheLimit = cacheLimit
-        # DADA ADD
-        self._viewCreationCache.size = cacheLimit
 
     # Return the maximum number of entries for the view cache.
     def getcache_limit(self) -> int:

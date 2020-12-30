@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-import MessageSourceResolvable
-from mock.inst import Locale
+from .MessageSourceResolvable import MessageSourceResolvable
+from springframework.utils.mock.inst import Locale
 
 
 class MessageSource(ABC):
