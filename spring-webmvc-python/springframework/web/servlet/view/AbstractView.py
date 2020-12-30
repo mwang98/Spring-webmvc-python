@@ -19,10 +19,15 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
     OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096
     contentType = DEFAULT_CONTENT_TYPE
+    requestContextAttribute: str = None
     staticAttributes = dict()
     exposePathVariables = True
     exposeContextBeansAsAttributes = False
     exposedContextBeanNames = set()
+    beanName: str = None
+
+    def __init__(self):
+        super().__init__()
 
     def set_content_type(self, contentType: str = None) -> None:
         self.contentType = contentType
@@ -81,7 +86,7 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     def get_bean_name(self) -> str:
         return self.beanName
 
-    def render(self, request, response, model: dict = None) -> None:
+    def render(self, model, request, response) -> None:
         logging.debug(
             "View " +
             self.format_view_name() +
@@ -96,16 +101,18 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     def create_merged_output_model(self, model: dict, request, response) -> dict:
         pathVars = None
         if self.exposePathVariables:
-            pathVars = request.getAttribute(View.PATH_VARIABLES)
+            pathVars = request.get_attribute(View.PATH_VARIABLES)
 
         size = len(self.staticAttributes)
-        size += len(model)
-        size += len(pathVars)
+        size += 0 if model is None else len(model)
+        size += 0 if pathVars is None else len(pathVars)
 
         mergedModel = dict()
         mergedModel.update(self.staticAttributes)
-        mergedModel.update(pathVars)
-        mergedModel.update(model)
+        if pathVars is not None:
+            mergedModel.update(pathVars)
+        if model is not None:
+            mergedModel.update(model)
 
         # Expose RequestContext?
         if self.requestContextAttribute is not None:
@@ -128,10 +135,10 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
     # return type : HttpServletRequest
     def get_request_to_expose(self, originalRequest):
-        if self.exposeContextBeansAsAttributes or self.exposedContextBeanNames is not None:
+        if self.exposeContextBeansAsAttributes or self.exposedContextBeanNames:
             # wac = getWebApplicationContext()
             wac = self.get_web_application_context()
-            assert wac is not None, "No WebApplicationContext"
+            assert wac is None, "No WebApplicationContext"
             # ContextExposingHttpServletRequest use mock
             return ContextExposingHttpServletRequest(originalRequest, wac, self.exposedContextBeanNames)
         return originalRequest
@@ -144,9 +151,9 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
         for name, value in model.items():
             # make sure request has this method
             if value is not None:
-                request.setAttribute(name, value)
+                request.set_attribute(name, value)
             else:
-                request.removeAttribute(name)
+                request.remove_attribute(name)
 
     def create_temporary_output_stream(self) -> bytearray:
         return bytearray(self.OUTPUT_BYTE_ARRAY_INITIAL_SIZE)

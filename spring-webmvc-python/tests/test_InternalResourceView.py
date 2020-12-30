@@ -7,7 +7,6 @@ from springframework.web.testfixture.servlet import MockServletContext, MockRequ
 from springframework.web.servlet.view import InternalResourceView
 
 
-@pytest.mark.skip("half way to complete")
 class TestInternalResourceView(TestCase):
 
     def setUp(self) -> None:
@@ -48,6 +47,7 @@ class TestInternalResourceView(TestCase):
             msg = f"Values for model key '{key}' must match"
             self.assertEqual(request.get_attribute(key), value, msg=msg)
 
+    @pytest.mark.skip("later")
     def test_always_include(self):
         self.assertIsNone(self.request.getAttribute(View.PATH_VARIABLES))
         # self.assertEqual(self.request.get_request_dispatcher(self.url)), MockRequestDispatcher(self.url))

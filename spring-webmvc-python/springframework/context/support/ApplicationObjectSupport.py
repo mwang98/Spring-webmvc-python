@@ -8,8 +8,8 @@ from springframework.context.support.MessageSourceAccessor import MessageSourceA
 class ApplicationObjectSupport(ApplicationContextAware, ABC):
     def __init__(self):
         super().__init__()
-        self._application_context: ApplicationContext
-        self._message_source_accessor: MessageSourceAccessor
+        self._application_context: ApplicationContext = None
+        self._message_source_accessor: MessageSourceAccessor = None
 
     def set_application_context(self, context: ApplicationContext = None) -> None:
         if context is None and not self.is_context_required():
