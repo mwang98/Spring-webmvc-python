@@ -9,10 +9,12 @@ class SimpleControllerHandlerAdapter(HandlerAdapter):
         return isinstance(handler, Controller)
 
     def handle(self, request: HttpServletRequest, response: HttpServletResponse, handler: object) -> ModelAndView:
+        handler: Controller = handler
         return handler.handleRequest(request, response)
 
     def get_last_modified(self, request: HttpServletRequest, handler: object) -> int:
         if isinstance(handler, Controller):
+            handler: Controller = handler
             return handler.getLastModified(request)
         return -1
  
