@@ -5,11 +5,10 @@ name = "pypi"
 
 [packages]
 springframework = {path = "./", editable = true}
-
+enum34 = "*"
 
 [dev-packages]
 "testfixtures" = "*"
-black = "*"
 "flake8" = "*"
 colorama = "*"
 gunicorn = "*"
