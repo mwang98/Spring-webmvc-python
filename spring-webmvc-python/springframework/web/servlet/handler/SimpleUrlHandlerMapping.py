@@ -7,26 +7,26 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
     def __init__(self, urlMap: dict = None, order: int = None):
         self.urlMap = dict()
         if isinstance(urlMap, dict):
-            self.setUrlMap(urlMap)
+            self.set_url_map(urlMap)
         if isinstance(order, int):
             self.setOrder(order)
 
-    def setMappings(self, mappings: dict) -> None:
+    def set_mappings(self, mappings: dict) -> None:
         self.urlMap.update(mappings)
 
-    def setUrlMap(self, urlMap: dict) -> None:
+    def set_url_map(self, urlMap: dict) -> None:
         self.urlMap.update(urlMap)
 
-    def getUrlMap(self) -> dict:
+    def get_url_map(self) -> dict:
         return self.urlMap
 
-    def initApplicationContext(self) -> None:
-        super().initApplicationContext()
-        self.registerHandlers(self.urlMap)
+    def init_application_context(self) -> None:
+        super().init_application_context()
+        self.register_handlers(self.urlMap)
 
-    def registerHandlers(self, urlMap: dict) -> None:
+    def register_handlers(self, urlMap: dict) -> None:
         if not urlMap:
-            logging.info(f"No patterns in {self.formatMappingName()}")
+            logging.info(f"No patterns in {self.format_mapping_name()}")
         else:
             for url, handler in urlMap.items():
                 # Prepend with slash if not already present.
@@ -35,12 +35,12 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
                 # Remove whitespace from handler bean name.
                 if isinstance(handler, str):
                     handler = handler.strip()
-                self.registerHandlers(url, handler)
+                self.register_handlers(url, handler)
 
             patterns = list()
-            if self.getRootHandler() is not None:
+            if self.get_root_handler() is not None:
                 patterns.append('/')
-            if self.getDefaultHandler() is not None:
+            if self.get_default_handler() is not None:
                 patterns.append('/**')
-            patterns.extend(list(self.getHandlerMap().keys()))
-            logging.debug(f"Patterns {patterns} in {self.formatMappingName()}")
+            patterns.extend(list(self.get_handler_map().keys()))
+            logging.debug(f"Patterns {patterns} in {self.format_mapping_name()}")

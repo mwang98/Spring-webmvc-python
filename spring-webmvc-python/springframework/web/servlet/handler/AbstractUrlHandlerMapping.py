@@ -198,7 +198,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
         if isinstance(urlPaths, list):
             for urlPath in urlPaths:
                 self.register_handler(urlPath, beanName)
-        else:
+        elif isinstance(urlPaths, str):
             urlPath = urlPaths
             handler = beanName
             assert urlPath, "URL path must not be null"
@@ -230,6 +230,8 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                     if self.getPatternParser() is not None:
                         self.pathPatternHandlerMap[self.getPatternParser().parse(urlPath)] = resolvedHandler
                     logging.info(f"Mapped [{urlPath}] onto {self.get_handler_description(handler)}")
+        else:
+            raise TypeError(f"{type(urlPaths)} type not supported.")
 
     def get_handler_description(self, handler: object) -> str:
         return f"'handler'" if isinstance(handler, str) else str(handler)
