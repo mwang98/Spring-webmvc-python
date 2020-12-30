@@ -15,3 +15,4 @@ class SimpleControllerHandlerAdapter(HandlerAdapter):
         if isinstance(handler, Controller):
             return handler.getLastModified(request)
         return -1
+ 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
+from springframework.core.env.Profiles import Profiles
 
 from springframework.core.env.Profiles import Profiles
 from springframework.core.env.PropertyResolver import PropertyResolver
