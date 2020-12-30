@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from env.ProfilesParser import ProfilesParser
+from springframework.core.env.ProfilesParser import ProfilesParser
 
 
 class Profiles(ABC):
