@@ -1,6 +1,7 @@
 from springframework.web.servlet import ModelAndView
 from springframework.web.servlet.HandlerAdapter import HandlerAdapter
 from springframework.web.servlet.mvc.Controller import Controller
+from springframework.web.servlet.mvc.LastModified import LastModified
 from springframework.utils.mock.inst import HttpServletResponse, HttpServletRequest
 
 
@@ -10,11 +11,11 @@ class SimpleControllerHandlerAdapter(HandlerAdapter):
 
     def handle(self, request: HttpServletRequest, response: HttpServletResponse, handler: object) -> ModelAndView:
         handler: Controller = handler
-        return handler.handleRequest(request, response)
+        return handler.handle_request(request, response)
 
     def get_last_modified(self, request: HttpServletRequest, handler: object) -> int:
-        if isinstance(handler, Controller):
+        if isinstance(handler, LastModified):
             handler: Controller = handler
-            return handler.getLastModified(request)
+            return handler.get_last_modified(request)
         return -1
  
