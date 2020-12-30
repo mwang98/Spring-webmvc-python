@@ -5,13 +5,13 @@ from springframework.utils.mock.inst import HttpServletResponse, HttpServletRequ
 
 
 class SimpleControllerHandlerAdapter(HandlerAdapter):
-    def supports(self, handler) -> bool:
+    def supports(self, handler: object) -> bool:
         return isinstance(handler, Controller)
 
-    def handle(self, request: HttpServletRequest, response: HttpServletResponse, handler) -> ModelAndView:
+    def handle(self, request: HttpServletRequest, response: HttpServletResponse, handler: object) -> ModelAndView:
         return handler.handleRequest(request, response)
 
-    def get_last_modified(self, request: HttpServletRequest, handler) -> int:
+    def get_last_modified(self, request: HttpServletRequest, handler: object) -> int:
         if isinstance(handler, Controller):
             return handler.getLastModified(request)
         return -1
