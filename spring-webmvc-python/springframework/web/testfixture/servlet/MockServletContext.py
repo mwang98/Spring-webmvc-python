@@ -7,7 +7,7 @@ from springframework.utils.mock.inst import SessionTrackingMode, \
 
 from springframework.utils.mock.inst import SessionCookieConfig as MockSessionCookieConfig
 # from springframework.web.testfixture.servlet import MockSessionCookieConfig
-from springframework.web.testfixture.servlet import MockRequestDispatcher
+from springframework.web.testfixture.servlet.MockRequestDispatcher import MockRequestDispatcher
 
 
 class MockServletContext():
@@ -42,11 +42,20 @@ class MockServletContext():
     responseCharacterEncoding: str = None
     mimeTypes = dict()
 
-    def __init__(self, resourceBasePath: str, resourceLoader=None) -> None:
-        if resourceLoader is None:
+    def __init__(self, resourceBasePath: str = None, resourceLoader=None) -> None:
+        if isinstance(resourceBasePath, str):
+            self.resourceBasePath = resourceBasePath
+            if resourceLoader is not None:
+                self.resourceLoader = resourceLoader
+            else:
+                self.resourceLoader = DefaultResourceLoader()
+        elif resourceBasePath is None:
+            self.resourceBasePath = ""
             self.resourceLoader = DefaultResourceLoader()
         else:
-            self.resourceLoader = resourceLoader
+            self.resourceBasePath = ""
+            self.resourceLoader = resourceBasePath
+
         self.register_named_dispatcher(self.defaultServletName, MockRequestDispatcher(self.defaultServletName))
 
     def get_resource_location(self, path: str) -> str:

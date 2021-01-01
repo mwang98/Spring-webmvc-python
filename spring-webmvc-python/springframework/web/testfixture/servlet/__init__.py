@@ -1,3 +1,4 @@
+from .MockServletContext import MockServletContext
 from .MockAsyncContext import MockAsyncContext
 from .MockCookie import MockCookie
 from .MockHttpServletRequest import MockHttpServletRequest
@@ -6,7 +7,6 @@ from .MockHttpSession import MockHttpSession
 from .MockPart import MockPart
 from .MockRequestDispatcher import MockRequestDispatcher
 from .MockServletConfig import MockServletConfig
-from .MockServletContext import MockServletContext
 
 __all__ = [
     "MockAsyncContext",

@@ -75,7 +75,7 @@ class InternalResourceView(AbstractUrlBasedView):
     def get_request_dispatcher(self, request, path: str):
         return request.get_request_dispatcher(path)
 
-    def use_include(self, request, response):
+    def use_include(self, request, response) -> bool:
         # TODO : WebUtils need handle
         # or WebUtils.isIncludeRequest(request)
-        return self.alwaysInclude or response.isCommitted()
+        return self.alwaysInclude or response.is_committed()
