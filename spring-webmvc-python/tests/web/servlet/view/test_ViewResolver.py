@@ -8,6 +8,7 @@ from springframework.web.servlet.view import UrlBasedViewResolver, \
     InternalResourceViewResolver, InternalResourceView
 
 
+@pytest.mark.skip()
 class TestViewResolver(TestCase):
 
     def setUp(self):
