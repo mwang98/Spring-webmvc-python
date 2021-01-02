@@ -1,9 +1,8 @@
 import logging
 # TODO: MatchableHandlerMapping, RequestMatchResult
-from sprngframework.web.servlet.handler import AbstractHandlerMapping, MatchableHandlerMapping, RequestMatchResult
+from springframework.web.servlet.handler import AbstractHandlerMapping, MatchableHandlerMapping, RequestMatchResult
 # TODO: RequestPath, ServletRequestPathUtils
 from springframework.utils.mock.inst import RequestPath, HttpServletRequest, ServletRequestPathUtils
-# TODO: HandlerExecutionChain, HandlerInterceptor
 from springframework.web.servlet import HandlerExecutionChain
 from springframework.web.servlet import HandlerInterceptorInterface
 from springframework.web.util import UrlPathHelper
@@ -35,7 +34,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
         self.lazyInitHandlers = lazyInitHandlers
 
     def get_handler_internal(self, request: HttpServletRequest) -> object:
-        lookupPath: str = self.initLookupPath(request)
+        lookupPath: str = self.init_lookup_path(request)
         handler: object = None
         if self.usesPathPatterns():
             path: RequestPath = ServletRequestPathUtils.getParsedRequestPath(request)
@@ -50,6 +49,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             if rawHandler is None:
                 rawHandler = self.getDefaultHandler()
             else:
+                assert not isinstance(rawHandler, str), "Does not support BeanName mapping"
                 if isinstance(rawHandler, str):
                     handlerName = str(rawHandler)
                     rawHandler = self.obtainApplicationContext().getBean(handlerName)
@@ -98,6 +98,9 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             handler = self.get_direct_match(lookupPath, request)
             if handler is None:
                 return handler
+            
+            #Only supports direct match currently
+            assert handler is not None, "Handler mapping only supports direct match currently."
 
             matchingPatterns = list()
             for registeredPattern in self.handlerMap.key():
@@ -172,7 +175,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
     ) -> object:
         chain = HandlerExecutionChain(rawHandler)
         chain.addInterceptor(PathExposingHandlerInterceptor(bestMatchingPattern, pathWithinMapping))
-        if not uriTemplateVariables:
+        if uriTemplateVariables:
             chain.addInterceptor(UriTemplateVariablesHandlerInterceptor(uriTemplateVariables))
         return chain
 

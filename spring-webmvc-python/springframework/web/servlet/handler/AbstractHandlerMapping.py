@@ -19,8 +19,7 @@ from springframework.web.context.request import WebRequestInterceptor
 from springframework.web.util import ServletRequestPathUtils
 from springframework.web.servlet import HandlerExecutionChain
 from springframework.web.servlet.handler import MappedInterceptor
-from springframework.web.testfixture.servlet import MockHttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse
+from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
 
 
 class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered, BeanNameAware):
@@ -163,7 +162,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
     def uses_path_patterns(self) -> bool:
         return not get_pattern_parser() is None
     
-    def get_handler(self, request: MockHttpServletRequest) -> HandlerExecutionChain:
+    def get_handler(self, request: HttpServletRequest) -> HandlerExecutionChain:
         handler = self.getHandlerInternal(request)
         if handler is None:
             handler = self.get_default_handler()
@@ -191,10 +190,10 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         return executionChain
     
     @abstractmethod
-    def get_handler_internal(self, request: MockHttpServletRequest):
+    def get_handler_internal(self, request: HttpServletRequest):
         raise NotImplementedError
 
-    def init_lookup_path(self, request: MockHttpServletRequest) -> str:
+    def init_lookup_path(self, request: HttpServletRequest) -> str:
         if self.uses_path_patterns():
             request.remove_attribute(UrlPathHelper.PATH_ATTRIBUTE)
             requestPath = ServletRequestPathUtils.get_parsed_request_path(request)
@@ -203,7 +202,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         else:
             return self.get_url_path_helper().resolve_and_cache_lookup_path(request)
 
-    def get_handler_execution_chain(self, handler: object, request: MockHttpServletRequest) -> HandlerExecutionChain:
+    def get_handler_execution_chain(self, handler: object, request: HttpServletRequest) -> HandlerExecutionChain:
         chain = handler if isinstance(handler, HandlerExecutionChain) else HandlerExecutionChain(handler)
         
         for interceptor in self.adaptedInterceptors:
@@ -222,7 +221,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         
         return isinstance(handler, CorsConfigurationSource) or self.CorsConfigurationSource is not None
 
-    def get_cors_configuration(self, handler: object, request: MockHttpServletRequest) -> CorsConfiguration:
+    def get_cors_configuration(self, handler: object, request: HttpServletRequest) -> CorsConfiguration:
         resolvedHandler = handler
         if isinstance(handler, HandlerExecutionChain):
             resolvedHandler = HandlerExecutionChain(handler).get_handler()
@@ -230,7 +229,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
             return CorsConfiguration(resolvedHandler).get_cors_configuration(request)
         return None
 
-    def get_cors_handler_execution_chain(self, request: MockHttpServletRequest,
+    def get_cors_handler_execution_chain(self, request: HttpServletRequest,
             chain: HandlerExecutionChain, config: CorsConfiguration):
         if CorsUtils.is_pre_flight_request(request):
             interceptors: [] = chain.get_interceptors()
@@ -240,7 +239,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
             return chain
 
 
-    class PreFlightHandler(MockHttpServletRequest, CorsConfiguration):
+    class PreFlightHandler(HttpRequestHandler, CorsConfiguration):
         
         config: CorsConfiguration = None
 
@@ -248,11 +247,11 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
             self.config = config
         
         @override
-        def handle_request(self, request: MockHttpServletRequest, response: MockHttpServletResponse):
+        def handle_request(self, request: HttpServletRequest, response: MockHttpServletResponse):
             corsProcessor.process_request(self.config, request, response)
         
         @override
-        def get_cors_configuration(self, request: MockHttpServletRequest) -> CorsConfiguration:
+        def get_cors_configuration(self, request: HttpServletRequest) -> CorsConfiguration:
             return self.config
 
 
@@ -264,12 +263,12 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
             self.config = config
 
         @override
-        def pre_handle(self, request: MockHttpServletRequest, response: MockHttpServletResponse,
+        def pre_handle(self, request: HttpServletRequest, response: MockHttpServletResponse,
                 handler: object) -> bool:
             # mock preHandle behavior
             return True
         
         @override
-        def get_cors_configuration(self, request: MockHttpServletRequest):
+        def get_cors_configuration(self, request: HttpServletRequest):
             return self.config
         
