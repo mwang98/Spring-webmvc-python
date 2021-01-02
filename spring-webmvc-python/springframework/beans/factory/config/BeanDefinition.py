@@ -2,6 +2,7 @@ from springframework.beans import BeanMetadataElement, MutablePropertyValues
 from springframework.cores import AttributeAccessor, ResolvableType
 from springframework.utils.mock.inst import ConfigurableBeanFactory
 
+
 class BeanDefinitionInterface(AttributeAccessor, BeanMetadataElement):
 
     SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON

@@ -65,7 +65,7 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
         matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(obtainApplicationContext(), ViewResolver).values()
         if self.viewResolvers is None:
             self.viewResolvers = list()
-            for (viewResolver in matchingBeans):
+            for viewResolver in matchingBeans:
                 if self != viewResolver:
                     self.viewResolvers.append(viewResolver)
 
@@ -75,7 +75,7 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
                 if matchingBeans.contains(vr):
                     continue
                 name = vr.getClass().getName() + i
-                obtainApplicationContext().getAutowireCapableBeanFactory().initializeBean(vr, name)
+                self.obtainApplicationContext().getAutowireCapableBeanFactory().initializeBean(vr, name)
 
         AnnotationAwareOrderComparator.sort(self.viewResolvers)
         self.cnmFactoryBean.setServletContext(servletContext)
@@ -122,6 +122,7 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
 
     def getProducibleMediaTypes(self, request) -> list:
         #TODO
+        pass
 
     def getCandidateViews(self, viewName: str, locale: Locale, requestMediaTypes: list) -> list:
         candidateViews = list()
@@ -162,8 +163,5 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
         return None
 
     NOT_ACCEPTABLE_VIEW = NotAcceptableView()
-
-
-
 
 

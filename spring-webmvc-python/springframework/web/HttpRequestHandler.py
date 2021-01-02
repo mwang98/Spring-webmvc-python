@@ -7,4 +7,3 @@ class HttpRequestHandler(ABC):
     @abstractmethod
     def handleRequest(self, request: HttpServletRequest, response: HttpServletResponse) -> None:
         pass
-    
