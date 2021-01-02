@@ -19,15 +19,15 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
     OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096
     contentType = DEFAULT_CONTENT_TYPE
-    requestContextAttribute: str = None
-    staticAttributes = dict()
-    exposePathVariables = True
-    exposeContextBeansAsAttributes = False
-    exposedContextBeanNames = set()
-    beanName: str = None
 
     def __init__(self):
         super().__init__()
+        self.staticAttributes = dict()
+        self.exposedContextBeanNames = set()
+        self.requestContextAttribute: str = None
+        self.exposePathVariables = True
+        self.exposeContextBeansAsAttributes = False
+        self.beanName: str = None
 
     def set_content_type(self, contentType: str = None) -> None:
         self.contentType = contentType
@@ -45,16 +45,20 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
         if propString is not None:
             token_list = propString.split(',')
             for token in token_list:
+                if not token:
+                    continue
                 if "=" not in token:
                     raise ValueError("Expected '=' in attributes CSV string '" + propString + "'")
                 if token.index("=") >= (len(token) - 2):
                     raise ValueError(
                         "At least 2 characters ([]) required in attributes CSV string '" + propString + "'")
                 name, value = token.split("=")
+                value = value[1:-1]
                 self.add_static_attribute(name, value)
 
     def set_attributes(self, attributes: dict) -> None:
-        self.staticAttributes.update(attributes)
+        if attributes is not None:
+            self.staticAttributes.update(attributes)
 
     def set_attributes_map(self, attributes: dict = None) -> None:
         if attributes is not None:
@@ -70,6 +74,9 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
     def get_static_attributes(self) -> dict:
         return self.staticAttributes.copy()
+
+    def set_expose_path_variables(self, exposePathVariables: bool) -> None:
+        self.exposePathVariables = exposePathVariables
 
     def is_expose_path_variables(self) -> bool:
         return self.exposePathVariables
@@ -92,7 +99,7 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
             self.format_view_name() +
             ", model " +
             str((dict() if model is None else model)) +
-            str((", static attributes " + self.staticAttributes if self.staticAttributes else ""))
+            f", static attributes {self.staticAttributes if self.staticAttributes else ''}"
         )
         mergedModel = self.create_merged_output_model(model, request, response)
         self.prepare_response(request, response)

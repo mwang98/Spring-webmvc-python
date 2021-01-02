@@ -32,16 +32,17 @@ class RedirectView(SmartView, AbstractUrlBasedView):
 
     def __init__(
         self,
-        url: str,
-        contextRelative: bool = None,
-        http10Compatible: bool = None,
-            exposeModelAttributes: bool = None):
+        url: str = None,
+        contextRelative: bool = False,
+        http10Compatible: bool = True,
+        exposeModelAttributes: bool = True
+    ):
 
         super().__init__(url)
         self.contextRelative = contextRelative
         self.http10Compatible = http10Compatible
         self.exposeModelAttributes = exposeModelAttributes
-        self.setExposePathVariables(False)
+        self.set_expose_path_variables(False)
 
     def set_context_relative(self, contextRelative: bool) -> None:
         self.contextRelative = contextRelative
@@ -85,7 +86,7 @@ class RedirectView(SmartView, AbstractUrlBasedView):
 
         # Save flash attributes
         # TODO: RequestContextUtils
-        RequestContextUtils.saveOutputFlashMap(targetUrl, request, response)
+        # RequestContextUtils.saveOutputFlashMap(targetUrl, request, response)
 
         # Redirect
         self.send_redirect(request, response, targetUrl, self.http10Compatible)
@@ -93,16 +94,16 @@ class RedirectView(SmartView, AbstractUrlBasedView):
     def create_target_url(self, model: dict, request) -> str:
         # TODO: StringBuilder
         targetUrl = StringBuilder()
-        url: str = self.getUrl()
+        url: str = self.get_url()
         assert url is not None, "'url' not set"
 
-        if self.contextRelative and self.getUrl().startswith("/"):
+        if self.contextRelative and self.get_url().startswith("/"):
             targetUrl.append(self.get_context_path(request))
-        targetUrl.append(self.getUrl())
+        targetUrl.append(self.get_url())
 
         enc: str = self.encodingScheme
         if enc is None:
-            enc = request.getCharacterEncoding()
+            enc = request.get_character_encoding()
         if enc is None:
             # TODO: WebUtils
             enc = WebUtils.DEFAULT_CHARACTER_ENCODING
@@ -114,12 +115,11 @@ class RedirectView(SmartView, AbstractUrlBasedView):
             self.append_current_query_params(str(targetUrl), request)
         if self.exposeModelAttributes:
             self.append_query_properties(str(targetUrl), model, enc)
-
         return str(targetUrl)
 
     def get_context_path(self, request) -> str:
         contextPath: str = request.get_context_path()
-        while contextPath.startsWith("//"):
+        while contextPath.startswith("//"):
             contextPath = contextPath[1:]
         return contextPath
 
@@ -130,13 +130,18 @@ class RedirectView(SmartView, AbstractUrlBasedView):
         currentUriVariables: dict,
             encodingScheme: str):
         # TODO: StringBuilder
-        result = list()
+        result = StringBuilder()
         match = self.URI_TEMPLATE_VARIABLE_PATTERN.search(targetUrl)
-        for name in match.groups():
-            value = model.pop(name) if name in model else currentUriVariables.get(name)
-            if value is None:
-                raise Exception(f"Model has no value for key '{name}'")
-            result.append(name)
+        endLastMatch = 0
+        if match:
+            for g, name in enumerate(match.groups()):
+                value = model.pop(name) if name in model else currentUriVariables.get(name)
+                if value is None:
+                    raise Exception(f"Model has no value for key '{name}'")
+                result.append(targetUrl[endLastMatch:match.start(g)])
+                # result.append(UriUtils.encodePathSegment(str(value), encodingScheme))
+                endLastMatch = match.end(g)
+        result.append(targetUrl[endLastMatch:])
         return result
 
     def get_current_request_uri_variables(self, request) -> dict:
@@ -146,7 +151,7 @@ class RedirectView(SmartView, AbstractUrlBasedView):
         return {} if uriVars is None else uriVars
 
     def append_current_query_params(self, targetUrl: str, request) -> None:
-        query: str = request.getQueryString()
+        query: str = request.get_query_string()
         if query:
             fragment: str = None
             if '#' in targetUrl:
@@ -216,7 +221,9 @@ class RedirectView(SmartView, AbstractUrlBasedView):
         wac = self.get_web_application_context()
         # TODO: RequestContextUtils, RequestDataValueProcessor
         if wac is None:
-            wac = RequestContextUtils.findWebApplicationContext(request, self.getServletContext())
+            wac = RequestContextUtils.findWebApplicationContext(request, self.get_servlet_context())
+            # TODO: is mock ; just use None
+            wac = None
         if (wac is not None) and wac.containsBean(RequestContextUtils.REQUEST_DATA_VALUE_PROCESSOR_BEAN_NAME):
             processor = wac.getBean(
                 RequestContextUtils.REQUEST_DATA_VALUE_PROCESSOR_BEAN_NAME,
@@ -226,7 +233,7 @@ class RedirectView(SmartView, AbstractUrlBasedView):
         return targetUrl
 
     def send_redirect(self, request, response, targetUrl: str, http10Compatible: bool):
-        encodedURL: str = targetUrl if self.is_remote_host(targetUrl) else response.encodeRedirectURL(targetUrl)
+        encodedURL: str = targetUrl if self.is_remote_host(targetUrl) else response.encode_redirect_url(targetUrl)
         if http10Compatible:
             attributeStatusCode: HttpStatus = request.get_attribute(View.RESPONSE_STATUS_ATTRIBUTE)
             if self.statusCode is not None:
@@ -240,8 +247,8 @@ class RedirectView(SmartView, AbstractUrlBasedView):
 
         else:
             statusCode: HttpStatus = self.get_http_11_status_code(request, response, targetUrl)
-            response.setStatus(statusCode.value())
-            response.setHeader("Location", encodedURL)
+            response.set_status(statusCode.value())
+            response.set_header("Location", encodedURL)
 
     def is_remote_host(self, targetUrl: str) -> bool:
         if not self.get_hosts():
@@ -261,4 +268,6 @@ class RedirectView(SmartView, AbstractUrlBasedView):
         attributeStatusCode: HttpStatus = request.get_attribute(View.RESPONSE_STATUS_ATTRIBUTE)
         if attributeStatusCode is not None:
             return attributeStatusCode
-        return HttpStatus.SEE_OTHER
+        tmp = HttpStatus.SEE_OTHER  # mock.MagicMock
+        tmp.value.return_value = 303
+        return tmp

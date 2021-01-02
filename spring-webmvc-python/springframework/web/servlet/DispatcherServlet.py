@@ -1,4 +1,12 @@
-class DispatcherServlet(object):
+
+class DispatcherServletMeta(type):
+
+    def __init__(cls, *args, **kwargs):
+        cls.OUTPUT_FLASH_MAP_ATTRIBUTE = cls.__class__.__name__ + ".OUTPUT_FLASH_MAP"
+        cls.FLASH_MAP_MANAGER_ATTRIBUTE = cls.__class__.__name__ + ".FLASH_MAP_MANAGER"
+
+
+class DispatcherServlet(metaclass=DispatcherServletMeta):
     """docstring for DispatcherServlet"""
 
     def __init__(self, arg):

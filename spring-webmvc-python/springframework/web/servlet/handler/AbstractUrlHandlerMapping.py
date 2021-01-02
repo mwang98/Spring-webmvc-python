@@ -12,10 +12,13 @@ from springframework.web.util import UrlPathHelper
 class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping):
 
     rootHandler: object = None
-    useTrailingSlashMatch: bool = False
-    lazyInitHandlers: bool = False
-    handlerMap = dict()
-    pathPatternHandlerMap: dict()
+
+    def __init__(self):
+        super().__init__(self)
+        self.useTrailingSlashMatch: bool = False
+        self.lazyInitHandlers: bool = False
+        self.handlerMap = dict()
+        self.pathPatternHandlerMap: dict()
 
     def set_root_handler(self, rootHandler: object) -> None:
         self.rootHandler = rootHandler

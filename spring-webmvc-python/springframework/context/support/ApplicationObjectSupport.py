@@ -6,6 +6,7 @@ from springframework.context.support.MessageSourceAccessor import MessageSourceA
 
 
 class ApplicationObjectSupport(ApplicationContextAware, ABC):
+
     def __init__(self):
         super().__init__()
         self._application_context: ApplicationContext = None
@@ -15,7 +16,7 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
         if context is None and not self.is_context_required():
             self._application_context, self._message_source_accessor = None, None
         elif self._application_context is None:
-            if not isinstance(self.required_context_class(), context):
+            if not isinstance(context, self.required_context_class()):
                 raise ValueError(
                     "Invalid application context: needs to be of type [" + self.required_context_class().__name__ + "]")
             self._application_context = context
@@ -30,7 +31,7 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
         return False
 
     def required_context_class(self):
-        return ApplicationContext.__class__
+        return ApplicationContext
 
     def init_application_context(self, context: ApplicationContext = None) -> None:
         if context is not None:
