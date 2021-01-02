@@ -46,3 +46,4 @@ AnnotationAwareOrderComparator = mock.MagicMock(name="AnnotationAwareOrderCompar
 RequestContextHolder = mock.MagicMock(name="RequestContextHolder")
 ServletWebRequest = mock.MagicMock(name="ServletWebRequest")
 RequestAttributes = mock.MagicMock(name="RequestAttributes")
+ServletRequestPathUtils = mock.MagicMock(name="ServletRequestPathUtils")

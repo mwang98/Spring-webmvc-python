@@ -1,15 +1,14 @@
 import logging
-# TODO: MatchableHandlerMapping, RequestMatchResult
-from springframework.web.servlet.handler import AbstractHandlerMapping, MatchableHandlerMapping, RequestMatchResult
-# TODO: RequestPath, ServletRequestPathUtils
-from springframework.utils.mock.inst import HttpServletRequest
+from springframework.web.servlet.handler.AbstractHandlerMapping import AbstractHandlerMapping
+from springframework.web.servlet.handler.MatchableHandlerMapping import MatchableHandlerMapping
+from springframework.web.servlet.handler.RequestMatchResult import RequestMatchResult
+from springframework.utils.mock.inst import HttpServletRequest, ServletRequestPathUtils
 from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet import HandlerInterceptorInterface
 from springframework.web.util import UrlPathHelper
 
 
-class AbstractUrlHandlerMapping(AbstractHandlerMapping.AbstractHandlerMapping, 
-        MatchableHandlerMapping.MatchableHandlerMapping):
+class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping):
 
     rootHandler: object = None
     useTrailingSlashMatch: bool = False
