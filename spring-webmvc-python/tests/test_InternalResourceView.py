@@ -5,6 +5,7 @@ from springframework.web.testfixture.servlet import MockHttpServletRequest as Ht
 from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
 from springframework.web.testfixture.servlet import MockServletContext, MockRequestDispatcher
 from springframework.web.servlet.view import InternalResourceView
+from springframework.web.util.WebUtils import WebUtils
 
 
 class TestInternalResourceView(TestCase):
@@ -29,6 +30,14 @@ class TestInternalResourceView(TestCase):
         self.skipTest("TODO")
         # self.fail()
 
+###########
+# DADA ADD
+###########
+
+    def test_reject_null_url(self):
+        with self.assertRaises(Exception):
+            self.view.after_properties_set()
+
     def test_forward(self):
         request = HttpServletRequest("GET", "/myservlet/handler.do")
         request.set_context_path("/mycontext")
@@ -47,10 +56,13 @@ class TestInternalResourceView(TestCase):
             msg = f"Values for model key '{key}' must match"
             self.assertEqual(request.get_attribute(key), value, msg=msg)
 
-    @pytest.mark.skip("later")
     def test_always_include(self):
-        self.assertIsNone(self.request.getAttribute(View.PATH_VARIABLES))
-        # self.assertEqual(self.request.get_request_dispatcher(self.url)), MockRequestDispatcher(self.url))
+        self.assertIsNone(self.request.get_attribute(View.PATH_VARIABLES))
+        # DADA modify to compare resource :)
+        self.assertEqual(
+            self.request.get_request_dispatcher(self.url).resource,
+            MockRequestDispatcher(self.url).resource
+        )
 
         self.view.set_url(self.url)
         self.view.set_always_include(True)
@@ -58,5 +70,26 @@ class TestInternalResourceView(TestCase):
         # Can now try multiple tests
         self.view.render(self.model, self.request, self.response)
         self.assertEqual(self.response.get_included_url(), self.url)
-        for key, value in self.model:
+        for key, value in self.model.items():
+            self.request.set_attribute(key, value)
+
+    def test_include_attribute(self):
+        self.response = HttpServletResponse()
+        self.assertIsNone(self.request.get_attribute(View.PATH_VARIABLES))
+        self.assertIsNone(self.request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE))
+        # DADA modify to compare resource :)
+        self.assertEqual(
+            self.request.get_request_dispatcher(self.url).resource,
+            MockRequestDispatcher(self.url).resource
+        )
+
+        self.response.set_committed(True)
+        self.view.set_url(self.url)
+        import logging
+        logging.error(self.response.includedUrls)
+
+        # Can now try multiple tests
+        self.view.render(self.model, self.request, self.response)
+        self.assertEqual(self.response.get_included_url(), self.url)
+        for key, value in self.model.items():
             self.request.set_attribute(key, value)
