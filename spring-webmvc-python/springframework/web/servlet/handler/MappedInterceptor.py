@@ -1,4 +1,5 @@
-from springframework.web.servlet import HandlerInterceptor
+from springframework.web.servlet.HandlerInterceptor import HandlerInterceptorInterface as HandlerInterceptor
+
 
 class MappedInterceptor(HandlerInterceptor):
 

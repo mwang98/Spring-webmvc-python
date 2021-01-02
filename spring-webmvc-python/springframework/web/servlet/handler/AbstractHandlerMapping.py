@@ -1,11 +1,12 @@
 import logging
-from abc import ABC, abstractmethod
-from springframework.web.context.support import WebApplicationContext
-from springframework.web.servlet import HandlerMapping
+from abc import ABC, abstractmethod, ABCMeta
+from springframework.web.context.support import WebApplicationObjectSupport
+from springframework.web.servlet import HandlerMappingInterface as HandlerMapping
 from springframework.core import Ordered
 from springframework.beans.factory import BeanNameAware
 
 from springframework.web.util import UrlPathHelper
+from springframework.web.util.pattern import PathPatternParser
 from springframework.util import PathMatcher
 from springframework.util import AntPathMatcher
 from springframework.web.cors import CorsConfiguration
@@ -14,16 +15,17 @@ from springframework.web.cors import CorsProcessor
 from springframework.web.cors import DefaultCorsProcessor
 from springframework.web.cors import UrlBasedCorsConfigurationSource
 from springframework.web.cors import CorsUtils
-from springframework.web.servlet import HandlerInterceptor
+from springframework.web.servlet import HandlerInterceptorInterface as HandlerInterceptor
 from springframework.web.context.request import WebRequestInterceptor
 from springframework.web.util import ServletRequestPathUtils
-from springframework.web.servlet import HandlerExecutionChain
+from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet.handler import MappedInterceptor
 from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
+from springframework.web import HttpRequestHandler
 
 
-class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered, BeanNameAware):
-    defaultHandler: obejct = None
+class AbstractHandlerMapping(WebApplicationObjectSupport, HandlerMapping, Ordered, BeanNameAware, ABC):
+    defaultHandler = None
     patternParser: PathPatternParser = None
     urlPathHelper: UrlPathHelper = UrlPathHelper()
     pathMatcher: PathMatcher = PathMatcher()
@@ -160,10 +162,10 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         pass
 
     def uses_path_patterns(self) -> bool:
-        return not get_pattern_parser() is None
+        return not self.get_pattern_parser() is None
     
     def get_handler(self, request: HttpServletRequest) -> HandlerExecutionChain:
-        handler = self.getHandlerInternal(request)
+        handler = self.get_handler_internal(request)
         if handler is None:
             handler = self.get_default_handler()
         if handler is None:
@@ -219,7 +221,7 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         if isinstance(handler, HandlerExecutionChain):
             handler = handler.get_handler()
         
-        return isinstance(handler, CorsConfigurationSource) or self.CorsConfigurationSource is not None
+        return isinstance(handler, CorsConfigurationSource) or self.corsConfigurationSource is not None
 
     def get_cors_configuration(self, handler: object, request: HttpServletRequest) -> CorsConfiguration:
         resolvedHandler = handler
@@ -246,29 +248,25 @@ class AbstractHandlerMapping(ABC, WebApplicationContext, HandlerMapping, Ordered
         def __init__(self, config: CorsConfiguration):
             self.config = config
         
-        @override
-        def handle_request(self, request: HttpServletRequest, response: MockHttpServletResponse):
+        def handle_request(self, request: HttpServletRequest, response: HttpServletResponse):
             corsProcessor.process_request(self.config, request, response)
         
-        @override
         def get_cors_configuration(self, request: HttpServletRequest) -> CorsConfiguration:
             return self.config
 
 
     class CorsInterceptor(HandlerInterceptor, CorsConfigurationSource):
         
-        config: CorsConfiguration
+        config: CorsConfiguration = None
 
         def __init__(self, config: CorsConfiguration):
             self.config = config
 
-        @override
-        def pre_handle(self, request: HttpServletRequest, response: MockHttpServletResponse,
+        def pre_handle(self, request: HttpServletRequest, response: HttpServletResponse,
                 handler: object) -> bool:
             # mock preHandle behavior
             return True
         
-        @override
         def get_cors_configuration(self, request: HttpServletRequest):
             return self.config
         

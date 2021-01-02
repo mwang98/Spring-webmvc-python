@@ -1,4 +1,4 @@
-from springframework.util import PathMatcher
+from springframework.util.PathMatcher import PathMatcher
 
 class AntPathMatcher(PathMatcher):
 

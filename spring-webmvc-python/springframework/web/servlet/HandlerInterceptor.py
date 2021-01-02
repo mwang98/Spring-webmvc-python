@@ -6,10 +6,10 @@ from abc import ABC
 class HandlerInterceptorInterface(ABC):
 
     def pre_handle(self, request, response, handler) -> bool:
-        raise NotImplementedError
+        pass
 
     def post_handle(self, request, response, handler, modelAndView) -> None:
-        raise NotImplementedError
+        pass
 
     def after_completion(self, request, response, handler, exception) -> None:
-        raise NotImplementedError
+        pass

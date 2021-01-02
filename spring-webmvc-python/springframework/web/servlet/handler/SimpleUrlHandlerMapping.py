@@ -35,7 +35,7 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
                 # Remove whitespace from handler bean name.
                 if isinstance(handler, str):
                     handler = handler.strip()
-                self.register_handlers(url, handler)
+                self.register_handler(url, handler)
 
             patterns = list()
             if self.get_root_handler() is not None:

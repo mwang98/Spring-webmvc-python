@@ -1,8 +1,9 @@
 from abc import ABC, abstractclassmethod
-from springframework.web.testfixture.servlet import MockHttpServletRequest
+from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
 
 
-class CorUtils():
+class CorsUtils():
 
-    def is_pre_flight_request(self, httpServletRequest: MockHttpServletRequest) -> bool:
+    @classmethod
+    def is_pre_flight_request(cls, httpServletRequest: HttpServletRequest) -> bool:
         return False
