@@ -3,49 +3,44 @@ from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
 import time
+from unittest import mock
 
 from springframework.web.util.WebUtils import WebUtils
 from springframework.web.testfixture.servlet.MockCookie import Cookie, MockCookie
+from springframework.web.testfixture.servlet.HeaderValueHolder import HeaderValueHolder
 from springframework.utils.mock.inst import ByteArrayOutputStream, ResponseServletOutputStream, \
-	HttpHeaders, ServletOutputStream, MediaType, Locale, HeaderValueHolder
-
-# TODO : implement HeaderValueHolder
+	HttpHeaders, ServletOutputStream, MediaType, Locale
 
 
 class MockHttpServletResponse:
 
-	CHARSET_PREFIX = "charset="
-	DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
-	GMT = pytz.timezone('GMT')
-
-	# ServletResponse properties
-	outputStreamAccessAllowed = True
-	writerAccessAllowed = True
-	characterEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING
-	charset = False
-	content = ByteArrayOutputStream()
-	outputStream = ResponseServletOutputStream()
-	# private PrintWriter writer
-	contentLength = 0
-
-
-	contentType: str = None
-	bufferSize = 4096
-	committed: bool = None
-	locale = Locale.getDefault()
-
-
-
-	# HttpServletResponse properties
-	cookies = []
-	#private final Map<String, HeaderValueHolder> headers = new LinkedCaseInsensitiveMap<>();
-	status = 200#HttpServletResponse.SC_OK
-	errorMessage: str = None
-	forwardedUrl: str = None
-	includedUrls = []
-
 	def __init__(self):
-		pass
+		self.CHARSET_PREFIX = "charset="
+		self.DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
+		self.GMT = pytz.timezone('GMT')
+
+		# ServletResponse properties
+		self.outputStreamAccessAllowed = True
+		self.writerAccessAllowed = True
+		self.characterEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING
+		self.charset = False
+		self.content = ByteArrayOutputStream()
+		self.outputStream = ResponseServletOutputStream()
+		self.writer = None  # private PrintWriter writer
+		self.contentLength = 0
+
+		self.contentType: str = None
+		self.bufferSize = 4096
+		self.committed: bool = None
+		self.locale = Locale.getDefault()
+
+		# HttpServletResponse properties
+		self.cookies = []
+		self.headers = dict()
+		self.status = 200  # HttpServletResponse.SC_OK
+		self.errorMessage: str = None
+		self.forwardedUrl: str = None
+		self.includedUrls = []
 
 	# ServletResponse interface
 	def set_output_stream_access_allowed(self, outputStreamAccessAllowed: bool) -> None:
@@ -267,29 +262,29 @@ class MockHttpServletResponse:
 
 	def get_header(self, name: str) -> str:
 		header = self.headers.get(name)
-		if header != None:
-			return header.getStringValues()
+		if header is not None:
+			return header.get_string_value()
 		else:
 			return None
 
 	def get_headers(self, name: str) -> []:
 		header = self.headers.get(name)
 		if header != None:
-			return header.getStringValues()
+			return header.get_string_values()
 		else:
 			return []
 
 	def get_header_value(self, name: str):
 		header = self.headers.get(name)
 		if header != None:
-			return header.getValue()
+			return header.get_value()
 		else:
 			return None
 
 	def get_header_values(self, name: str) -> []:
 		header = self.headers.get(name)
 		if header != None:
-			return header.getValues()
+			return header.get_values()
 		else:
 			return []
 
@@ -314,7 +309,7 @@ class MockHttpServletResponse:
 		assert not self.is_committed(), "Cannot set error status - response is already committed"
 		assert url, "Redirect URL must not be null"
 		self.set_header(HttpHeaders.LOCATION, url)
-		self.set_status(302)#HttpServletResponse.SC_MOVED_TEMPORARILY
+		self.set_status(302)  # HttpServletResponse.SC_MOVED_TEMPORARILY
 		self.set_committed(True)
 
 	def get_redirected_url(self) -> str:
@@ -328,7 +323,7 @@ class MockHttpServletResponse:
 
 	def get_date_header(self, name: str) -> int:
 		headerValue = self.get_header(name)
-		if headerValue == None:
+		if headerValue is None:
 			return -1
 		try:
 			return self.new_date_format().parse(self.get_header(name)).getTime()
@@ -369,7 +364,9 @@ class MockHttpServletResponse:
 		self.do_add_header_value(name, value, replaceHeader);
 
 	def set_special_header(self, name: str, value, replaceHeader: bool) -> bool:
-		if HttpHeaders.CONTENT_TYPE.equalsIgnoreCase(name):
+		if isinstance(HttpHeaders, mock.MagicMock):
+			return False
+		elif HttpHeaders.CONTENT_TYPE.equalsIgnoreCase(name):
 			self.set_content_type(str(value))
 			return True
 		elif HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(name):
@@ -393,14 +390,16 @@ class MockHttpServletResponse:
 		else:
 			return False
 
-	def do_add_header_value(self, name: str, value, replace: bool) -> None:
+	def do_add_header_value(self, name: str, value: object, replace: bool) -> None:
 		assert value, "Header value must not be null"
-		header = self.headers.computeIfAbsent(name, HeaderValueHolder())
-		if replace:
-			header.setValue(value)
-		else:
-			header.addValue(value)
 
+		if name not in self.headers:
+			self.headers[name] = HeaderValueHolder(name)
+		
+		if replace:
+			self.headers[name].set_value(value)
+		else:
+			self.headers[name].add_value(value)
 
 	def set_cookie(self, cookie: Cookie) -> None:
 		assert cookie, "Cookie must not be null"
@@ -408,11 +407,7 @@ class MockHttpServletResponse:
 		self.cookies.append(cookie)
 		self.do_add_header_value(HttpHeaders.SET_COOKIE, self.get_cookie_header(cookie), True)
 
-	def set_status(self, status: int) -> None:
-		if not self.is_committed():
-			self.status = status
-
-	def set_status(self, status: int, errorMessage: str) -> None:
+	def set_status(self, status: int, errorMessage: str = None) -> None:
 		if not self.is_committed():
 			self.status = status
 			self.errorMessage = errorMessage
