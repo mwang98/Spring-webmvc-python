@@ -6,3 +6,4 @@ HttpServletResponseWrapper = type("HttpServletResponseWrapper", (mock.MagicMock,
 JstlView = type("JstlView", (mock.MagicMock,), {})
 ServletRequestWrapper = type("ServletRequestWrapper", (mock.MagicMock,), {})
 AsyncHandlerInterceptor = type("AsyncHandlerInterceptor", (mock.MagicMock,), {})
+Servlet = type("Servlet", (mock.MagicMock,), {})

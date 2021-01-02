@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
 from springframework.utils.mock.inst import HttpServletRequest
 
 
@@ -15,11 +15,16 @@ class HandlerMappingInterfaceMeta(type):
         cls.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE: str = cls.__name__ + ".matrixVariables"
 
 
-class HandlerMappingInterface(ABC, metaclass=HandlerMappingInterfaceMeta):
+# https://stackoverflow.com/questions/57349105/python-abc-inheritance-with-specified-metaclass
+class CombinedMeta(HandlerMappingInterfaceMeta, ABCMeta):
+    pass
 
-    def usesPathPatterns(self) -> bool:
+
+class HandlerMappingInterface(ABC, metaclass=CombinedMeta):
+
+    def uses_path_patterns(self) -> bool:
         return False
 
     @abstractmethod
-    def getHandler(self, request: HttpServletRequest):
+    def get_handler(self, request: HttpServletRequest):
         raise NotImplementedError

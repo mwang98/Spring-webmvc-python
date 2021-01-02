@@ -1,15 +1,14 @@
 from abc import ABC
-# from springframework.web.method import HandlerMethod
 
 
 # dont use abstractmethod cause override is not neccessary
-class HandlerInterceptorInterface(ABC):
+class WebRequestInterceptorInterface(ABC):
 
     def pre_handle(self, request, response, handler) -> bool:
-        pass
+        raise NotImplementedError
 
     def post_handle(self, request, response, handler, modelAndView) -> None:
-        pass
+        raise NotImplementedError
 
     def after_completion(self, request, response, handler, exception) -> None:
-        pass
+        raise NotImplementedError

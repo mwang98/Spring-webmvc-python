@@ -8,10 +8,62 @@ class DispatcherServletMeta(type):
 
 class DispatcherServlet(metaclass=DispatcherServletMeta):
     """docstring for DispatcherServlet"""
+    contextClass = None
+    config = None
+    webApplicationContext = None
 
-    def __init__(self, arg):
+    def __init__(self):
         super(DispatcherServlet, self).__init__()
-        self.arg = arg
+        #self.arg = arg
+
+    def init(self, config):
+        self.config = config
+
+        '''
+        PropertyValues   pvs = new
+        ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
+        if (!pvs.isEmpty()) {
+        try {
+        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
+        ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
+        bw.registerCustomEditor(Resource.
+
+        class , new ResourceEditor(resourceLoader, getEnvironment()));
+        initBeanWrapper(bw);
+        bw.setPropertyValues(pvs, true);
+        }
+        catch (BeansException ex) {
+        if (logger.isErrorEnabled()) {
+
+        logger.error("Failed to set bean properties on servlet '" + getServletName() + "'", ex);
+        '''
+        self.init_servlet_bean()
+
+    def init_servlet_bean(self):
+        '''
+        getServletContext().log("Initializing Spring " + getClass().getSimpleName() + " '" + getServletName() + "'");
+        if (logger.isInfoEnabled()) {
+        logger.info("Initializing Servlet '" + getServletName() + "'");
+        }
+        long
+        startTime = System.currentTimeMillis();
+        '''
+
+        self.webApplicationContext = self.init_web_application_context()
+
+    def init_web_application_context(self):
+        context=None
+        self.on_refresh()
+        return 1
+
+    def on_refresh(self, context):
+        self.init_strategies(context)
+
+    def init_strategies(self, context):
+        raise NotImplementedError
+
+    def set_context_class(self, contextClass):
+        self.contextClass = contextClass
 
     def do_service(self, request, response):
         self.do_dispatch(request, response)

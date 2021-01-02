@@ -1,8 +1,31 @@
 import logging
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
+from springframework.web.context.support import WebApplicationObjectSupport
+from springframework.web.servlet import HandlerMappingInterface as HandlerMapping
+from springframework.core import Ordered
+from springframework.beans.factory import BeanNameAware
 
-class AbstractHandlerMapping(ABC):
-    defaultHandler: obejct = None
+from springframework.web.util import UrlPathHelper
+from springframework.web.util.pattern import PathPatternParser
+from springframework.util import PathMatcher
+from springframework.util import AntPathMatcher
+from springframework.web.cors import CorsConfiguration
+from springframework.web.cors import CorsConfigurationSource
+from springframework.web.cors import CorsProcessor
+from springframework.web.cors import DefaultCorsProcessor
+from springframework.web.cors import UrlBasedCorsConfigurationSource
+from springframework.web.cors import CorsUtils
+from springframework.web.servlet import HandlerInterceptorInterface as HandlerInterceptor
+from springframework.web.context.request import WebRequestInterceptor
+from springframework.web.util import ServletRequestPathUtils
+from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
+from springframework.web.servlet.handler import MappedInterceptor
+from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
+from springframework.web import HttpRequestHandler
+
+
+class AbstractHandlerMapping(WebApplicationObjectSupport, HandlerMapping, Ordered, BeanNameAware, ABC):
+    defaultHandler = None
     patternParser: PathPatternParser = None
     urlPathHelper: UrlPathHelper = UrlPathHelper()
     pathMatcher: PathMatcher = PathMatcher()
@@ -36,9 +59,9 @@ class AbstractHandlerMapping(ABC):
             self.corsConfigurationSource.set_url_decode(urlDecode)
     
     def set_remove_semicolon_content(self, removeSemicolonContent: bool) -> None:
-        self.urlPathHelper.set_remove_semicolon_content(urlDecode)
+        self.urlPathHelper.set_remove_semicolon_content(removeSemicolonContent)
         if isinstance(self.corsConfigurationSource, UrlBasedCorsConfigurationSource):
-            self.corsConfigurationSource.set_remove_semicolon_content(urlDecode)
+            self.corsConfigurationSource.set_remove_semicolon_content(removeSemicolonContent)
     
     def set_url_path_helper(self, urlPathHelper: UrlPathHelper) -> None:
         assert urlPathHelper, "UrlPathHelper must not be null"
@@ -50,7 +73,7 @@ class AbstractHandlerMapping(ABC):
         return self.urlPathHelper
     
     def set_path_matcher(self, pathMatcher: PathMatcher) -> None:
-        assert pathMatcher, "pathMatcher must not be null"\
+        assert pathMatcher, "pathMatcher must not be null"
         if isinstance(self.corsConfigurationSource, UrlBasedCorsConfigurationSource):
             self.corsConfigurationSource.set_path_matcher(pathMatcher)
     
@@ -61,8 +84,8 @@ class AbstractHandlerMapping(ABC):
         for interceptor in interceptors:
             self.interceptors.append(interceptor)
 
-    def set_cors_configurations(self, corsConfigurations: list) -> None:
-        if len(corsConfigurations]) == 0:
+    def set_cors_configurations(self, corsConfigurations: dict) -> None:
+        if len(corsConfigurations) == 0:
             self.corsConfigurationSource = None
             return
         source = None
@@ -126,9 +149,9 @@ class AbstractHandlerMapping(ABC):
     
     def adapted_interceptor(self, interceptor: object) -> HandlerInterceptor:
         if isinstance(interceptor, HandlerInterceptor):
-            return interceptor: HandlerInterceptor
+            return HandlerInterceptor(interceptor)
         elif isinstance(interceptor, WebRequestInterceptor):
-            return WebRequestHandlerInterceptorAdapter(interceptor)
+            return interceptor
         else:
             raise ValueError(f"Interceptor type not supported: {type(interceptor).__name__}")
 
@@ -139,10 +162,10 @@ class AbstractHandlerMapping(ABC):
         pass
 
     def uses_path_patterns(self) -> bool:
-        return not get_pattern_parser() is None
+        return not self.get_pattern_parser() is None
     
     def get_handler(self, request: HttpServletRequest) -> HandlerExecutionChain:
-        handler = self.getHandlerInternal(request)
+        handler = self.get_handler_internal(request)
         if handler is None:
             handler = self.get_default_handler()
         if handler is None:
@@ -152,7 +175,7 @@ class AbstractHandlerMapping(ABC):
             handlerName = handler
             handler = self.obtain_application_context().get_bean(handlerName)
         
-        executionChain = slef.get_handler_execution_chain(handler, request)
+        executionChain = self.get_handler_execution_chain(handler, request)
 
         if self.has_cors_configuration_source(request) or CorsUtils.is_pre_flight_request(request):
             config = self.get_cors_configuration(handler, request)
@@ -185,7 +208,7 @@ class AbstractHandlerMapping(ABC):
         chain = handler if isinstance(handler, HandlerExecutionChain) else HandlerExecutionChain(handler)
         
         for interceptor in self.adaptedInterceptors:
-            if isintance(interceptor, MappedInterceptor):
+            if isinstance(interceptor, MappedInterceptor):
                 mappedInterceptor: MappedInterceptor = interceptor
                 if(mappedInterceptor.matches(request)):
                     chain.add_interceptor(mappedInterceptor.get_interceptor())
@@ -198,7 +221,52 @@ class AbstractHandlerMapping(ABC):
         if isinstance(handler, HandlerExecutionChain):
             handler = handler.get_handler()
         
-        return isinstnace(handler, CorsConfigurationSource) or self.CorsConfigurationSource is not None
+        return isinstance(handler, CorsConfigurationSource) or self.corsConfigurationSource is not None
 
-    def get_cors_configuration(self, handler: object, request: HttpServletRequest):
+    def get_cors_configuration(self, handler: object, request: HttpServletRequest) -> CorsConfiguration:
+        resolvedHandler = handler
+        if isinstance(handler, HandlerExecutionChain):
+            resolvedHandler = HandlerExecutionChain(handler).get_handler()
+        if isinstance(handler, CorsConfigurationSource):
+            return CorsConfiguration(resolvedHandler).get_cors_configuration(request)
+        return None
+
+    def get_cors_handler_execution_chain(self, request: HttpServletRequest,
+            chain: HandlerExecutionChain, config: CorsConfiguration):
+        if CorsUtils.is_pre_flight_request(request):
+            interceptors: [] = chain.get_interceptors()
+            return HandlerExecutionChain(PreFlightHandler(config), interceptors)
+        else:
+            chain.add_interceptor(0, CorsInterceptor(config))
+            return chain
+
+
+    class PreFlightHandler(HttpRequestHandler, CorsConfiguration):
+        
+        config: CorsConfiguration = None
+
+        def __init__(self, config: CorsConfiguration):
+            self.config = config
+        
+        def handle_request(self, request: HttpServletRequest, response: HttpServletResponse):
+            corsProcessor.process_request(self.config, request, response)
+        
+        def get_cors_configuration(self, request: HttpServletRequest) -> CorsConfiguration:
+            return self.config
+
+
+    class CorsInterceptor(HandlerInterceptor, CorsConfigurationSource):
+        
+        config: CorsConfiguration = None
+
+        def __init__(self, config: CorsConfiguration):
+            self.config = config
+
+        def pre_handle(self, request: HttpServletRequest, response: HttpServletResponse,
+                handler: object) -> bool:
+            # mock preHandle behavior
+            return True
+        
+        def get_cors_configuration(self, request: HttpServletRequest):
+            return self.config
         

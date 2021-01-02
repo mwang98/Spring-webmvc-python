@@ -44,12 +44,12 @@ class HandlerExecutionChain():
 
     def apply_post_handle(self, request, response, mv=None) -> None:
         for interceptor in self.interceptorList[::-1]:
-            interceptor.postHandle(request, response, self.handler, mv)
+            interceptor.post_handle(request, response, self.handler, mv)
 
     def trigger_after_completion(self, request, response, ex) -> None:
         for interceptor in self.interceptorList[:self.interceptorIndex][::-1]:
             try:
-                interceptor.afterCompletion(request, response, self.handler, ex)
+                interceptor.after_completion(request, response, self.handler, ex)
             except Exception as ex2:
                 self.logger.error("HandlerInterceptor.afterCompletion threw exception", ex2)
 

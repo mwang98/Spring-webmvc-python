@@ -7,7 +7,8 @@ def main():
     servletConfig = MockServletConfig(MockServletContext, servletName='simple')
     dispatcherServelet = DispatcherServlet()
 
-    dispatcherServelet.set
+    #dispatcherServelet.set_context_class()
+    dispatcherServelet.init()
 
 
 if __name__ == 'main':

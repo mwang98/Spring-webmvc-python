@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from springframework.web.servlet.handler import AbstractUrlHandlerMapping
+from springframework.web.servlet.handler.AbstractUrlHandlerMapping import AbstractUrlHandlerMapping
 from springframework.utils.mock.inst import BeanFactoryUtils
 
 
