@@ -50,8 +50,8 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
     # Map from view key to View instance, synchronized for View creation.
     # _viewCreationCache = my_order_dict()
 
-    def __init__(self, *args, **kwargs):
-        super.__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
 
         class my_order_dict(OrderedDict):
             def __setitem__(self, key, value):
@@ -59,7 +59,8 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
                     self.popitem(last=False)
                 return super().__setitem__(key, value)
             getcache_limit = self.getcache_limit
-        self._viewCreationCache.getcache_limit = my_order_dict()
+
+        self._viewCreationCache = my_order_dict()
 
     # Specify the maximum number of entries for the view cache.
     # Default is 1024.

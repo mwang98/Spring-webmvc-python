@@ -5,6 +5,7 @@ from springframework.utils.mock.inst import Ordered, BeanUtils
 from springframework.web.servlet.view.InternalResourceView import InternalResourceView
 from springframework.web.servlet.view.AbstractCachingViewResolver import AbstractCachingViewResolver
 from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
+from springframework.web.servlet.view.JstlView import JstlView
 
 
 # Ordered
@@ -19,11 +20,11 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
     _order = Ordered.LOWEST_PRECEDENCE
 
     def set_view_class(self, viewClass) -> None:
-        # TODO: isAssignableFrom()? and getName()?
+        # TODO: isAssignableFrom()
         if viewClass is not None and \
-                not issubclass(self.required_view_class(), viewClass):
-            raise Exception(f"Given view class[{viewClass.getName()}] is not of \
-                type [{self.required_view_class().getName()}]")
+                not issubclass(viewClass, self.required_view_class()):
+            raise Exception(f"Given view class[{viewClass.__name__}] is not of \
+                type [{self.required_view_class().__name__}]")
 
         self.viewClass = viewClass
 
