@@ -7,6 +7,8 @@ __pycache__/
 .ipynb_checkpoints/
 *.pyc
 *.pyo
+*.dll
+*.exe
 
 # Distribution / packaging
 *.egg-info/

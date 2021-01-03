@@ -1,9 +1,10 @@
 from unittest import mock
 from springframework.beans.factory.config import BeanDefinitionInterface as BeanDefinition
+from springframework.context.support.GenericApplicationContext import GenericApplicationContext
 from springframework.utils.mock.inst import GenericBeanDefinition
 
 
-class StaticApplicationContext():
+class StaticApplicationContext(GenericApplicationContext):
 
     def __init__(self, parent=None):
         super().__init__(parent)
