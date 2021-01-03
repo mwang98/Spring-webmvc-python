@@ -1,0 +1,2 @@
+class ConfigurableApplicationContext():
+    pass
