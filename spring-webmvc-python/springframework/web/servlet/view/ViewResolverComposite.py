@@ -6,6 +6,7 @@ from springframework.web.context.ServletContextAware import ServletContextAware
 from .ViewResolver import ViewResolver
 from .View import View
 
+
 class ViewResolverComposite(ViewResolver, Ordered, InitializingBean, ApplicationContextAware, ServletContextAware):
     _viewResolvers = list()
     _order = Ordered.LOWEST_PRECEDENCE
@@ -28,7 +29,7 @@ class ViewResolverComposite(ViewResolver, Ordered, InitializingBean, Application
         for viewResolver in self._viewResolvers:
             if (isinstance(viewResolver, ServletContextAware)):
                 viewResolver.setServletContext(servletContext)
-        
+
     def afterPropertiesSet(self) -> None:
         for viewResolver in self._viewResolvers:
             if (isinstance(viewResolver, InitializingBean)):
