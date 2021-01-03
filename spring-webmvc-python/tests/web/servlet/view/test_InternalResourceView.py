@@ -1,4 +1,3 @@
-import pytest
 from unittest import TestCase
 from springframework.web.servlet import View
 from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
