@@ -6,7 +6,7 @@ class MockServletConfig:
 
     initParameters = dict()
 
-    def __init__(self, servletName: str = "", servletContext=None):
+    def __init__(self, servletContext=None, servletName: str = ""):
         self.servletName = servletName
         if servletContext is None:
             self.servletContext = MockServletContext()

@@ -15,4 +15,3 @@ class MatchableHandlerMapping(HandlerMapping, ABC):
     @abstractmethod
     def match(self, request: HttpServletRequest, pattern: str) -> RequestMatchResult:
         return None
-    

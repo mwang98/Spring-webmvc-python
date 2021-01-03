@@ -1,3 +1,6 @@
+from springframework.web.servlet.mvc.SimpleControllerHandlerAdapter import SimpleControllerHandlerAdapter
+from springframework.web.servlet.view import InternalResourceViewResolver
+
 
 class DispatcherServletMeta(type):
 
@@ -11,9 +14,14 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     contextClass = None
     config = None
     webApplicationContext = None
+    handlerMappings = []
+    handlerAdapters = []
+    viewResolvers = []
+
 
     def __init__(self):
         super(DispatcherServlet, self).__init__()
+        print('inits')
         #self.arg = arg
 
     def init(self, config):
@@ -52,15 +60,21 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         self.webApplicationContext = self.init_web_application_context()
 
     def init_web_application_context(self):
-        context=None
-        self.on_refresh()
+        context = None
+        self.on_refresh(context)
         return 1
 
     def on_refresh(self, context):
         self.init_strategies(context)
 
     def init_strategies(self, context):
-        raise NotImplementedError
+        self.handlerMappings.append(1)
+
+        simpleHandlerAdapter = SimpleControllerHandlerAdapter()
+        self.handlerAdapters.append(simpleHandlerAdapter)
+
+        internalResourceViewResolver = InternalResourceViewResolver()
+        self.viewResolvers.append(internalResourceViewResolver)
 
     def set_context_class(self, contextClass):
         self.contextClass = contextClass

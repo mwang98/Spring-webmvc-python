@@ -15,5 +15,5 @@ class HandlerAdapter(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def getLastModified(self, request: HttpServletRequest, handler) -> int:
+    def get_last_modified(self, request: HttpServletRequest, handler) -> int:
         raise NotImplementedError

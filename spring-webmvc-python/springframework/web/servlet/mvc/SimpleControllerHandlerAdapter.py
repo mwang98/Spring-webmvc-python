@@ -18,4 +18,3 @@ class SimpleControllerHandlerAdapter(HandlerAdapter):
             handler: Controller = handler
             return handler.get_last_modified(request)
         return -1
- 

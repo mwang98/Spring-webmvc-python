@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from springframework.utils.mock.inst import HttpServletRequest
 
