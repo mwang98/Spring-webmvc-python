@@ -1,5 +1,5 @@
-from springframework.beans import BeanMetadataElement, MutablePropertyValues
-from springframework.cores import AttributeAccessor, ResolvableType
+from springframework.beans import BeanMetadataElement  # , MutablePropertyValues
+from springframework.core import AttributeAccessor  # , ResolvableType
 from springframework.utils.mock.inst import ConfigurableBeanFactory
 
 
