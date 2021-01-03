@@ -1,3 +1,4 @@
+from springframework.web.servlet.handler import SimpleUrlHandlerMapping
 from springframework.web.servlet.mvc.SimpleControllerHandlerAdapter import SimpleControllerHandlerAdapter
 from springframework.web.servlet.view import InternalResourceViewResolver
 
@@ -68,7 +69,8 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         self.init_strategies(context)
 
     def init_strategies(self, context):
-        self.handlerMappings.append(1)
+        simpleUrlHandlerMapping = SimpleUrlHandlerMapping()
+        self.handlerMappings.append(simpleUrlHandlerMapping)
 
         simpleHandlerAdapter = SimpleControllerHandlerAdapter()
         self.handlerAdapters.append(simpleHandlerAdapter)
@@ -84,12 +86,12 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
 
     def do_dispatch(self, request, response):
         mapped_handler = self.get_handler(request)
-        handler_adapter = self.get_handler_adapter(mapped_handler.getHandler())
+        handler_adapter = self.get_handler_adapter(mapped_handler.get_handler())
 
         if not mapped_handler.applyPreHandle(request, response):
             return
 
-        model_and_view = handler_adapter.handle(request, response, mapped_handler.getHandler())
+        model_and_view = handler_adapter.handle(request, response, mapped_handler.get_handler())
         mapped_handler.applyPostHandle(request, response, model_and_view)
 
         view = model_and_view.getView()
@@ -97,7 +99,7 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
 
     def get_handler(self, request):
         for handlerMapping in self.handlerMappings:
-            handler_execution_chain = handlerMapping.getHandler(request)
+            handler_execution_chain = handlerMapping.get_handler(request)
             if handler_execution_chain is not None:
                 return handler_execution_chain
         return None
