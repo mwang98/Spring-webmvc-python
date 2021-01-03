@@ -13,7 +13,7 @@ from springframework.web.servlet.ViewResolver import ViewResolver
 
 
 class NotAcceptableView(View):
-    def getContentType(self) -> str:
+    def get_content_type(self) -> str:
         return None
 
     def render(self, model: dict, response: HttpServletResponse) -> None:
@@ -25,44 +25,45 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
     useNotAcceptableStatusCode = False
     order = Ordered.HIGHEST_PRECEDENCE
 
-    def setContentNegotiationManager(self, contentNegotiationManager) -> None:
+    def set_content_negotiation_manager(self, contentNegotiationManager) -> None:
         self.contentNegotiationManager = contentNegotiationManager
 
-    def getContentNegotiationManager(self):
+    def get_content_negotiation_manager(self):
         return self.contentNegotiationManager
 
-    def setUseNotAcceptableStatusCode(self, useNotAcceptableStatusCode: bool) -> None:
+    def set_use_not_acceptable_status_code(self, useNotAcceptableStatusCode: bool) -> None:
         self.useNotAcceptableStatusCode = useNotAcceptableStatusCode
 
-    def isUseNotAcceptableStatusCode(self) -> bool:
+    def is_use_not_acceptable_status_code(self) -> bool:
         return self.useNotAcceptableStatusCode
 
-    def setDefaultViews(self, defaultViews: list) -> None:
+    def set_default_views(self, defaultViews: list) -> None:
         self.defaultViews = defaultViews
 
-    def getDefaultViews(self) -> list:
+    def get_default_views(self) -> list:
         if self.defaultViews is not None:
             return self.defaultViews
 
         return list()
 
-    def setViewResolvers(self, viewResolvers: list) -> None:
+    def set_view_resolvers(self, viewResolvers: list) -> None:
         self.viewResolvers = viewResolvers
 
-    def getViewResolvers(self) -> list:
+    def get_view_resolvers(self) -> list:
         if self.viewResolvers is not None:
             return self.viewResolvers
 
         return list()
 
-    def setOrder(self, order) -> None:
+    def set_order(self, order) -> None:
         self.order = order
 
-    def getOrder(self) -> int:
+    def get_order(self) -> int:
         return self.order
 
-    def initServletContext(self, servletContext: ServletContext) -> None:
-        matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(obtainApplicationContext(), ViewResolver).values()
+    def init_servlet_context(self, servletContext: ServletContext) -> None:
+        matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+            obtainApplicationContext(), ViewResolver).values()
         if self.viewResolvers is None:
             self.viewResolvers = list()
             for viewResolver in matchingBeans:
@@ -80,20 +81,21 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
         AnnotationAwareOrderComparator.sort(self.viewResolvers)
         self.cnmFactoryBean.setServletContext(servletContext)
 
-    def afterPropertiesSet(self) -> None:
+    def after_properties_set(self) -> None:
         if self.contentNegotiationManager is None:
             self.contentNegotiationManager = self.cnmFactoryBean.build()
 
         if (self.viewResolvers is None or not self.viewResolvers):
             logging.info("No ViewResolvers configured")
 
-    def resolveViewName(self, viewName: str, locale: Locale) -> View:
+    def resolve_view_name(self, viewName: str, locale: Locale) -> View:
         attrs = RequestContextHolder.getRequestAttributes()
         # assert isinstance(attrs, ServletRequestAttributes), "No current ServletRequestAttributes"
-        requestMediaTypes = self.getMediaTypes((attrs).getRequest())
+        requestMediaTypes = self.get_media_types((attrs).getRequest())
         if requestedMediaTypes is not None:
-            candidateViews = self.getCandidateViews(viewName, locale, requestedMediaTypes)
-            bestView = getBestView(candidateViews, requestedMediaTypes, attrs)
+            candidateViews = self.get_candidate_views(
+                viewName, locale, requestedMediaTypes)
+            bestView = get_best_view(candidateViews, requestedMediaTypes, attrs)
             if bestView is not None:
                 return bestView
 
@@ -102,29 +104,31 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
         else:
             return None
 
-    def getMediaTypes(self, request) -> list:
+    def get_media_types(self, request) -> list:
         assert self.contentNegotiationManager is not None, "No ContentNegotiationManager set"
         try:
             webRequest = ServletWebRequest(request)
-            acceptableMediaTypes = self.contentNegotiationManager.resolveMediaTypes(webRequest)
-            producibleMediaTypes = self.getProducibleMediaTypes(request)
+            acceptableMediaTypes = self.contentNegotiationManager.resolveMediaTypes(
+                webRequest)
+            producibleMediaTypes = self.get_producible_media_types(request)
             compatibleMediaTypes = list()
             for acceptable in acceptableMediaTypes:
                 for producible in producibleMediaTypes:
                     if acceptable.isCompatibleWith(producible):
-                        compatibleMediaTypes.append(self.getMostSpecificMediaType(acceptable, producible))
-            
+                        compatibleMediaTypes.append(
+                            self.get_most_specific_media_type(acceptable, producible))
+
             selectedMediaTypes = compatibleMediaTypes
             MediaType.sortBySpecificityAndQuality(selectedMediaTypes)
             return selectedMediaTypes
         except:
             return None
 
-    def getProducibleMediaTypes(self, request) -> list:
-        #TODO
+    def get_producible_media_types(self, request) -> list:
+        # TODO
         pass
 
-    def getCandidateViews(self, viewName: str, locale: Locale, requestMediaTypes: list) -> list:
+    def get_candidate_views(self, viewName: str, locale: Locale, requestMediaTypes: list) -> list:
         candidateViews = list()
         if self.viewResolvers is not None:
             assert self.contentNegotiationManager is not None, "No ContentNegotiationManager set"
@@ -133,10 +137,12 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
                 if view is not None:
                     candidateViews.append(view)
                 for requestedMediaType in requestMediaTypes:
-                    extensions = self.contentNegotiationManager.resolveFileExtensions(requestedMediaType)
+                    extensions = self.contentNegotiationManager.resolveFileExtensions(
+                        requestedMediaType)
                     for extension in extensions:
                         viewNameWithExtension = viewName + '.' + extension
-                        view = viewResolver.resolveViewName(viewNameWithExtension, locale)
+                        view = viewResolver.resolveViewName(
+                            viewNameWithExtension, locale)
                         if view is not None:
                             candidateViews.add(view)
 
@@ -145,7 +151,7 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
 
         return candidateViews
 
-    def getBestView(self, candidateViews: list, requestedMediaTypes: list, attrs) -> View:
+    def get_best_view(self, candidateViews: list, requestedMediaTypes: list, attrs) -> View:
         for candidateView in candidateViews:
             if isinstance(candidateView, SmartView):
                 smartView = candidateView
@@ -154,14 +160,14 @@ class ContentNegotiatingViewResolver(WebApplicationObjectSupport, ViewResolver, 
 
         for mediaType in requestedMediaTypes:
             for candidateView in candidateViews:
-                if candidateView.getContentType():
-                    candidateContentType = MediaType.parseMediaType(candidateView.getContentType())
+                if candidateView.get_content_type():
+                    candidateContentType = MediaType.parseMediaType(
+                        candidateView.get_content_type())
                     if mediaType.isCompatibleWith(candidateContentType):
-                        attrs.setAttribute(View.SELECTED_CONTENT_TYPE, mediaType, RequestAttributes.SCOPE_REQUEST)
+                        attrs.setAttribute(
+                            View.SELECTED_CONTENT_TYPE, mediaType, RequestAttributes.SCOPE_REQUEST)
                         return candidateView
 
         return None
 
     NOT_ACCEPTABLE_VIEW = NotAcceptableView()
-
-
