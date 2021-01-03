@@ -1,14 +1,12 @@
-import pytest
 from unittest import TestCase, mock
 from springframework.web.testfixture.servlet import MockServletContext
 from springframework.web.testfixture.servlet import MockHttpServletRequest
 from springframework.web.testfixture.servlet import MockHttpServletResponse
 from springframework.web.context.support.StaticWebApplicationContext import StaticWebApplicationContext
 from springframework.web.servlet.view import UrlBasedViewResolver, \
-    InternalResourceViewResolver, InternalResourceView
+    InternalResourceViewResolver, InternalResourceView, JstlView
 
 
-@pytest.mark.skip()
 class TestViewResolver(TestCase):
 
     def setUp(self):
@@ -20,16 +18,12 @@ class TestViewResolver(TestCase):
 
     def test_url_based_view_resolver_without_prefixes(self):
         vr = UrlBasedViewResolver()
-        JstlView = mock.MagicMock(name="JstlView")
-        JstlView.__class__ = "JstlView"
-        vr.setViewClass(JstlView)
+        vr.set_view_class(JstlView)
         self.do_test_url_based_view_resolver_without_prefixes(vr)
 
     def test_url_based_view_resolver_with_prefixes(self):
         vr = UrlBasedViewResolver()
-        JstlView = mock.MagicMock(name="JstlView")
-        JstlView.__class__ = "JstlView"
-        vr.setViewClass(JstlView)
+        vr.set_view_class(JstlView)
         self.do_test_url_based_view_resolver_with_prefixes(vr)
 
     def test_internal_resourceV_view_resolver_without_prefixes(self):
