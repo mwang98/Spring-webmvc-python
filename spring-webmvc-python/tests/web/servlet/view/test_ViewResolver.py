@@ -36,53 +36,51 @@ class TestViewResolver(TestCase):
         self.do_test_url_based_view_resolver_with_prefixes(InternalResourceViewResolver())
 
     def do_test_url_based_view_resolver_without_prefixes(self, vr: UrlBasedViewResolver):
-        return
         self.wac.refresh()
         vr.set_application_context(self.wac)
         vr.set_content_type("myContentType")
         vr.set_request_context_attribute("rc")
 
-        view = vr.resolve_view_name("example1", Locale.getDefault())
+        view = vr.resolve_view_name("example1", Locale.get_default())
         assert isinstance(view, JstlView), "Incorrect view class"
         assert view.get_url() == "example1", "Incorrect URL"
         assert view.get_content_type() == "myContentType", "Incorrect textContentType"
 
-        view = vr.resolve_view_name("example2", Locale.getDefault())
+        view = vr.resolve_view_name("example2", Locale.get_default())
         assert isinstance(view, JstlView), "Incorrect view class"
         assert view.get_url() == "example2", "Incorrect URL"
         assert view.get_content_type() == "myContentType", "Incorrect textContentType"
 
         # TODO: self.request.set_attribute
 
-        view = vr.resolve_view_name("redirect:myUrl", Locale.getDefault())
+        view = vr.resolve_view_name("redirect:myUrl", Locale.get_default())
         assert isinstance(view, RedirectView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
         #TODO: check applicationContext
 
-        view = vr.resolveViewName("forward:myUrl", Locale.getDefault())
+        view = vr.resolve_view_name("forward:myUrl", Locale.get_default())
         assert isinstance(view, InternalResourceView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
 
     def do_test_url_based_view_resolver_with_prefixes(self, vr):
-        return
         self.wac.refresh()
         vr.set_prefix("/WEB-INF/")
         vr.set_suffix(".jsp")
         vr.set_application_context(self.wac)
 
-        view = vr.resolveViewName("example1", Locale.getDefault())
+        view = vr.resolve_view_name("example1", Locale.get_default())
         assert isinstance(view, JstlView)
-        assert view.get_url() == "/WEB_INF/example1.jsp", "Incorrect URL"
+        assert view.get_url() == "/WEB-INF/example1.jsp", "Incorrect URL"
 
-        view = vr.resolveViewName("example2", Locale.getDefault())
+        view = vr.resolve_view_name("example2", Locale.get_default())
         assert isinstance(view, JstlView)
-        assert view.get_url() == "/WEB_INF/example2.jsp", "Incorrect URL"
+        assert view.get_url() == "/WEB-INF/example2.jsp", "Incorrect URL"
 
-        view = vr.resolveViewName("redirect:myUrl", Locale.getDefault())
+        view = vr.resolve_view_name("redirect:myUrl", Locale.get_default())
         assert isinstance(view, RedirectView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
 
-        view = vr.resolveViewName("forward:myUrl", Locale.getDefault())
+        view = vr.resolve_view_name("forward:myUrl", Locale.get_default())
         assert isinstance(view, InternalResourceView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
 
