@@ -1,5 +1,6 @@
 import logging
-from springframework.utils.mock.inst import HttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
 from springframework.web.util.WebUtils import WebUtils
 
 
@@ -12,22 +13,33 @@ class UrlPathHelperMeta(type):
 class UrlPathHelper(metaclass=UrlPathHelperMeta):
 
     def __init__(self):
+        self.alwaysUseFullPath = False
         return
+    
+    def set_always_use_full_path(self, alwaysUseFullPath: bool):
+        self.alwaysUseFullPath = alwaysUseFullPath
 
     def resolve_and_cache_lookup_path(self, request: HttpServletRequest) -> str:
         lookupPath: str = self.get_lookup_path_for_request(request)
+        logging.info(f"[lookupPath] = {lookupPath}")
         request.set_attribute(self.PATH_ATTRIBUTE, lookupPath)
+        return lookupPath
 
     def get_lookup_path_for_request(self, request: HttpServletRequest) -> str:
         pathWithinApp: str = self.get_path_within_application(request)
-        # Always use full path within current servlet context {UrlPathHelprt.java: 249}
-        return pathWithinApp
+        if self.alwaysUseFullPath:
+            return pathWithinApp
+        rest: str = self.get_path_within_servlet_mapping(request, pathWithinApp)
+        if rest.replace(" ", ""):
+            return rest
+        else:
+            return pathWithinApp
         
     def get_path_within_application(self, request: HttpServletRequest) -> str:
         contextPath: str = self.get_context_path(request)
         requestUri: str = self.get_request_uri(request)
         path: str = self.get_remaining_path(requestUri, contextPath, True)
-        logging.info(f"\n contextPath: {contextPath} \n requestUri: {requestUri} \n path: {path}")
+
         if path:
             # Normal case: URI contains context path.
             if path.replace(" ", "") == "":
@@ -36,9 +48,22 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
                 return path
         else:
             return requestUri
+
+    def get_path_within_servlet_mapping(self, request: HttpServletRequest, pathWithinApp: str) -> str:
+        servletPath: str = request.get_servlet_path()
+        sanitizedPathWithinApp: str = self.get_sanitized_path(pathWithinApp)
+        path: str = ""
+        if sanitizedPathWithinApp in servletPath:
+            path = self.get_remaining_path(sanitizedPathWithinApp, servletPath, False)
+        else:
+            path = self.get_remaining_path(pathWithinApp, servletPath, False)
+        if path:
+            return path
+        else:
+            return request.get_path_info()
     
     def get_context_path(self, request: HttpServletRequest) -> str:
-        contextPath: str = str(request.get_attribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE))
+        contextPath: str = request.get_attribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)
         if not contextPath:
             contextPath = request.get_context_path()
         if contextPath == "/":
@@ -46,9 +71,10 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
         return self.decode_request_string(request, contextPath)
     
     def get_request_uri(self, request: HttpServletRequest) -> str:
-        uri: str = str(request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE))
+        uri: str = request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)
         if not uri:
-            uri = uri.get_request_uri()
+            uri = request.get_request_uri()
+            print(uri)
         return self.decode_and_clean_uri_string(request, uri)
     
     def decode_request_string(self, request: HttpServletRequest, source: str) -> str:
@@ -62,6 +88,8 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
         return uri
     
     def remove_semicolon_content(self, requestUri: str) -> str:
+        if not requestUri:
+            return ""
         res: str = ""
         state = False
         for i in requestUri:
@@ -97,6 +125,6 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
             return None
         elif index1 == len(requestUri):
             return ""
-        elif requestUri[index] == ";":
+        elif requestUri[index1] == ";":
             index = requestUri.index("/", index1)
-        return (requestUri.substring(index1) if index1 != -1 else "")
+        return (requestUri[index1:] if index1 != -1 else "")

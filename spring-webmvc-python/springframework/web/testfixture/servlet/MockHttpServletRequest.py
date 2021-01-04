@@ -9,7 +9,6 @@ from datetime import datetime
 from springframework.web.testfixture.servlet import MockServletContext
 from springframework.web.testfixture.servlet import MockAsyncContext
 from springframework.web.testfixture.servlet import MockHttpSession
-from springframework.web.testfixture.servlet.MockRequestDispatcher import MockRequestDispatcher
 
 from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
     DispatcherType, DelegatingServletInputStream, InputStreamReader,\
@@ -590,6 +589,12 @@ class MockHttpServletRequest():
 
     def get_context_path(self) -> str:
         return self.contextPath
+
+    def set_request_uri(self, requestURI: str) -> None:
+        self.requestURI = requestURI
+    
+    def get_request_uri(self) -> str:
+        return self.requestURI
 
     def set_query_string(self, queryString: str = None) -> None:
         self.queryString = queryString

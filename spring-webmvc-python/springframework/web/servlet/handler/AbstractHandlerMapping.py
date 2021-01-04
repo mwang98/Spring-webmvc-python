@@ -20,7 +20,8 @@ from springframework.web.context.request import WebRequestInterceptor
 from springframework.web.util import ServletRequestPathUtils
 from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet.handler import MappedInterceptor
-from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
+from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
 from springframework.web import HttpRequestHandler
 
 
