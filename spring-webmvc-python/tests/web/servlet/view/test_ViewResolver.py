@@ -56,7 +56,7 @@ class TestViewResolver(TestCase):
         view = vr.resolve_view_name("redirect:myUrl", Locale.get_default())
         assert isinstance(view, RedirectView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
-        #TODO: check applicationContext
+        # TODO: check applicationContext
 
         view = vr.resolve_view_name("forward:myUrl", Locale.get_default())
         assert isinstance(view, InternalResourceView), "Incorrect view class"
@@ -84,25 +84,25 @@ class TestViewResolver(TestCase):
         assert isinstance(view, InternalResourceView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
 
-    def internal_resource_view_resolver_with_jstl(self):
+    def test_internal_resource_view_resolver_with_jstl(self):
         locale = Locale.getDefault()
 
         self.wac.addMessage("code1", locale, "messageX")
         vr = InternalResourceViewResolver()
         vr.set_view_class(JstlView)
-        vr.setApplicationContext(self.wac)
+        vr.set_application_context(self.wac)
 
-        view = vr.resolveViewName("example1", Locale.getDefault())
+        view = vr.resolve_view_name("example1", Locale.getDefault())
         assert isinstance(view, JstlView)
         assert view.get_url() == "example1", "Incorrect URL"
 
-        view = vr.resolveViewName("example2", Locale.getDefault())
+        view = vr.resolve_view_name("example2", Locale.getDefault())
         assert isinstance(view, JstlView)
         assert view.get_url() == "example2", "Incorrect URL"
 
-        #TODO setAttribute, testbean, render view
+        # TODO setAttribute, testbean, render view
 
-    def cache_removal(self):
+    def test_cache_removal(self):
         vr = InternalResourceViewResolver()
         vr.set_view_class(JstlView)
         vr.set_application_context(self.wac)
@@ -115,15 +115,13 @@ class TestViewResolver(TestCase):
         cached = vr.resolve_view_name("example1", Locale.getDefault())
         assert cached is not view, "not removed from cache"
 
-    def cache_unresolved(self):
-        viewResolver = testAbstractCachingViewResolver()
-        
+    def test_cache_unresolved(self):
+        viewResolver = test1AbstractCachingViewResolver()
         viewResolver.set_cache_unresolved(False)
 
         viewResolver.resolve_view_name("view", Locale.getDefault())
         viewResolver.resolve_view_name("view", Locale.getDefault())
-
-        assert count == 2
+        assert viewResolver.count == 2
 
         viewResolver.set_cache_unresolved(True)
 
@@ -132,45 +130,51 @@ class TestViewResolver(TestCase):
         viewResolver.resolve_view_name("view", Locale.getDefault())
         viewResolver.resolve_view_name("view", Locale.getDefault())
         viewResolver.resolve_view_name("view", Locale.getDefault())
+        assert viewResolver.count == 3
 
-        assert count == 3
-
-    def cache_filter_enabled(self):
+    def test_cache_filter_enabled(self):
         viewResolver = test2AbstractCachingViewResolver()
 
         viewResolver.resolve_view_name("view", Locale.getDefault())
         viewResolver.resolve_view_name("view", Locale.getDefault())
 
-        assert count == 1
+        assert viewResolver.count == 1
 
-    def cache_filter(self, view, viewName, locale):
-        return False
-
-    def cache_filter_disabled(self):
+    def test_cache_filter_disabled(self):
         viewResolver = test2AbstractCachingViewResolver()
 
-        #TODO set cachefilter
-        viewResolver.set_cache_filter(self.cache_filter)
+        # def cache_filter(view, viewName, locale):
+        #     return False
+        cache_filter = type("cache_filter", (), {"filter": (lambda view, viewName, locale : False)})
+        viewResolver.set_cache_filter(cache_filter)
 
         viewResolver.resolve_view_name("view", Locale.getDefault())
         viewResolver.resolve_view_name("view", Locale.getDefault())
 
-        assert count == 2
+        assert viewResolver.count == 2
 
 
 class test1AbstractCachingViewResolver(AbstractCachingViewResolver):
-    count = 0
+    def __init__(self):
+        super().__init__()
+        self.count = 0
+
     def load_view(self, viewName, locale):
-        count += 1
+        self.count += 1
         return None
 
+
 class test2AbstractCachingViewResolver(AbstractCachingViewResolver):
-    count = 0
+    def __init__(self):
+        super().__init__()
+        self.count = 0
+
     def load_view(self, viewName, locale):
         assert viewName == "view"
         # TODO assert Locale
-        count += 1
+        self.count += 1
         return testView()
+
 
 class testView(InternalResourceView):
     def __init__(self):

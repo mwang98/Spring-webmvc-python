@@ -5,8 +5,7 @@ from springframework.utils.mock.inst import JstlUtils
 class JstlView(InternalResourceView):
 
     def __init__(self, url: str = None, messageSource=None):
-        if url:
-            super().__init__(self, url)
+        super().__init__(self, url)
         self.messageSource = messageSource
 
     def init_servlet_context(self, servletContext) -> None:
