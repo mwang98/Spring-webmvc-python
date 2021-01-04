@@ -46,6 +46,3 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
                 patterns.append('/**')
             patterns.extend(list(self.get_handler_map().keys()))
             logging.debug(f"Patterns {patterns} in {self.format_mapping_name()}")
-
-    def init_lookup_path(self, request) -> str:
-        return self.lookup_path

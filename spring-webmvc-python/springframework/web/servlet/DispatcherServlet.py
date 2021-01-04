@@ -97,20 +97,16 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     def init_strategies(self, context):
         mockXmlParser = MockXmlParser(self.xml_path)
 
-        print()
-        print(mockXmlParser.get_class_by_name("SimpleControllerHandlerAdapter"))
-        print(mockXmlParser.get_class_by_name("InternalResourceViewResolver"))
+
 
         urlMap = mockXmlParser.get_url_map()
         prefix = mockXmlParser.get_view_resolver_attr()['prefix']
         suffix = mockXmlParser.get_view_resolver_attr()['suffix']
-        #{"/": MockController("/"), "test": MockController("/test")}
+
 
         simpleUrlHandlerMapping = mockXmlParser.get_class_by_name("SimpleUrlHandlerMapping")
         simpleUrlHandlerMapping.set_url_map(urlMap)
-        #simpleUrlHandlerMapping.set_lookup_path('/hello')
         simpleUrlHandlerMapping.init_application_context()
-        print(simpleUrlHandlerMapping.get_url_map())
         self.handlerMappings.append(simpleUrlHandlerMapping)
 
         simpleHandlerAdapter = mockXmlParser.get_class_by_name("SimpleControllerHandlerAdapter")#SimpleControllerHandlerAdapter()

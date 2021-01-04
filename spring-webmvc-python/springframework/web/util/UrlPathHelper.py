@@ -21,6 +21,8 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
 
     def resolve_and_cache_lookup_path(self, request: HttpServletRequest) -> str:
         lookupPath: str = self.get_lookup_path_for_request(request)
+        print('----------')
+        print(lookupPath)
         logging.info(f"[lookupPath] = {lookupPath}")
         request.set_attribute(self.PATH_ATTRIBUTE, lookupPath)
         return lookupPath

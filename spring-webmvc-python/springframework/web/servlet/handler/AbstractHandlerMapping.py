@@ -203,6 +203,7 @@ class AbstractHandlerMapping(WebApplicationObjectSupport, HandlerMapping, Ordere
             lookupPath = requestPath.path_within_application().value()
             return UrlPathHelper.defaultInstance.remove_semicolon_content(lookupPath)
         else:
+            print('downown')
             return self.get_url_path_helper().resolve_and_cache_lookup_path(request)
 
     def get_handler_execution_chain(self, handler: object, request: HttpServletRequest) -> HandlerExecutionChain:

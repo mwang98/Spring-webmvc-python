@@ -103,7 +103,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             handler = self.get_direct_match(lookupPath, request)
             if handler is not None:
                 return handler
-            
+
             #Only supports direct match currently
             assert handler is not None, "Handler mapping only supports direct match currently."
 
