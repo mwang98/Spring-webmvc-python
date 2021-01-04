@@ -1,7 +1,9 @@
 from unittest import TestCase
 from springframework.web.servlet.handler import SimpleUrlHandlerMapping
 from springframework.web.servlet import HandlerExecutionChain, HandlerMapping
-from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
+from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
+from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
+
 
 
 class MockController():
@@ -25,13 +27,12 @@ class TestSimpleURLHandlerMapping(TestCase):
 
     def setUp(self):
         self.urlMap = {"/": MockController("/"), "test": MockController("test")}
-        self.request = HttpServletRequest("GET", "/myservlet/handler.do")
+        self.request = HttpServletRequest(servletContext = "Context", method="GET", requestURI="/mycontext/myservlet/test")
         self.request.set_context_path("/mycontext")
         self.request.set_servlet_path("/myservlet")
-        self.request.set_path_info(";mypathinfo")
+        self.request.set_path_info("/test")
         self.request.set_query_string("?param1=value1")
         self.response = HttpServletResponse()
-        self.lookupPath = "/test"
 
     def test_init_lookup_path(self):
         handlerMapping: HandlerMapping = SimpleUrlHandlerMapping(self.urlMap)
@@ -42,7 +43,7 @@ class TestSimpleURLHandlerMapping(TestCase):
         handlerMapping.init_application_context()
 
     def test_mapping_directly(self):
-        handlerMapping: HandlerMapping = MockSimpleUrlHandlerMapping(self.urlMap, self.lookupPath)
+        handlerMapping: HandlerMapping = SimpleUrlHandlerMapping(self.urlMap)
         handlerMapping.init_application_context()
         mappedHandler: HandlerExecutionChain = handlerMapping.get_handler(self.request)
         ha = mappedHandler.get_handler()
