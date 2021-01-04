@@ -1,23 +1,33 @@
 from abc import ABC
 from springframework.web.servlet import View
-from springframework.web.servlet.view import RedirectView
-from springframework.utils.mock.inst import Ordered, BeanUtils
+from springframework.web.servlet.view.RedirectView import RedirectView
 from springframework.web.servlet.view.InternalResourceView import InternalResourceView
 from springframework.web.servlet.view.AbstractCachingViewResolver import AbstractCachingViewResolver
 from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
-from springframework.web.servlet.view.JstlView import JstlView
+from springframework.utils.mock.inst import Ordered, BeanUtils
 
 
-# Ordered
+# also inherit Ordered but metaclass conflict so remove
 class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
-    REDIRECT_URL_PREFIX = "redirect:"
-    FORWARD_URL_PREFIX = "forward:"
-    _prefix = ""
-    _suffix = ""
-    _redirectContextRelative = True
-    _redirectHttp10Compatible = True
-    _staticAttributes = dict()
-    _order = Ordered.LOWEST_PRECEDENCE
+
+    def __init__(self):
+        super().__init__()
+        self.REDIRECT_URL_PREFIX = "redirect:"
+        self.FORWARD_URL_PREFIX = "forward:"
+        self._viewClass = None
+        self._prefix = ""
+        self._suffix = ""
+        self._contentType: str = None
+        self._redirectContextRelative = True
+        self._redirectHttp10Compatible = True
+        self._redirectHosts = list()
+        self._requestContextAttribute: str = None
+        self._staticAttributes = dict()
+        self._exposePathVariables: bool = None
+        self._exposeContextBeansAsAttributes: bool = None
+        self._exposedContextBeanNames = list()
+        self._viewNames = list()
+        self._order = Ordered.LOWEST_PRECEDENCE
 
     def set_view_class(self, viewClass) -> None:
         # TODO: isAssignableFrom()
@@ -26,22 +36,22 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
             raise Exception(f"Given view class[{viewClass.__name__}] is not of \
                 type [{self.required_view_class().__name__}]")
 
-        self.viewClass = viewClass
+        self._viewClass = viewClass
 
     def get_view_class(self):
-        return self.viewClass
+        return self._viewClass
 
     def set_prefix(self, prefix: str) -> None:
-        self.prefix = (prefix if prefix is not None else "")
+        self._prefix = (prefix if prefix is not None else "")
 
     def get_prefix(self) -> str:
-        return self.prefix
+        return self._prefix
 
     def set_suffix(self, suffix: str) -> None:
-        self.suffix = (suffix if suffix is not None else "")
+        self._suffix = (suffix if suffix is not None else "")
 
     def get_suffix(self) -> str:
-        return self.suffix
+        return self._suffix
 
     def set_content_type(self, contentType: str) -> None:
         self._contentType = contentType
@@ -49,7 +59,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
     def get_content_type(self) -> str:
         return self._contentType
 
-    def set_Redirect_context_relative(self, redirectContextRelative: bool) -> None:
+    def set_redirect_context_relative(self, redirectContextRelative: bool) -> None:
         self._redirectContextRelative = redirectContextRelative
 
     def is_redirect_context_relative(self) -> bool:
@@ -84,28 +94,28 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
         return self._staticAttributes
 
     def set_expose_path_variables(self, exposePathVariables: bool) -> None:
-        self.exposePathVariables = exposePathVariables
+        self._exposePathVariables = exposePathVariables
 
     def get_expose_path_variables(self) -> bool:
-        return self.exposePathVariables
+        return self._exposePathVariables
 
     def set_expose_context_beans_as_attributes(self, exposeContextBeansAsAttributes: bool) -> None:
-        self.exposeContextBeansAsAttributes = exposeContextBeansAsAttributes
+        self._exposeContextBeansAsAttributes = exposeContextBeansAsAttributes
 
     def get_expose_context_beans_as_attributes(self) -> bool:
-        return self.exposeContextBeansAsAttributes
+        return self._exposeContextBeansAsAttributes
 
     def set_exposed_context_bean_names(self, exposedContextBeanNames: list) -> None:
-        self.exposedContextBeanNames = exposedContextBeanNames
+        self._exposedContextBeanNames = exposedContextBeanNames
 
     def get_exposed_context_bean_names(self) -> list:
-        return self.exposedContextBeanNames
+        return self._exposedContextBeanNames
 
     def set_view_names(self, viewNames: list) -> None:
-        self.viewNames = viewNames
+        self._viewNames = viewNames
 
     def get_view_names(self) -> list:
-        return self.viewNames
+        return self._viewNames
 
     def set_order(self, order) -> None:
         self._order = order
@@ -113,7 +123,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
     def get_order(self):
         return self._order
 
-    def init_application_context(self) -> None:
+    def init_application_context(self, context=None) -> None:
         super().init_application_context()
         if (self.get_view_class() is None):
             raise Exception("Property 'viewClass' is required")
@@ -126,10 +136,13 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
             return None
 
         # Check for special "redirect:" prefix.
-        if (viewName.startsWith(self.REDIRECT_URL_PREFIX)):
-            redirectUrl = viewName[:len(self.REDIRECT_URL_PREFIX)]
-            view = RedirectView(redirectUrl,
-                                self.is_redirect_context_relative(), self.is_redirect_http10_compatible())
+        if (viewName.startswith(self.REDIRECT_URL_PREFIX)):
+            redirectUrl = viewName[len(self.REDIRECT_URL_PREFIX):]
+            view = RedirectView(
+                redirectUrl,
+                self.is_redirect_context_relative(),
+                self.is_redirect_http10_compatible()
+            )
             hosts = self.get_redirect_hosts()
             if (hosts is not None):
                 view.set_hosts(hosts)
@@ -137,8 +150,8 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
             return self.apply_lifecycle_methods(self.REDIRECT_URL_PREFIX, view)
 
         # check for special "forward:" prefix.
-        if (viewName.startsWith(self.FORWARD_URL_PREFIX)):
-            forwardUrl = viewName[:len(self.FORWARD_URL_PREFIX)]
+        if (viewName.startswith(self.FORWARD_URL_PREFIX)):
+            forwardUrl = viewName[len(self.FORWARD_URL_PREFIX):]
             view = InternalResourceView(forwardUrl)
             return self.apply_lifecycle_methods(self.FORWARD_URL_PREFIX, view)
 
@@ -147,7 +160,7 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
 
     def can_handle(self, viewName: str, locale) -> bool:
         viewNames = self.get_view_names()
-        return (viewNames is None or any([(viewName in pattern) for pattern in viewNames]))
+        return (not viewNames or any([(viewName in pattern) for pattern in viewNames]))
         # PatternMatchUtils.simpleMatch(viewNames, viewName))
 
     def required_view_class(self):
@@ -156,6 +169,8 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
     def instantiate_view(self):
         viewClass = self.get_view_class()
         assert viewClass is not None
+        return viewClass()
+        # TODO
         return BeanUtils.instantiateClass(viewClass)
 
     def load_view(self, viewName: str, locale) -> View:
@@ -193,7 +208,10 @@ class UrlBasedViewResolver(AbstractCachingViewResolver, ABC):
 
     def apply_lifecycle_methods(self, viewName: str, view: AbstractUrlBasedView) -> View:
         # TODO: getApplicationContext
-        context = self.get_application_onext()
+        # TODO: initialized
+        return view
+
+        context = self.get_application_context()
         if (context is not None):
             initialized = context.get_autowire_capable_bean_factory().initialize_bean(view, viewName)
             if isinstance(initialized, View):

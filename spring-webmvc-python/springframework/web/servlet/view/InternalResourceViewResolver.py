@@ -1,16 +1,18 @@
-from unittest import mock
-from springframework.utils.mock.type import JstlView
 from springframework.web.servlet.view.UrlBasedViewResolver import UrlBasedViewResolver
-from springframework.web.servlet.view import InternalResourceView, AbstractUrlBasedView
+from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
+from springframework.web.servlet.view.InternalResourceView import InternalResourceView
+from springframework.web.servlet.view.JstlView import JstlView
 
 
 class InternalResourceViewResolver(UrlBasedViewResolver):
     _jstlPresent = True
+    alwaysInclude = None
     # ClassUtils.isPresent("javax.servlet.jsp.jstl.core.Config", InternalResourceViewResolver.class.getClassLoader())
 
     def __init__(self, prefix: str = None, suffix: str = None):
+        super().__init__()
         viewClass = self.required_view_class()
-        if (isinstance(InternalResourceView, viewClass) and self._jstlPresent):
+        if InternalResourceView == viewClass and self._jstlPresent:
             viewClass = JstlView
         self.set_view_class(viewClass)
 
@@ -25,14 +27,12 @@ class InternalResourceViewResolver(UrlBasedViewResolver):
         return InternalResourceView
 
     def instantiate_view(self) -> AbstractUrlBasedView:
-        if isinstance(self.get_view_class(), InternalResourceView):
+        if self.get_view_class() == InternalResourceView:
             return InternalResourceView()
-        elif isinstance(self.get_view_class(), JstlView):
-            JstlViewInst = mock.MagicMock(name="JstlView")
-            JstlViewInst.__class__ = JstlView
-            return JstlViewInst
+        elif self.get_view_class() == JstlView:
+            return JstlView()
         else:
-            return super().instantiateView()
+            return super().instantiate_view()
 
     def build_view(self, viewName: str) -> AbstractUrlBasedView:
         view = super().build_view(viewName)

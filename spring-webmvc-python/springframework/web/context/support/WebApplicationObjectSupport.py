@@ -10,8 +10,8 @@ from springframework.web.testfixture.servlet.MockServletContext import MockServl
 
 class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware, ABC):
     def __init__(self):
-        super().__init__()
         self._servlet_context = None
+        super().__init__()
 
     def set_servlet_context(self, servlet_context: ServletContext) -> None:
         if servlet_context is not self._servlet_context:
@@ -22,7 +22,7 @@ class WebApplicationObjectSupport(ApplicationObjectSupport, ServletContextAware,
         return True
 
     def init_application_context(self, context: ApplicationContext = None) -> None:
-        super(WebApplicationObjectSupport, self).init_application_context(context)
+        super().init_application_context(context)
         if self._servlet_context is None and isinstance(context, WebApplicationContext):
             self._servlet_context = context.get_servlet_context()
             if self._servlet_context is not None:
