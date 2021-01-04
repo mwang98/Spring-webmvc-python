@@ -13,11 +13,6 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
         if isinstance(order, int):
             self.setOrder(order)
 
-    def set_lookup_path(self, path):
-        self.lookup_path = path
-    def get_loolup_path(self):
-        return self.lookup_path
-
     def set_mappings(self, mappings: dict) -> None:
         self.urlMap.update(mappings)
 
