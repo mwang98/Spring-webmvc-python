@@ -5,6 +5,7 @@ from springframework.web.servlet.handler import AbstractUrlHandlerMapping
 class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
 
     def __init__(self, urlMap: dict = None, order: int = None):
+        super().__init__()
         self.urlMap = dict()
         if isinstance(urlMap, dict):
             self.set_url_map(urlMap)

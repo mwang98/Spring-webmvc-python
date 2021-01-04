@@ -13,11 +13,11 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
     rootHandler: object = None
 
     def __init__(self):
-        super().__init__(self)
         self.useTrailingSlashMatch: bool = False
         self.lazyInitHandlers: bool = False
         self.handlerMap = dict()
         self.pathPatternHandlerMap: dict()
+        super().__init__()
 
     def set_root_handler(self, rootHandler: object) -> None:
         self.rootHandler = rootHandler
