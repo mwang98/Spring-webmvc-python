@@ -36,8 +36,6 @@ class TestViewResolver(TestCase):
         self.do_test_url_based_view_resolver_with_prefixes(InternalResourceViewResolver())
 
     def do_test_url_based_view_resolver_without_prefixes(self, vr: UrlBasedViewResolver):
-        return
-        self.wac.refresh()
         vr.set_application_context(self.wac)
         vr.set_content_type("myContentType")
         vr.set_request_context_attribute("rc")
@@ -64,8 +62,6 @@ class TestViewResolver(TestCase):
         assert view.get_url() == "myUrl", "Incorrect URL"
 
     def do_test_url_based_view_resolver_with_prefixes(self, vr):
-        return
-        self.wac.refresh()
         vr.set_prefix("/WEB-INF/")
         vr.set_suffix(".jsp")
         vr.set_application_context(self.wac)
