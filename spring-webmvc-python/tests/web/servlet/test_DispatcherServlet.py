@@ -5,17 +5,17 @@ from springframework.web.testfixture.servlet.MockHttpServletRequest import MockH
 from springframework.web.testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse
 
 # custom controller
-from test_controller.Controller1 import controller1
-from test_controller.Controller2 import controller2
+#from test_controller.Controller1 import controller1
+#from test_controller.Controller2 import controller2
 
 def main():
     print('start')
 
     servletConfig = MockServletConfig(MockServletContext, servletName='simple')
-    dispatcherServlet = DispatcherServlet()
+    dispatcherServlet = DispatcherServlet('./myservlet.xml')
     dispatcherServlet.init(servletConfig)
 
-    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/locale.do")
+    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/hello.do")
     #request.addPreferredLocale(Locale.CANADA)
     response = MockHttpServletResponse()
 

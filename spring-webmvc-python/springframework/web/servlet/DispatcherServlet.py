@@ -97,16 +97,28 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     def init_strategies(self, context):
         mockXmlParser = MockXmlParser(self.xml_path)
 
-        urlMap = {"/": MockController("/"), "test": MockController("/test")}
+        print()
+        print(mockXmlParser.get_class_by_name("SimpleControllerHandlerAdapter"))
+        print(mockXmlParser.get_class_by_name("InternalResourceViewResolver"))
 
-        simpleUrlHandlerMapping = MockSimpleUrlHandlerMapping(urlMap, "/test")  # SimpleUrlHandlerMapping(urlMap)
+        urlMap = mockXmlParser.get_url_map()
+        prefix = mockXmlParser.get_view_resolver_attr()['prefix']
+        suffix = mockXmlParser.get_view_resolver_attr()['suffix']
+        #{"/": MockController("/"), "test": MockController("/test")}
+
+        simpleUrlHandlerMapping = mockXmlParser.get_class_by_name("SimpleUrlHandlerMapping")
+        simpleUrlHandlerMapping.set_url_map(urlMap)
+        #simpleUrlHandlerMapping.set_lookup_path('/hello')
         simpleUrlHandlerMapping.init_application_context()
+        print(simpleUrlHandlerMapping.get_url_map())
         self.handlerMappings.append(simpleUrlHandlerMapping)
 
-        simpleHandlerAdapter = SimpleControllerHandlerAdapter()
+        simpleHandlerAdapter = mockXmlParser.get_class_by_name("SimpleControllerHandlerAdapter")#SimpleControllerHandlerAdapter()
         self.handlerAdapters.append(simpleHandlerAdapter)
 
-        internalResourceViewResolver = InternalResourceViewResolver()
+        internalResourceViewResolver = mockXmlParser.get_class_by_name("InternalResourceViewResolver")#InternalResourceViewResolver()
+        internalResourceViewResolver.set_prefix(prefix)
+        internalResourceViewResolver.set_suffix(suffix)
         self.viewResolvers.append(internalResourceViewResolver)
 
     def set_context_class(self, contextClass):

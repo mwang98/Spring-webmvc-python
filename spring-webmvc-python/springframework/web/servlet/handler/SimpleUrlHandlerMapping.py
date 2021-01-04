@@ -7,10 +7,16 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
     def __init__(self, urlMap: dict = None, order: int = None):
         super().__init__()
         self.urlMap = dict()
+        self.lookup_path = ""
         if isinstance(urlMap, dict):
             self.set_url_map(urlMap)
         if isinstance(order, int):
             self.setOrder(order)
+
+    def set_lookup_path(self, path):
+        self.lookup_path = path
+    def get_loolup_path(self):
+        return self.lookup_path
 
     def set_mappings(self, mappings: dict) -> None:
         self.urlMap.update(mappings)
@@ -45,3 +51,6 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
                 patterns.append('/**')
             patterns.extend(list(self.get_handler_map().keys()))
             logging.debug(f"Patterns {patterns} in {self.format_mapping_name()}")
+
+    def init_lookup_path(self, request) -> str:
+        return self.lookup_path

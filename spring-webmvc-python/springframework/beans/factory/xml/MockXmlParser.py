@@ -75,7 +75,8 @@ class MockXmlParser():
 
 
 if __name__ == '__main__':
-    mockXmlParser = MockXmlParser("../../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml")
+    mockXmlParser = MockXmlParser("../../../../tests/web/servlet/myservlet.xml")
+    #../../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml
     print(mockXmlParser.get_url_map())
     print(mockXmlParser.get_view_resolver_attr())
     print(mockXmlParser.get_class_by_name("SimpleUrlHandlerMapping"))
