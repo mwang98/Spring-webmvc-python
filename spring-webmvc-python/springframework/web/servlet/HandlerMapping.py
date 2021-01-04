@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod, ABCMeta
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
+from springframework.utils.mock.inst import HttpServletRequest
 
 
 class HandlerMappingInterfaceMeta(type):

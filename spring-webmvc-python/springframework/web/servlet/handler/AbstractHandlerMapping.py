@@ -1,5 +1,4 @@
-import logging
-from abc import ABC, abstractmethod, ABCMeta
+from abc import ABC, abstractmethod
 from springframework.web.context.support import WebApplicationObjectSupport
 from springframework.web.servlet import HandlerMappingInterface as HandlerMapping
 from springframework.core import Ordered
@@ -20,8 +19,7 @@ from springframework.web.context.request import WebRequestInterceptor
 from springframework.web.util import ServletRequestPathUtils
 from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet.handler import MappedInterceptor
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
+from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
 from springframework.web import HttpRequestHandler
 
 

@@ -1,11 +1,9 @@
 import logging
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
+from springframework.utils.mock.inst import HttpServletRequest
 from springframework.web.util.WebUtils import WebUtils
 
 
 class UrlPathHelperMeta(type):
-    
     def __init__(cls, *args, **kwargs):
         cls.PATH_ATTRIBUTE: str = cls.__name__ + ".path"
 
@@ -15,7 +13,7 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
     def __init__(self):
         self.alwaysUseFullPath = False
         return
-    
+
     def set_always_use_full_path(self, alwaysUseFullPath: bool):
         self.alwaysUseFullPath = alwaysUseFullPath
 
@@ -34,7 +32,7 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
             return rest
         else:
             return pathWithinApp
-        
+
     def get_path_within_application(self, request: HttpServletRequest) -> str:
         contextPath: str = self.get_context_path(request)
         requestUri: str = self.get_request_uri(request)
@@ -61,7 +59,7 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
             return path
         else:
             return request.get_path_info()
-    
+
     def get_context_path(self, request: HttpServletRequest) -> str:
         contextPath: str = request.get_attribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)
         if not contextPath:
@@ -69,13 +67,13 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
         if contextPath == "/":
             contextPath = ""
         return self.decode_request_string(request, contextPath)
-    
+
     def get_request_uri(self, request: HttpServletRequest) -> str:
         uri: str = request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)
         if not uri:
             uri = request.get_request_uri()
         return self.decode_and_clean_uri_string(request, uri)
-    
+
     def decode_request_string(self, request: HttpServletRequest, source: str) -> str:
         # Ignore decode
         return source
@@ -85,7 +83,7 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
         uri = self.decode_request_string(request, uri)
         uri = self.get_sanitized_path(uri)
         return uri
-    
+
     def remove_semicolon_content(self, requestUri: str) -> str:
         if not requestUri:
             return ""
@@ -99,10 +97,10 @@ class UrlPathHelper(metaclass=UrlPathHelperMeta):
             if i == "/":
                 state = False
         return res
-    
+
     def get_sanitized_path(self, path: str) -> str:
         return path.replace("//", "/")
-    
+
     def get_remaining_path(self, requestUri: str, mapping: str, ignoreCase: bool) -> str:
         index1: int = 0
         index2: int = 0

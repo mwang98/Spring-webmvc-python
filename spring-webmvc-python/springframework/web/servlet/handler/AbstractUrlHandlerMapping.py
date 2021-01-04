@@ -2,13 +2,11 @@ import logging
 from springframework.web.servlet.handler.AbstractHandlerMapping import AbstractHandlerMapping
 from springframework.web.servlet.handler.MatchableHandlerMapping import MatchableHandlerMapping
 from springframework.web.servlet.handler.RequestMatchResult import RequestMatchResult
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
 from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet import HandlerInterceptorInterface
 from springframework.web.util import UrlPathHelper
+from springframework.utils.mock.inst import HttpServletRequest
 from springframework.utils.mock.inst import ServletRequestPathUtils, RequestPath
-
 
 
 class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping):
