@@ -3,8 +3,7 @@ from springframework.utils.mock.type import HttpServletResponseWrapper
 from springframework.web.testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse
 
 
-class MockRequestDispatcher():
-
+class MockRequestDispatcher:
     logger = logging.getLogger()
     resource: str = None
 

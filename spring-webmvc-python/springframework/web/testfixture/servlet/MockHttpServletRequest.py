@@ -6,7 +6,7 @@ from datetime import datetime
 # from .MockRequestDispatcher import MockRequestDispatcher
 # from springframework.web.testfixture.servlet import MockServletContext, \
 #     MockAsyncContext, MockHttpSession, MockRequestDispatcher
-from springframework.web.testfixture.servlet import MockServletContext
+from springframework.web.testfixture.servlet import MockServletContext, MockRequestDispatcher
 from springframework.web.testfixture.servlet import MockAsyncContext
 from springframework.web.testfixture.servlet import MockHttpSession
 
@@ -397,7 +397,7 @@ class MockHttpServletRequest():
         return self.secure or self.HTTPS == self.scheme
 
     def get_request_dispatcher(self, path: str):
-        return MockRequestDispatcher(path)
+        return MockRequestDispatcher.MockRequestDispatcher(path)
 
     def get_real_path(self, path: str) -> str:
         return self.servletContext.getRealPath(path)
