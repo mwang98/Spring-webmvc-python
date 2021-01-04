@@ -54,7 +54,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                 rawHandler = self.get_root_handler()
             if rawHandler is None:
                 rawHandler = self.get_default_handler()
-            else:
+            if rawHandler is not None:
                 assert not isinstance(rawHandler, str), "Does not support BeanName mapping"
                 if isinstance(rawHandler, str):
                     handlerName = str(rawHandler)
@@ -102,26 +102,23 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             request = arg2
 
             handler = self.get_direct_match(lookupPath, request)
-            if handler is not None:
-                return handler
+            return handler
 
             #Only supports direct match currently
-            assert handler is not None, "Handler mapping only supports direct match currently."
+
 
             matchingPatterns = list()
-            for registeredPattern in self.handlerMap.key():
-                if self.getPathMatcher().match(registeredPattern, lookupPath):
+            for registeredPattern in self.handlerMap:
+                if self.get_path_matcher().match(registeredPattern, lookupPath):
                     matchingPatterns.append(registeredPattern)
                 elif self.use_trailing_slash_match():
-                    if (not registeredPattern.endsWith("/")) and self.getPathMatcher().match(registeredPattern + "/", lookupPath):
+                    if (not registeredPattern.endsWith("/")) and self.get_path_matcher().match(registeredPattern + "/", lookupPath):
                         matchingPatterns.add(registeredPattern + "/")
 
             bestMatch: str = None
-            patternComparator = self.getPathMatcher().getPatternComparator(lookupPath)
+            patternComparator = self.get_path_matcher().getPatternComparator(lookupPath)
 
             if matchingPatterns:
-                # TODO
-                # matchingPatterns.sort(patternComparator)
                 logging.info(f"Matching patterns: {matchingPatterns}")
                 bestMatch = matchingPatterns[0]
 
@@ -234,7 +231,7 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
                     self.set_root_handler(resolvedHandler)
                 elif urlPath == "/*":
                     logging.info(f"Default mapping to {self.get_handler_description(handler)}")
-                    self.setDefaultHandler(resolvedHandler)
+                    self.set_default_handler(resolvedHandler)
                 else:
                     self.handlerMap[urlPath] = resolvedHandler
                     if self.get_pattern_parser() is not None:
