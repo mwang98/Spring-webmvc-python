@@ -142,7 +142,7 @@ class AbstractCachingViewResolver(WebApplicationObjectSupport, ViewResolver, ABC
             self.viewCreationCache = dict()
 
     def create_view(self, viewName: str, locale: Locale) -> View:
-        return self.loadView(viewName, locale)
+        return self.load_view(viewName, locale)
 
     @abstractmethod
     def load_view(self, viewName: str, locale: Locale) -> View:

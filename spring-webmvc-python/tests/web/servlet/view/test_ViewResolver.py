@@ -6,7 +6,7 @@ from springframework.web.testfixture.servlet import MockHttpServletRequest
 from springframework.web.testfixture.servlet import MockHttpServletResponse
 from springframework.web.context.support.StaticWebApplicationContext import StaticWebApplicationContext
 from springframework.web.servlet.DispatcherServlet import DispatcherServlet
-from springframework.web.servlet.view import UrlBasedViewResolver, \
+from springframework.web.servlet.view import UrlBasedViewResolver, AbstractCachingViewResolver, \
     InternalResourceViewResolver, InternalResourceView, JstlView, RedirectView
 
 
@@ -82,6 +82,93 @@ class TestViewResolver(TestCase):
         assert isinstance(view, InternalResourceView), "Incorrect view class"
         assert view.get_url() == "myUrl", "Incorrect URL"
 
+    def internal_resource_view_resolver_with_jstl(self):
+        locale = Locale.getDefault()
+
+        self.wac.addMessage("code1", locale, "messageX")
+        vr = InternalResourceViewResolver()
+        vr.set_view_class(JstlView.class)
+        vr.setApplicationContext(self.wac)
+
+        view = vr.resolveViewName("example1", Locale.getDefault())
+        assert isinstance(view, JstlView)
+        assert view.get_url() == "example1", "Incorrect URL"
+
+        view = vr.resolveViewName("example2", Locale.getDefault())
+        assert isinstance(view, JstlView)
+        assert view.get_url() == "example2", "Incorrect URL"
+
+        #TODO setAttribute, testbean, render view
+
+    def cache_removal(self):
+        vr = InternalResourceViewResolver()
+        vr.set_view_class(JstlView)
+        vr.set_application_context(self.wac)
+
+        view = vr.resolve_view_name("example1", Locale.getDefault())
+        cached = vr.resolve_view_name("example1", Locale.getDefault())
+        assert cached is view
+
+        vr.remove_from_cache("example1", Locale.getDefault())
+        cached = vr.resolve_view_name("example1", Locale.getDefault())
+        assert cached is not view, "not removed from cache"
+
+    def cache_unresolved(self):
+        viewResolver = testAbstractCachingViewResolver()
+        
+        viewResolver.set_cache_unresolved(False)
+
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+
+        assert count == 2
+
+        viewResolver.set_cache_unresolved(True)
+
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+
+        assert count == 3
+
+    def cache_filter_enabled(self):
+        viewResolver = test2AbstractCachingViewResolver()
+
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+
+        assert count == 1
+
+    def cache_filter(self, view, viewName, locale):
+        return False
+
+    def cache_filter_disabled(self):
+        viewResolver = test2AbstractCachingViewResolver()
+
+        #TODO set cachefilter
+        viewResolver.set_cache_filter(self.cache_filter)
+
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+        viewResolver.resolve_view_name("view", Locale.getDefault())
+
+        assert count == 2
+
+
+class test1AbstractCachingViewResolver(AbstractCachingViewResolver):
+    count = 0
+    def load_view(self, viewName, locale):
+        count += 1
+        return None
+
+class test2AbstractCachingViewResolver(AbstractCachingViewResolver):
+    count = 0
+    def load_view(self, viewName, locale):
+        assert viewName == "view"
+        # TODO assert Locale
+        count += 1
+        return testView()
 
 class testView(InternalResourceView):
     def __init__(self):
