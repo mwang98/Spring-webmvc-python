@@ -1,6 +1,30 @@
+from springframework.web.servlet.ModelAndView import ModelAndView
 from springframework.web.servlet.handler import SimpleUrlHandlerMapping
+from springframework.web.servlet.mvc.Controller import Controller
 from springframework.web.servlet.mvc.SimpleControllerHandlerAdapter import SimpleControllerHandlerAdapter
 from springframework.web.servlet.view import InternalResourceViewResolver
+
+
+class MockController(Controller):
+    def __init__(self, name: str):
+        self.name = name
+
+    def get_name(self) -> str:
+        return self.name
+
+    def handle_request(self, request, response) -> ModelAndView:
+        print('handle')
+        mv = ModelAndView()
+        return mv
+
+
+class MockSimpleUrlHandlerMapping(SimpleUrlHandlerMapping):
+    def __init__(self, urlMap: dict(), mockLookupPath: str):
+        super().__init__(urlMap)
+        self.mockLookupPath = mockLookupPath
+
+    def init_lookup_path(self, request):
+        return self.mockLookupPath
 
 
 class DispatcherServletMeta(type):
@@ -19,11 +43,10 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     handlerAdapters = []
     viewResolvers = []
 
-
     def __init__(self):
         super(DispatcherServlet, self).__init__()
         print('inits')
-        #self.arg = arg
+        # self.arg = arg
 
     def init(self, config):
         self.config = config
@@ -69,7 +92,10 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         self.init_strategies(context)
 
     def init_strategies(self, context):
-        simpleUrlHandlerMapping = SimpleUrlHandlerMapping()
+        urlMap = {"/": MockController("/"), "test": MockController("/test")}
+
+        simpleUrlHandlerMapping = MockSimpleUrlHandlerMapping(urlMap, "/test")  # SimpleUrlHandlerMapping(urlMap)
+        simpleUrlHandlerMapping.init_application_context()
         self.handlerMappings.append(simpleUrlHandlerMapping)
 
         simpleHandlerAdapter = SimpleControllerHandlerAdapter()
@@ -88,7 +114,7 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         mapped_handler = self.get_handler(request)
         handler_adapter = self.get_handler_adapter(mapped_handler.get_handler())
 
-        if not mapped_handler.applyPreHandle(request, response):
+        if not mapped_handler.apply_pre_handle(request, response):
             return
 
         model_and_view = handler_adapter.handle(request, response, mapped_handler.get_handler())

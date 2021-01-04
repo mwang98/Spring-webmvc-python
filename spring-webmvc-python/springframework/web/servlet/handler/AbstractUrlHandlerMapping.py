@@ -183,11 +183,11 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
         return chain
 
     def expose_path_within_mapping(self, bestMatchingPattern: str, pathWithinMapping: str, request) -> None:
-        request.setAttribute(AbstractUrlHandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE, bestMatchingPattern)
-        request.setAttribute(AbstractUrlHandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping)
+        request.set_attribute(AbstractUrlHandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE, bestMatchingPattern)
+        request.set_attribute(AbstractUrlHandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, pathWithinMapping)
 
     def expose_uri_template_variables(self, uriTemplateVariables: dict, request) -> None:
-        request.setAttribute(self.URI_TEMPLATE_VARIABLES_ATTRIBUTE, uriTemplateVariables)
+        request.set_attribute(self.URI_TEMPLATE_VARIABLES_ATTRIBUTE, uriTemplateVariables)
 
     def match(self, request, pattern: str):
         assert self.getPatternParser() is not None, "This HandlerMapping uses PathPatterns."
@@ -263,8 +263,8 @@ class PathExposingHandlerInterceptor(HandlerInterceptorInterface):
         self.expose_path_within_mapping(self.bestMatchingPattern, self.pathWithinMapping, request)
         # TODO: BEST_MATCHING_HANDLER_ATTRIBUTE, INTROSPECT_TYPE_LEVEL_MAPPING
         # dont know where it is from
-        request.setAttribute(AbstractUrlHandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE, handler)
-        request.setAttribute(AbstractUrlHandlerMapping.INTROSPECT_TYPE_LEVEL_MAPPING, 
+        request.set_attribute(AbstractUrlHandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE, handler)
+        request.set_attribute(AbstractUrlHandlerMapping.INTROSPECT_TYPE_LEVEL_MAPPING, 
                 self.supports_type_level_mappings())
         return True
 

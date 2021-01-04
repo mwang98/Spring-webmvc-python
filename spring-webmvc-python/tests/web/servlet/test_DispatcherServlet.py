@@ -15,6 +15,11 @@ def main():
     #request.addPreferredLocale(Locale.CANADA)
     response = MockHttpServletResponse()
 
+    request.set_context_path("/mycontext")
+    request.set_servlet_path("/myservlet")
+    request.set_path_info(";mypathinfo")
+    request.set_query_string("?param1=value1")
+
     #dispatcherServelet.set_context_class()
     dispatcherServelet.do_service(request, response)
     print('test finished')
