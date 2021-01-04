@@ -17,6 +17,7 @@ Pipfile.lock
 *.toml
 pip-wheel-metadata/
 data
+*.idea
 
 
 # Byte-compiled / optimized / DLL files
