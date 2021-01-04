@@ -1,4 +1,3 @@
-import pytest
 from unittest import TestCase, mock
 from springframework.utils.mock.inst import Locale
 from springframework.web.testfixture.servlet import MockServletContext
