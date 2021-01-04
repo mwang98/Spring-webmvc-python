@@ -6,6 +6,7 @@ from springframework.web.servlet.mvc.SimpleControllerHandlerAdapter import Simpl
 from springframework.web.servlet.view import InternalResourceViewResolver
 from springframework.utils.mock.inst import Locale
 
+
 class MockController(Controller):
     def __init__(self, name: str):
         self.name = name
@@ -97,22 +98,21 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     def init_strategies(self, context):
         mockXmlParser = MockXmlParser(self.xml_path)
 
-
-
         urlMap = mockXmlParser.get_url_map()
         prefix = mockXmlParser.get_view_resolver_attr()['prefix']
         suffix = mockXmlParser.get_view_resolver_attr()['suffix']
-
 
         simpleUrlHandlerMapping = mockXmlParser.get_class_by_name("SimpleUrlHandlerMapping")
         simpleUrlHandlerMapping.set_url_map(urlMap)
         simpleUrlHandlerMapping.init_application_context()
         self.handlerMappings.append(simpleUrlHandlerMapping)
 
-        simpleHandlerAdapter = mockXmlParser.get_class_by_name("SimpleControllerHandlerAdapter")#SimpleControllerHandlerAdapter()
+        simpleHandlerAdapter = mockXmlParser.get_class_by_name(
+            "SimpleControllerHandlerAdapter")  # SimpleControllerHandlerAdapter()
         self.handlerAdapters.append(simpleHandlerAdapter)
 
-        internalResourceViewResolver = mockXmlParser.get_class_by_name("InternalResourceViewResolver")#InternalResourceViewResolver()
+        internalResourceViewResolver = mockXmlParser.get_class_by_name(
+            "InternalResourceViewResolver")  # InternalResourceViewResolver()
         internalResourceViewResolver.set_prefix(prefix)
         internalResourceViewResolver.set_suffix(suffix)
         self.viewResolvers.append(internalResourceViewResolver)
@@ -124,20 +124,18 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         self.do_dispatch(request, response)
 
     def do_dispatch(self, request, response):
+
         mapped_handler = self.get_handler(request)
         handler_adapter = self.get_handler_adapter(mapped_handler.get_handler())
 
         if not mapped_handler.apply_pre_handle(request, response):
             return
 
-
         model_and_view = handler_adapter.handle(request, response, mapped_handler.get_handler())
         mapped_handler.apply_post_handle(request, response, model_and_view)
-
         locale = Locale()
         view = self.resolve_view_name(model_and_view.get_view_name(), locale)
-        print('view:', view)
-        view.render(model_and_view.get_model_internal(), request, response)
+        view.render(request, response, model_and_view.get_model_internal())
 
     def get_handler(self, request):
         for handlerMapping in self.handlerMappings:
@@ -155,6 +153,6 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     def resolve_view_name(self, viewName, locale):
         for viewResolver in self.viewResolvers:
             view = viewResolver.resolve_view_name(viewName, locale)
-            if view != None:
+            if view is not None:
                 return view
         return None

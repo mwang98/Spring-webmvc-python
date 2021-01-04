@@ -266,9 +266,9 @@ class MockHttpServletRequest():
     def get_parameter_names(self) -> list:
         return list(self.parameters.keys())
 
-    def get_parameter_values(self, name: str) -> list:
-        assert name is not None, "Parameter name must not be null"
-        return self.parameters.get(name)
+    def get_parameter_values(self) -> list:
+        #assert name is not None, "Parameter name must not be null"
+        return list(self.parameters.values())
 
     def get_parameter_map(self) -> dict:
         return self.parameters
