@@ -47,9 +47,11 @@ class MockXmlParser():
 
     def get_url_map(self):
         url_map = {}
-        simpleUrlHandlerMapping = self.root.find("_default:bean[@class='springframework.web.servlet.handler.SimpleUrlHandlerMapping']", namespaces=self.namespace)
+        simpleUrlHandlerMapping = self.root.find("_default:bean[@class='springframework.web.servlet.handler.SimpleUrlHandlerMapping']", 
+                                                 namespaces=self.namespace)
         
-        props = simpleUrlHandlerMapping.find("_default:property[@name='mappings']/_default:props", self.namespace)
+        props = simpleUrlHandlerMapping.find("_default:property[@name='mappings']/_default:props", 
+                                             namespaces=self.namespace)
         for prop in props:
             routePath = prop.attrib['key']
             mappedHandlerId = prop.text
@@ -58,7 +60,18 @@ class MockXmlParser():
             except Exception as e:
                 print(f"{mappedHandlerId} isn't found in {self.xml_path}")
         return url_map
+    
+    def get_view_resolver_attr(self):
+        ret = {}
+        properties = self.root.findall("_default:bean[@class='springframework.web.servlet.view.InternalResourceViewResolver']/_default:property", 
+                          namespaces = self.namespace)
+        for prop in properties:
+            key = prop.attrib['name']
+            value = prop.attrib['value']
+            ret[key] = value
+        return ret
 
 if __name__ == '__main__':
-    mockXmlParser = MockXmlParser("path-to/mvc-servlet.xml")
+    mockXmlParser = MockXmlParser("../../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml")
     print(mockXmlParser.get_url_map())
+    print(mockXmlParser.get_view_resolver_attr())
