@@ -94,7 +94,7 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
         return self.beanName
 
     def render(self, model, request, response) -> None:
-        logging.debug(
+        logging.info(
             "View " +
             self.format_view_name() +
             ", model " +
