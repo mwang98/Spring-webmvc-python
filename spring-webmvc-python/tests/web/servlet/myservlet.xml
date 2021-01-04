@@ -17,12 +17,14 @@
     </bean>
 
     <bean class="springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-    <bean class="path.to.Controller1" id="controller1" />
+    <bean class="springframework.test_controller.Controller1" id="controller1"/>
+    <bean class="springframework.test_controller.Controller2" id="controller2"/>
     <bean class="springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/hello">controller1</prop>
                 <prop key="/*/hello">controller1</prop>
+                <prop key="/welcome">controller2</prop>
             </props>
         </property>
 
