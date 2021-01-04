@@ -7,6 +7,7 @@ from springframework.web.testfixture.servlet import MockHttpServletResponse as H
 from springframework.web.servlet.HandlerExecutionChain import HandlerExecutionChain
 from springframework.web.servlet import HandlerInterceptorInterface
 from springframework.web.util import UrlPathHelper
+from springframework.utils.mock.inst import ServletRequestPathUtils, RequestPath
 
 
 
