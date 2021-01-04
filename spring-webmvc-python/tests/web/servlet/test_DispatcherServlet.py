@@ -15,13 +15,13 @@ def main():
     dispatcherServlet = DispatcherServlet('./myservlet.xml')
     dispatcherServlet.init(servletConfig)
 
-    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/hello.do")
+    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/hello")
     #request.addPreferredLocale(Locale.CANADA)
     response = MockHttpServletResponse()
 
     request.set_context_path("/mycontext")
     request.set_servlet_path("/myservlet")
-    request.set_path_info(";mypathinfo")
+    request.set_path_info("/hello")
     request.set_query_string("?param1=value1")
 
     #dispatcherServlet.set_context_class()
