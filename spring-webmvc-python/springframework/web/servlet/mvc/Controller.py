@@ -6,6 +6,5 @@ from springframework.web.servlet import ModelAndView
 
 class Controller(ABC):
     @abstractmethod
-    def handle_request(request: HttpServletRequest, response: HttpServletResponse) -> ModelAndView:
+    def handle_request(self, request: HttpServletRequest, response: HttpServletResponse) -> ModelAndView:
         raise NotImplementedError
-        
