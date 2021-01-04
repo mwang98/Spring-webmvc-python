@@ -7,9 +7,12 @@ from springframework.utils.mock.inst import GenericBeanDefinition
 class StaticApplicationContext(GenericApplicationContext):
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        if parent:
+            super().__init__(parent)
+        else:
+            super().__init__()
         self.staticMessageSource = mock.MagicMock(name="StaticMessageSource")
-        self.getBeanFactory().register_singleton(self.MESSAGE_SOURCE_BEAN_NAME, self.staticMessageSource)
+        # self.getBeanFactory().register_singleton(self.MESSAGE_SOURCE_BEAN_NAME, self.staticMessageSource)
 
     def assert_bean_factory_active(self):
         pass

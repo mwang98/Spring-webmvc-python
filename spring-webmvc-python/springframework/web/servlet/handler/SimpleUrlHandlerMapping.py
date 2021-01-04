@@ -21,7 +21,7 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
     def get_url_map(self) -> dict:
         return self.urlMap
 
-    def init_application_context(self) -> None:
+    def init_application_context(self, context=None) -> None:
         super().init_application_context()
         self.register_handlers(self.urlMap)
 

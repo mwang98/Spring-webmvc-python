@@ -124,11 +124,11 @@ class AbstractHandlerMapping(WebApplicationObjectSupport, HandlerMapping, Ordere
         self.beanName = name
 
     def format_mapping_name(self) -> str:
-        if not self.beanName is None:
+        if self.beanName is not None:
             return "'" + self.beanName + "'"
         return "<unknown>"
 
-    def init_application_context(self) -> None:
+    def init_application_context(self, context=None) -> None:
         self.extend_interceptors(self.interceptors)
         self.detected_mapped_interceptors(self.interceptors)
         self.init_interceptors()

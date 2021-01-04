@@ -3,14 +3,15 @@ from abc import ABC
 from springframework.context.ApplicationContextAware import ApplicationContextAware
 from springframework.context.ApplicationContext import ApplicationContext
 from springframework.context.support.MessageSourceAccessor import MessageSourceAccessor
+from springframework.function.support.multiple import MultipleMeta
 
 
 class ApplicationObjectSupport(ApplicationContextAware, ABC):
 
     def __init__(self):
-        super().__init__()
         self._application_context: ApplicationContext = None
         self._message_source_accessor: MessageSourceAccessor = None
+        super().__init__()
 
     def set_application_context(self, context: ApplicationContext = None) -> None:
         if context is None and not self.is_context_required():
@@ -33,9 +34,12 @@ class ApplicationObjectSupport(ApplicationContextAware, ABC):
     def required_context_class(self):
         return ApplicationContext
 
-    def init_application_context(self, context: ApplicationContext = None) -> None:
+    def init_application_context(self, context: ApplicationContext) -> None:
         if context is not None:
             self.init_application_context()
+
+    # def init_application_context(self) -> None:
+    #     pass
 
     def get_application_context(self):
         if self._application_context is None and self.is_context_required():

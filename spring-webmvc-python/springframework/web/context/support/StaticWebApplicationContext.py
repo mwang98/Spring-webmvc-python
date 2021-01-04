@@ -12,6 +12,7 @@ class StaticWebApplicationContext(StaticApplicationContext):
     themeSource = None
 
     def __init__(self):
+        super().__init__()
         self.set_display_name("Root WebApplicationContext")
 
     def set_servlet_context(self, servletContext):

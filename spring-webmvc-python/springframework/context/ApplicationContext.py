@@ -5,7 +5,7 @@ from springframework.core.env.EnvironmentCapable import EnvironmentCapable
 
 
 # TODO: solve dependencies: ListableBeanFactory, HierarchicalBeanFactory,
-# ApplicationEventPublisher, ResourcePatternResolver
+# , ResourcePatternResolver
 class ApplicationContext(EnvironmentCapable, MessageSource, ABC):
     def __init__(self):
         super().__init__()

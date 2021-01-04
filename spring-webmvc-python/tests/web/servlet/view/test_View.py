@@ -1,6 +1,6 @@
 from unittest import TestCase, mock
 from springframework.web.context.support.WebApplicationContext import WebApplicationContext
-from springframework.web.testfixture.servlet import MockServletContext, MockHttpServletRequest
+from springframework.web.testfixture.servlet import MockServletContext
 from springframework.web.testfixture.servlet import MockHttpServletRequest
 from springframework.web.testfixture.servlet import MockHttpServletResponse
 from springframework.web.servlet import View
