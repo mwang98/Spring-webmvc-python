@@ -6,27 +6,23 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <context:component-scan base-package="com.yuntao.hello"/>
 
-    <!-- 静态资源(js、image等)的访问 -->
     <mvc:default-servlet-handler/>
 
-    <!-- 开启注解 -->
     <mvc:annotation-driven/>
 
-    <!--ViewResolver 视图解析器-->
-    <!--用于支持Servlet、JSP视图解析-->
-    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    <bean id="jspViewResolver" class="springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-    <bean class="com.yuntao.hello.HelloController2" id="hello2" />
-    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <bean class="springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+    <bean class="springframework.web.servlet.mvc.MyController" id="myController" />
+    <bean class="springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="/hello">hello2</prop>
-                <prop key="/*/hello">hello2</prop>
+                <prop key="/hello">myController</prop>
+                <prop key="/*/hello">myController</prop>
             </props>
         </property>
 
