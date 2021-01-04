@@ -87,7 +87,7 @@ class TestViewResolver(TestCase):
 
         self.wac.addMessage("code1", locale, "messageX")
         vr = InternalResourceViewResolver()
-        vr.set_view_class(JstlView.class)
+        vr.set_view_class(JstlView)
         vr.setApplicationContext(self.wac)
 
         view = vr.resolveViewName("example1", Locale.getDefault())
