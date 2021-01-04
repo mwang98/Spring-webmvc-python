@@ -82,8 +82,6 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
             if not matches:
                 return None
             else:
-                # TODO
-                # matches.sort(PathPattern.SPECIFICITY_COMPARATOR)
                 logging.debug(f"Matching patterns: {matches}")
 
             pattern = matches[0]
@@ -103,9 +101,6 @@ class AbstractUrlHandlerMapping(AbstractHandlerMapping, MatchableHandlerMapping)
 
             handler = self.get_direct_match(lookupPath, request)
             return handler
-
-            #Only supports direct match currently
-
 
             matchingPatterns = list()
             for registeredPattern in self.handlerMap:
