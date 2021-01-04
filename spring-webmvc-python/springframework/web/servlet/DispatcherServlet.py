@@ -131,10 +131,11 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
             return
 
         model_and_view = handler_adapter.handle(request, response, mapped_handler.get_handler())
-        mapped_handler.applyPostHandle(request, response, model_and_view)
+        mapped_handler.apply_post_handle(request, response, model_and_view)
 
-        view = model_and_view.getView()
-        view.render(model_and_view.getModelInternal(), request, response)
+        view = model_and_view.get_view()
+        print('view:', view)
+        view.render(model_and_view.get_model_internal(), request, response)
 
     def get_handler(self, request):
         for handlerMapping in self.handlerMappings:

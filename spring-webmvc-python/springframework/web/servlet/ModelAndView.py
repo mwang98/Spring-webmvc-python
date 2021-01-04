@@ -14,14 +14,15 @@ class ModelAndView():
 
     def __init__(self, view=None, arg2=None, arg3=None):
         self._view = view
-        if isinstance(arg2, dict) and arg2:
-            self.get_model_map().addAllAttributes(arg2)
-        if isinstance(arg2, HttpStatus):
-            self._status = arg2
-        if isinstance(arg3, HttpStatus):
-            self._status = arg3
-        if isinstance(arg2, str) and isinstance(arg2, object):
-            self.add_object(arg2, arg3)
+        if arg2 != None and arg3 != None:
+            if isinstance(arg2, dict) and arg2:
+                self.get_model_map().addAllAttributes(arg2)
+            if isinstance(arg2, HttpStatus):
+                self._status = arg2
+            if isinstance(arg3, HttpStatus):
+                self._status = arg3
+            if isinstance(arg2, str) and isinstance(arg2, object):
+                self.add_object(arg2, arg3)
 
     def set_view_name(self, viewName: str) -> None:
         self._view = viewName
@@ -32,7 +33,7 @@ class ModelAndView():
     def set_view(self, view: View) -> None:
         self._view = view
 
-    def get_view(self) -> str:
+    def get_view(self) -> View:
         return self._view
 
     def has_view(self) -> bool:
