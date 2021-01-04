@@ -1,4 +1,3 @@
-
 from springframework.web.servlet.DispatcherServlet import DispatcherServlet
 from springframework.web.testfixture.servlet.MockServletConfig import MockServletConfig
 from springframework.web.testfixture.servlet.MockServletContext import MockServletContext
@@ -6,9 +5,9 @@ from springframework.web.testfixture.servlet.MockHttpServletRequest import MockH
 from springframework.web.testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse
 
 def main():
-    print('strat')
+    print('start')
     servletConfig = MockServletConfig(MockServletContext, servletName='simple')
-    dispatcherServelet = DispatcherServlet()
+    dispatcherServelet = DispatcherServlet("../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml")
     dispatcherServelet.init(servletConfig)
 
     request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/locale.do")

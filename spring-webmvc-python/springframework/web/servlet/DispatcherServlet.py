@@ -1,3 +1,4 @@
+from springframework.beans.factory.xml.MockXmlParser import MockXmlParser
 from springframework.web.servlet.ModelAndView import ModelAndView
 from springframework.web.servlet.handler import SimpleUrlHandlerMapping
 from springframework.web.servlet.mvc.Controller import Controller
@@ -42,11 +43,13 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
     handlerMappings = []
     handlerAdapters = []
     viewResolvers = []
+    xml_path = ""
 
-    def __init__(self):
+    def __init__(self, xml_path):
         super(DispatcherServlet, self).__init__()
         print('inits')
         # self.arg = arg
+        self.xml_path = xml_path
 
     def init(self, config):
         self.config = config
@@ -92,6 +95,8 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         self.init_strategies(context)
 
     def init_strategies(self, context):
+        mockXmlParser = MockXmlParser(self.xml_path)
+
         urlMap = {"/": MockController("/"), "test": MockController("/test")}
 
         simpleUrlHandlerMapping = MockSimpleUrlHandlerMapping(urlMap, "/test")  # SimpleUrlHandlerMapping(urlMap)
