@@ -9,7 +9,7 @@ class Controller1(Controller):
     def handle_request(self, request: MockHttpServletRequest, response: MockHttpServletResponse):
         print("Controller1 invoked!!!")
         mav = ModelAndView()
-        print(request.get_request_url())
-        internalResourceView = InternalResourceView(request.get_request_url())
-        mav.set_view(internalResourceView)
+        #internalResourceView = InternalResourceView(request.get_request_url())
+        #mav.set_view(internalResourceView)
+        mav.set_view_name('hello')
         return mav

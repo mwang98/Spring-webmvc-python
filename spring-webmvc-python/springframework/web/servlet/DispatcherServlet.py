@@ -4,7 +4,7 @@ from springframework.web.servlet.handler import SimpleUrlHandlerMapping
 from springframework.web.servlet.mvc.Controller import Controller
 from springframework.web.servlet.mvc.SimpleControllerHandlerAdapter import SimpleControllerHandlerAdapter
 from springframework.web.servlet.view import InternalResourceViewResolver
-
+from springframework.utils.mock.inst import Locale
 
 class MockController(Controller):
     def __init__(self, name: str):
@@ -130,10 +130,12 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         if not mapped_handler.apply_pre_handle(request, response):
             return
 
+
         model_and_view = handler_adapter.handle(request, response, mapped_handler.get_handler())
         mapped_handler.apply_post_handle(request, response, model_and_view)
 
-        view = model_and_view.get_view()
+        locale = Locale()
+        view = self.resolve_view_name(model_and_view.get_view_name(), locale)
         print('view:', view)
         view.render(model_and_view.get_model_internal(), request, response)
 
@@ -148,4 +150,11 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         for handlerAdapter in self.handlerAdapters:
             if handlerAdapter.supports(handler):
                 return handlerAdapter
+        return None
+
+    def resolve_view_name(self, viewName, locale):
+        for viewResolver in self.viewResolvers:
+            view = viewResolver.resolve_view_name(viewName, locale)
+            if view != None:
+                return view
         return None

@@ -55,7 +55,7 @@ class InternalResourceView(AbstractUrlBasedView):
         assert path is not None, "'url' not set"
 
         if self.preventDispatchLoop:
-            uri: str = request.getRequestURI()
+            uri: str = request.get_request_uri()
             if path.startswith("/"):
                 state = (uri == path)
             else:
