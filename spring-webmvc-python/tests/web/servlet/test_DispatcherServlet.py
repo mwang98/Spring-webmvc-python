@@ -4,9 +4,34 @@ from springframework.web.testfixture.servlet.MockServletContext import MockServl
 from springframework.web.testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest
 from springframework.web.testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse
 
-# custom controller
-#from test_controller.Controller1 import controller1
-#from test_controller.Controller2 import controller2
+
+def test_1(servletConfig, dispatcherServlet):
+    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/hello")
+    response = MockHttpServletResponse()
+
+    request.set_context_path("/mycontext")
+    request.set_servlet_path("/myservlet")
+    request.set_path_info("/hello")
+    request.set_query_string("?param1=value1")
+    request.set_parameter('team id', [4])
+    request.set_parameter('team member num', [6])
+
+    dispatcherServlet.do_service(request, response)
+    print('test 1 finished')
+
+def test_2(servletConfig, dispatcherServlet):
+    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/welcome")
+    response = MockHttpServletResponse()
+
+    request.set_context_path("/mycontext")
+    request.set_servlet_path("/myservlet")
+    request.set_path_info("/hello")
+    request.set_query_string("?param1=value1")
+    request.set_parameter('term project', 'spring webmvc')
+
+    dispatcherServlet.do_service(request, response)
+    print('test 2 finished')
+
 
 def main():
     print('start')
@@ -14,19 +39,9 @@ def main():
     servletConfig = MockServletConfig(MockServletContext, servletName='simple')
     dispatcherServlet = DispatcherServlet('./myservlet.xml')
     dispatcherServlet.init(servletConfig)
+    test_2(servletConfig, dispatcherServlet)
 
-    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/hello")
-    #request.addPreferredLocale(Locale.CANADA)
-    response = MockHttpServletResponse()
 
-    request.set_context_path("/mycontext")
-    request.set_servlet_path("/myservlet")
-    request.set_path_info("/hello")
-    request.set_query_string("?param1=value1")
-
-    #dispatcherServlet.set_context_class()
-    dispatcherServlet.do_service(request, response)
-    print('test finished')
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@
     <bean id="jspViewResolver" class="springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"/>
+        <property name="suffix" value=".gjsp"/>
     </bean>
 
     <bean class="springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -27,8 +27,5 @@
                 <prop key="/welcome">controller2</prop>
             </props>
         </property>
-
     </bean>
-
-
 </beans>

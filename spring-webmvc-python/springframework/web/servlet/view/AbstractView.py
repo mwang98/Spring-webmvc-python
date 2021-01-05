@@ -93,7 +93,7 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     def get_bean_name(self) -> str:
         return self.beanName
 
-    def render(self, model, request, response) -> None:
+    def render(self, request, response, model=None):
         logging.info(
             "View " +
             self.format_view_name() +
@@ -153,6 +153,7 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     @abstractmethod
     def render_merged_output_model(self, model: dict, request, response):
         raise NotImplementedError
+
 
     def expose_model_as_request_attributes(self, model: dict, request):
         for name, value in model.items():

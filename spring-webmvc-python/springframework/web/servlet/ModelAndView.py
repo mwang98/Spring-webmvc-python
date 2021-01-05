@@ -45,9 +45,9 @@ class ModelAndView():
     def get_model_internal(self) -> dict:
         return self._model
 
-    def get_model_map(self) -> ModelMap:
+    def get_model_map(self):
         if self._model is None:
-            self._model = ModelMap()
+            self._model = {}#ModelMap()
         return self._model
 
     def get_model(self) -> dict:
@@ -62,9 +62,11 @@ class ModelAndView():
     def add_object(self, attributeName: str, attributeValue: object = None):
         if attributeValue is None and isinstance(attributeName, object):
             attributeValue = attributeName
-            self.get_model_map().addAttribute(attributeValue)
+            #self.get_model_map().addAttribute(attributeValue)
+            self.get_model_map()[attributeName] = attributeValue
         else:
-            self.get_model_map().addAttribute(attributeName, attributeValue)
+            #self.get_model_map().addAttribute(attributeName, attributeValue)
+            self.get_model_map()[attributeName] = attributeValue
         return self
 
     def add_all_objects(self, modelMap: dict):
