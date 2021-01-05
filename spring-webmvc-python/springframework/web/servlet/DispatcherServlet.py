@@ -135,7 +135,7 @@ class DispatcherServlet(metaclass=DispatcherServletMeta):
         mapped_handler.apply_post_handle(request, response, model_and_view)
         locale = Locale()
         view = self.resolve_view_name(model_and_view.get_view_name(), locale)
-        view.render(request, response, model_and_view.get_model_internal())
+        view.render(model_and_view.get_model_internal(), request, response)
 
     def get_handler(self, request):
         for handlerMapping in self.handlerMappings:

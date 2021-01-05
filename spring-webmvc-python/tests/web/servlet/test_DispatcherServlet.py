@@ -1,3 +1,4 @@
+from unittest import TestCase
 from springframework.web.servlet.DispatcherServlet import DispatcherServlet
 from springframework.web.testfixture.servlet.MockServletConfig import MockServletConfig
 from springframework.web.testfixture.servlet.MockServletContext import MockServletContext
@@ -5,44 +6,36 @@ from springframework.web.testfixture.servlet.MockHttpServletRequest import MockH
 from springframework.web.testfixture.servlet.MockHttpServletResponse import MockHttpServletResponse
 
 
-def test_1(servletConfig, dispatcherServlet):
-    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/hello")
-    response = MockHttpServletResponse()
+class TestDispatcherServlet(TestCase):
 
-    request.set_context_path("/mycontext")
-    request.set_servlet_path("/myservlet")
-    request.set_path_info("/hello")
-    request.set_query_string("?param1=value1")
-    request.set_parameter('team id', [4])
-    request.set_parameter('team member num', [6])
+    def setUp(self):
+        import os
+        os.chdir(os.path.dirname(__file__))
+        self.servletConfig = MockServletConfig(MockServletContext, servletName='simple')
+        self.dispatcherServlet = DispatcherServlet('./myservlet.xml')
+        self.dispatcherServlet.init(self.servletConfig)
 
-    dispatcherServlet.do_service(request, response)
-    print('test 1 finished')
+    def test_1(self):
+        request = MockHttpServletRequest(self.servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/hello")
+        response = MockHttpServletResponse()
 
-def test_2(servletConfig, dispatcherServlet):
-    request = MockHttpServletRequest(servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/welcome")
-    response = MockHttpServletResponse()
+        request.set_context_path("/mycontext")
+        request.set_servlet_path("/myservlet")
+        request.set_path_info("/hello")
+        request.set_query_string("?param1=value1")
+        request.set_parameter('team id', [4])
+        request.set_parameter('team member num', [6])
 
-    request.set_context_path("/mycontext")
-    request.set_servlet_path("/myservlet")
-    request.set_path_info("/hello")
-    request.set_query_string("?param1=value1")
-    request.set_parameter('term project', 'spring webmvc')
+        self.dispatcherServlet.do_service(request, response)
 
-    dispatcherServlet.do_service(request, response)
-    print('test 2 finished')
+    def test_2(self):
+        request = MockHttpServletRequest(self.servletConfig.get_servlet_context(), "GET", "/mycontext/myservlet/welcome")
+        response = MockHttpServletResponse()
 
+        request.set_context_path("/mycontext")
+        request.set_servlet_path("/myservlet")
+        request.set_path_info("/hello")
+        request.set_query_string("?param1=value1")
+        request.set_parameter('term project', 'spring webmvc')
 
-def main():
-    print('start')
-
-    servletConfig = MockServletConfig(MockServletContext, servletName='simple')
-    dispatcherServlet = DispatcherServlet('./myservlet.xml')
-    dispatcherServlet.init(servletConfig)
-    test_2(servletConfig, dispatcherServlet)
-
-
-
-
-if __name__ == '__main__':
-    main()
+        self.dispatcherServlet.do_service(request, response)
