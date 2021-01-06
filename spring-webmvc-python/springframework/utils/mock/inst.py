@@ -3,8 +3,12 @@ from unittest import mock
 HttpHeaders = mock.MagicMock(name="HttpSessionBindingEvent")
 ServletInputStream = mock.MagicMock(name="ServletInputStream")
 ServletOutputStream = mock.MagicMock(name="ServletOutputStream")
-DelegatingServletInputStream = mock.MagicMock(name="DelegatingServletInputStream")
-ResponseServletOutputStream = mock.MagicMock(name="ResponseServletOutputStream")
+DelegatingServletInputStream = mock.MagicMock(
+    name="DelegatingServletInputStream"
+)
+ResponseServletOutputStream = mock.MagicMock(
+    name="ResponseServletOutputStream"
+)
 BufferedReader = mock.MagicMock(name="BufferedReader")
 ByteArrayInputStream = mock.MagicMock(name="ByteArrayInputStream")
 ByteArrayOutputStream = mock.MagicMock(name="ByteArrayOutputStream")
@@ -40,13 +44,19 @@ BeanFactoryUtils = mock.MagicMock(name="BeanFactoryUtils")
 LocaleContextHolder = mock.MagicMock(name="LocaleContextHolder")
 RequestContextUtils = mock.MagicMock(name="RequestContextUtils")
 RequestDataValueProcessor = mock.MagicMock(name="RequestDataValueProcessor")
-ContentNegotiationManagerFactoryBean = mock.MagicMock(name="ContentNegotiationManagerFacotryBean")
-AnnotationAwareOrderComparator = mock.MagicMock(name="AnnotationAwareOrderComparator")
+ContentNegotiationManagerFactoryBean = mock.MagicMock(
+    name="ContentNegotiationManagerFacotryBean"
+)
+AnnotationAwareOrderComparator = mock.MagicMock(
+    name="AnnotationAwareOrderComparator"
+)
 RequestContextHolder = mock.MagicMock(name="RequestContextHolder")
 ServletWebRequest = mock.MagicMock(name="ServletWebRequest")
 RequestAttributes = mock.MagicMock(name="RequestAttributes")
 ServletRequestPathUtils = mock.MagicMock(name="ServletRequestPathUtils")
-ServletContextAwareProcessor = mock.MagicMock(name="ServletContextAwareProcessor")
+ServletContextAwareProcessor = mock.MagicMock(
+    name="ServletContextAwareProcessor"
+)
 ServletContextAware = mock.MagicMock(name="ServletContextAware")
 ServletConfigAware = mock.MagicMock(name="ServletConfigAware")
 WebApplicationContextUtils = mock.MagicMock(name="WebApplicationContextUtils")

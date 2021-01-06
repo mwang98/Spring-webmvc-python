@@ -5,5 +5,9 @@ from xml.etree.ElementTree import Element
 
 class BeanDefinitionParser():
 
-    def parse(self, element: Element, parserContext: ParserContext) -> BeanDefinitionInterface:
+    def parse(
+        self,
+        element: Element,
+        parserContext: ParserContext
+    ) -> BeanDefinitionInterface:
         raise NotImplementedError

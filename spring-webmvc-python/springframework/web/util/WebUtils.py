@@ -1,9 +1,7 @@
 from abc import ABC
 import os
-# from springframework.web.testfixture.servlet.MockHttpSession import MockHttpSession as HttpSession
-# from springframework.web.testfixture.servlet.MockServletContext import MockServletContext as ServletContext
-# from springframework.web.testfixture.servlet.MockHttpServletRequest import MockHttpServletRequest as HttpServletRequest
-from springframework.utils.mock.inst import ServletRequest, HttpSession, ServletContext, HttpServletRequest
+from springframework.utils.mock.inst import ServletRequest, HttpSession, \
+    ServletContext, HttpServletRequest
 from springframework.utils.mock.type import ServletRequestWrapper
 
 
@@ -35,23 +33,32 @@ class WebUtils(ABC):
     SESSION_MUTEX_ATTRIBUTE = 'WebUtils' + '.MUTEX'
 
     @classmethod
-    def set_web_app_root_system_property(cls, servlet_context: ServletContext) -> None:
+    def set_web_app_root_system_property(
+        cls,
+        servlet_context: ServletContext
+    ) -> None:
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
         root = servlet_context.get_real_path('/')
         if root is None:
-            raise InterruptedError('Cannot set web app root system property when WAR file is not expanded')
+            raise InterruptedError(
+                'Cannot set web app root system property when WAR file is not expanded'
+            )
         param = servlet_context.get_init_parameter(cls.WEB_APP_ROOT_KEY_PARAM)
         key = param if param is not None else WebUtils.DEFAULT_WEB_APP_ROOT_KEY
         old_value = os.getenv(key)
-        if old_value is not None and os.path.normcase(old_value) != os.path.normcase(root):
+        if old_value is not None and\
+                os.path.normcase(old_value) != os.path.normcase(root):
             raise InterruptedError("Web app root system property already set to different value: '" +
                                    key + "' = [" + old_value + "] instead of [" + root + "] - " +
                                    "Choose unique values for the 'webAppRootKey' context-param in your web.xml files!")
         os.putenv(key, root)
 
     @classmethod
-    def remove_web_app_root_system_property(cls, servlet_context: ServletContext) -> None:
+    def remove_web_app_root_system_property(
+        cls,
+        servlet_context: ServletContext
+    ) -> None:
         if servlet_context is None:
             raise AssertionError('ServletContext must not be null')
         param = servlet_context.get_init_parameter(cls.WEB_APP_ROOT_KEY_PARAM)
@@ -87,8 +94,10 @@ class WebUtils(ABC):
         real_path = servlet_context.get_real_path(path)
         if real_path is None:
             raise FileNotFoundError(
-                "ServletContext resource [" + path + "] cannot be resolved to absolute file path - " +
-                "web application archive not expanded?")
+                f"""ServletContext resource [{path}] cannot be
+                 resolved to absolute file path -
+                 web application archive not expanded?"""
+            )
         return real_path
 
     @classmethod
@@ -106,14 +115,23 @@ class WebUtils(ABC):
         return session.get_attribute(name) if session is not None else None
 
     @classmethod
-    def get_required_session_attribute(cls, request: HttpServletRequest, name: str):
+    def get_required_session_attribute(
+        cls,
+        request: HttpServletRequest,
+        name: str
+    ):
         attr = cls.get_session_attribute(request, name)
         if attr is None:
             raise InterruptedError("No session attribute '" + name + "' found")
         return attr
 
     @classmethod
-    def set_session_attribute(cls, request: HttpServletRequest, name: str, value):
+    def set_session_attribute(
+        cls,
+        request: HttpServletRequest,
+        name: str,
+        value
+    ):
         if request is None:
             raise AssertionError('Request must not be null')
         if value is not None:
@@ -138,7 +156,10 @@ class WebUtils(ABC):
             if isinstance(request_type, request.__class__):
                 return request
             elif isinstance(request, ServletRequestWrapper):
-                return cls.get_native_request(request.get_request(), request_type)
+                return cls.get_native_request(
+                    request.get_request(),
+                    request_type
+                )
         return None
 
     # TODO: Line 480

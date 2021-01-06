@@ -10,7 +10,12 @@ class MockXmlParser():
         self.class_ = self._get_bean_instance()
 
     def _get_namespace(self):
-        ns = dict([node for (_, node) in ET.iterparse(self.xml_path, events=['start-ns'])])
+        ns = dict(
+            [node for (_, node) in ET.iterparse(
+                self.xml_path,
+                events=['start-ns']
+            )]
+        )
         ns['_default'] = ns['']
         del ns['']
         return ns
@@ -25,16 +30,16 @@ class MockXmlParser():
                 module = importlib.import_module(moduleName)
                 class_ = getattr(module, className)
                 instance = class_()
-                if not className in bean_instance:
+                if className not in bean_instance:
                     bean_instance[className] = instance
 
                 id_ = child.attrib['id']
-                if not id_ in bean_instance:
+                if id_ not in bean_instance:
                     bean_instance[id_] = instance
                 else:
                     assert ("id must be unique")
 
-            except Exception as e:
+            except Exception:
                 pass
 
         return bean_instance
@@ -51,14 +56,16 @@ class MockXmlParser():
             "_default:bean[@class='springframework.web.servlet.handler.SimpleUrlHandlerMapping']",
             namespaces=self.namespace)
 
-        props = simpleUrlHandlerMapping.find("_default:property[@name='mappings']/_default:props",
-                                             namespaces=self.namespace)
+        props = simpleUrlHandlerMapping.find(
+            "_default:property[@name='mappings']/_default:props",
+            namespaces=self.namespace
+        )
         for prop in props:
             routePath = prop.attrib['key']
             mappedHandlerId = prop.text
             try:
                 url_map[routePath] = self.class_[mappedHandlerId]
-            except Exception as e:
+            except Exception:
                 print(f"{mappedHandlerId} isn't found in {self.xml_path}")
         return url_map
 
@@ -76,7 +83,7 @@ class MockXmlParser():
 
 if __name__ == '__main__':
     mockXmlParser = MockXmlParser("../../../../tests/web/servlet/myservlet.xml")
-    #../../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml
+    # ../../../../../spring-webmvc-demo/HelloSpring/web/WEB-INF/mvc-servlet.xml
     print(mockXmlParser.get_url_map())
     print(mockXmlParser.get_view_resolver_attr())
     print(mockXmlParser.get_class_by_name("SimpleUrlHandlerMapping"))
