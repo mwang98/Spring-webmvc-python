@@ -1,6 +1,9 @@
 import inspect
 import types
 from copy import deepcopy
+from typing import TypeVar, ClassVar
+T = TypeVar('T')
+C = ClassVar[T]
 
 
 class MultiMethod:
@@ -32,7 +35,10 @@ class MultiMethod:
                 raise TypeError(
                     'Argument {} must be annotated with a type'.format(name)
                 )
-            if not isinstance(parm.annotation, type):
+            if not (isinstance(parm.annotation, type) or
+                    isinstance(parm.annotation, type(ClassVar[T])) or
+                    isinstance(parm.annotation, type(TypeVar('T')))
+                    ):
                 raise TypeError(
                     'Argument {} annotation must be a type'.format(name)
                 )
@@ -47,7 +53,8 @@ class MultiMethod:
                 i.append(parm.annotation)
 
             # append None type
-            if parm.default is not inspect.Parameter.empty and parm.default is None:
+            if parm.default is not inspect.Parameter.empty and \
+                    parm.default is None:
                 for i in new:
                     i.append(type(None))
                 types += new
