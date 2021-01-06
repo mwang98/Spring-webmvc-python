@@ -16,7 +16,7 @@ init-python:
 	fi
 
 test:
-	python -m pytest --suppress-no-test-exit-code --disable-warnings --cov=springframework tests/
+	python -m pytest
 
 install:
 	pipenv install --dev

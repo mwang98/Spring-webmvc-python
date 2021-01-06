@@ -24,7 +24,7 @@ syntax:
     - pip install pytest pytest-cov pytest-custom_exit_code
     - cd spring-webmvc-python
     - pip install -e .
-    - python -m pytest --suppress-no-test-exit-code --disable-warnings --cov=springframework springframework
+    - python -m pytest
 
 test:
   stage: test
@@ -32,5 +32,5 @@ test:
     - pip install pytest pytest-cov
     - cd spring-webmvc-python
     - pip install -e .
-    - pytest --disable-warnings --cov=springframework tests/
+    - python -m pytest
 
