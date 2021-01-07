@@ -1,6 +1,8 @@
 from datetime import datetime
-from springframework.utils.mock.inst import HttpSessionBindingEvent as HttpSessionBindingEvent
-from springframework.utils.mock.type import HttpSessionBindingListener, Serializable
+from springframework.utils.mock.inst import HttpSessionBindingEvent \
+    as HttpSessionBindingEvent
+from springframework.utils.mock.type import HttpSessionBindingListener, \
+    Serializable
 
 
 class MockHttpSession():
@@ -81,9 +83,15 @@ class MockHttpSession():
             oldValue = self.attributes.get(name)
             if oldValue != value:
                 if isinstance(oldValue, HttpSessionBindingListener):
-                    oldValue.valueUnbound(HttpSessionBindingEvent(self, name, oldValue))
+                    oldValue.valueUnbound(HttpSessionBindingEvent(
+                        self,
+                        name,
+                        oldValue)
+                    )
                 if isinstance(value, HttpSessionBindingListener):
-                    value.valuebound(HttpSessionBindingEvent(self, name, value))
+                    value.valuebound(
+                        HttpSessionBindingEvent(self, name, value)
+                    )
 
     def put_value(self, name: str, value) -> None:
         self.set_attribute(name, value)
@@ -113,7 +121,8 @@ class MockHttpSession():
         return self.invalid
 
     def assert_is_valid(self) -> None:
-        assert (not self.is_invalid), "The session has already been invalidated"
+        assert (not self.is_invalid),\
+            "The session has already been invalidated"
 
     def set_new(self, value: bool) -> None:
         self.isNew = value
@@ -134,5 +143,6 @@ class MockHttpSession():
         return state
 
     def deserialize_state(self, state: Serializable) -> None:
-        assert isinstance(state, dict), "Serialized state needs to be of type [java.util.Map]"
+        assert isinstance(state, dict),\
+            "Serialized state needs to be of type [dict]"
         self.attributes.update(state)

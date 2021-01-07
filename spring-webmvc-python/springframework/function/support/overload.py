@@ -39,10 +39,11 @@ class Function(object):
                 raise TypeError(
                     f'Argument {name} must be annotated with a type.'
                 )
-            if not (isinstance(parm.annotation, type) or
-                    isinstance(parm.annotation, type(ClassVar[T])) or
-                    isinstance(parm.annotation, type(TypeVar('T')))
-                    ):
+            if not (
+                isinstance(parm.annotation, type) or
+                isinstance(parm.annotation, type(ClassVar[T])) or
+                isinstance(parm.annotation, type(TypeVar('T')))
+            ):
                 raise TypeError(
                     f'''Argument {name} annotation must be a type.
                     It is a {parm.annotation}'''
@@ -75,17 +76,17 @@ class Function(object):
         # when call, use passed argument as signature
         if args is None:
             return [tuple([
-              self.fn.__module__,
-              self.fn.__class__,
-              self.fn.__name__,
-              sig,
+                self.fn.__module__,
+                self.fn.__class__,
+                self.fn.__name__,
+                sig,
             ]) for sig in self.signatures]
         else:
             return [tuple([
-              self.fn.__module__,
-              self.fn.__class__,
-              self.fn.__name__,
-              tuple([type(i) for i in args]),
+                self.fn.__module__,
+                self.fn.__class__,
+                self.fn.__name__,
+                tuple([type(i) for i in args]),
             ])]
 
 

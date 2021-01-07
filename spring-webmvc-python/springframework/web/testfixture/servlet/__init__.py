@@ -1,6 +1,7 @@
+from .HeaderValueHolder import HeaderValueHolder
 from .MockServletContext import MockServletContext
 from .MockAsyncContext import MockAsyncContext
-from .MockCookie import MockCookie
+from .MockCookie import Cookie, MockCookie
 from .MockHttpServletRequest import MockHttpServletRequest
 from .MockHttpServletResponse import MockHttpServletResponse
 from .MockHttpSession import MockHttpSession
@@ -9,6 +10,8 @@ from .MockRequestDispatcher import MockRequestDispatcher
 from .MockServletConfig import MockServletConfig
 
 __all__ = [
+    "Cookie",
+    "HeaderValueHolder",
     "MockAsyncContext",
     "MockCookie",
     "MockHttpServletRequest",

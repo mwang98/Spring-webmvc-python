@@ -1,4 +1,3 @@
-from unittest import mock
 import pytz
 from collections import defaultdict
 from datetime import datetime
@@ -6,9 +5,11 @@ from datetime import datetime
 # from .MockRequestDispatcher import MockRequestDispatcher
 # from springframework.web.testfixture.servlet import MockServletContext, \
 #     MockAsyncContext, MockHttpSession, MockRequestDispatcher
-from springframework.web.testfixture.servlet import MockServletContext, MockRequestDispatcher
+from springframework.web.testfixture.servlet import MockServletContext
+from springframework.web.testfixture.servlet import MockRequestDispatcher
 from springframework.web.testfixture.servlet import MockAsyncContext
 from springframework.web.testfixture.servlet import MockHttpSession
+from springframework.web.testfixture.servlet import HeaderValueHolder
 
 from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
     DispatcherType, DelegatingServletInputStream, InputStreamReader,\
@@ -28,7 +29,6 @@ from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
 # Part : MockPart
 # ServletContext : MockServletContext
 # ---------------------------------------------------------------------
-HeaderValueHolder = set
 
 
 # inherit HttpServletRequestInterface
@@ -88,7 +88,6 @@ class MockHttpServletRequest():
     authType: str = None
     cookies: list = None
     headers = defaultdict(set)
-    HeaderValueHolder = set  # use set
     method: str = None
     pathInfo: str = None
     contextPath: str = ""
@@ -105,7 +104,12 @@ class MockHttpServletRequest():
     requestedSessionIdFromURL = True
     parts = dict()
 
-    def __init__(self, servletContext=None, method: str = None, requestURI: str = None):
+    def __init__(
+        self,
+        servletContext=None,
+        method: str = None,
+        requestURI: str = None
+    ):
         if servletContext is None:
             self.servletContext = MockServletContext()
         else:
@@ -191,8 +195,10 @@ class MockHttpServletRequest():
                     self.characterEncoding = mediaType.getCharset().name()
             except Exception:
                 try:
-                    charsetIndex = contentType.lower().index(self.CHARSET_PREFIX)
-                    self.characterEncoding = contentType[charsetIndex + len(self.CHARSET_PREFIX):]
+                    charsetIndex = contentType.lower()\
+                        .index(self.CHARSET_PREFIX)
+                    self.characterEncoding = \
+                        contentType[charsetIndex + len(self.CHARSET_PREFIX):]
                 except Exception:
                     pass
 
@@ -205,10 +211,15 @@ class MockHttpServletRequest():
         if self.inputStream is not None:
             return self.inputStream
         elif self.reader is not None:
-            raise ValueError("Cannot call getInputStream() after getReader() has already been called for the current request")
+            raise ValueError(
+                """Cannot call getInputStream() after getReader() has already
+                 been called for the current request"""
+            )
 
         if self.content is not None:
-            self.inputStream = DelegatingServletInputStream(ByteArrayInputStream(self.content))
+            self.inputStream = DelegatingServletInputStream(
+                ByteArrayInputStream(self.content)
+            )
         else:
             self.inputStream = self.EMPTY_SERVLET_INPUT_STREAM
         return self.inputStream
@@ -230,7 +241,10 @@ class MockHttpServletRequest():
             elif isinstance(value, list):
                 self.set_parameter(name, value)
             else:
-                raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
+                raise ValueError(
+                    f"""Parameter map value must be single value
+                      or array of type [ String ]"""
+                )
 
     def add_parameter(self, name, value) -> None:
         if isinstance(name, str):
@@ -250,7 +264,10 @@ class MockHttpServletRequest():
             elif isinstance(value, list):
                 self.add_parameter(name, value)
             else:
-                raise ValueError(f"Parameter map value must be single value or array of type [ String ]")
+                raise ValueError(
+                    f"""Parameter map value must be single value
+                      or array of type [ String ]"""
+                )
 
     def remove_parameter(self, name: str) -> None:
         assert name is not None, "Parameter name must not be null"
@@ -267,7 +284,7 @@ class MockHttpServletRequest():
         return list(self.parameters.keys())
 
     def get_parameter_values(self) -> list:
-        #assert name is not None, "Parameter name must not be null"
+        # assert name is not None, "Parameter name must not be null"
         return list(self.parameters.values())
 
     def get_parameter_map(self) -> dict:
@@ -327,15 +344,21 @@ class MockHttpServletRequest():
         if self.reader is not None:
             return self.reader
         elif self.inputStream is not None:
-            raise ValueError("Cannot call getReader() after getInputStream() has already been called for the current request")
+            raise ValueError(
+                """Cannot call getReader() after getInputStream() has already
+                been called for the current request"""
+            )
 
         if self.content is not None:
             sourceStream = ByteArrayInputStream(self.content)
             if self.characterEncoding is not None:
-                sourceReader = InputStreamReader(sourceStream, self.characterEncoding)
+                sourceReader = InputStreamReader(
+                    sourceStream,
+                    self.characterEncoding
+                )
             else:
                 sourceReader = InputStreamReader(sourceStream)
-            reader = BufferedReader(sourceReader)
+            self.reader = BufferedReader(sourceReader)
         else:
             self.reader = self.EMPTY_BUFFERED_READER
         return self.reader
@@ -382,7 +405,10 @@ class MockHttpServletRequest():
     def update_accept_language_header(self) -> None:
         headers = HttpHeaders()
         headers.setAcceptLanguageAsLocales(self.locales)
-        self.do_add_header_value(HttpHeaders.ACCEPT_LANGUAGE, headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True)
+        self.do_add_header_value(
+            HttpHeaders.ACCEPT_LANGUAGE,
+            headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True
+        )
 
     def get_locale(self):
         return self.locales[:1]
@@ -471,7 +497,11 @@ class MockHttpServletRequest():
     def set_cookies(self, cookies: list) -> None:
         self.cookies = cookies
         if cookies:
-            self.do_add_header_value(HttpHeaders.COOKIE, self.encode_cookies(self.cookies), True)
+            self.do_add_header_value(
+                HttpHeaders.COOKIE,
+                self.encode_cookies(self.cookies),
+                True
+            )
         else:
             self.remove_header(HttpHeaders.COOKIE)
 
@@ -533,7 +563,10 @@ class MockHttpServletRequest():
         elif isinstance(value, str):
             return self.parse_date_header(name, value)
         elif value is not None:
-            raise ValueError(f"Value for header '{name}' + is not a Date, Number, or String: {value}")
+            raise ValueError(
+                f"""Value for header '{name}' + is not a Date,
+                Number, or String: {value}"""
+            )
         else:
             return -1
 
@@ -546,7 +579,9 @@ class MockHttpServletRequest():
             except Exception:
                 pass
 
-        raise ValueError(f"Cannot parse date value '{value}' for '{name}' header")
+        raise ValueError(
+            f"""Cannot parse date value '{value}' for '{name}' header"""
+        )
 
     def get_header(self, name: str) -> str:
         header: HeaderValueHolder = self.headers.get(name)
@@ -565,7 +600,9 @@ class MockHttpServletRequest():
         if isinstance(value, (int, float, str)):
             return int(value)
         elif value is not None:
-            raise ValueError(f"Value for header '{name}' is not a Number: {value}")
+            raise ValueError(
+                f"Value for header '{name}' is not a Number: {value}"
+            )
         else:
             return -1
 
@@ -582,7 +619,10 @@ class MockHttpServletRequest():
         return self.pathInfo
 
     def get_path_translated(self):
-        return None if self.pathInfo is None else self.get_real_path(self.pathInfo)
+        if self.pathInfo is None:
+            return None
+        else:
+            return self.get_real_path(self.pathInfo)
 
     def set_context_path(self, contextPath: str) -> None:
         self.contextPath = contextPath
@@ -592,7 +632,7 @@ class MockHttpServletRequest():
 
     def set_request_uri(self, requestURI: str) -> None:
         self.requestURI = requestURI
-    
+
     def get_request_uri(self) -> str:
         return self.requestURI
 
@@ -663,7 +703,8 @@ class MockHttpServletRequest():
 
     def get_session(self, create: bool = True):
         self.check_active()
-        if isinstance(self.session, MockHttpSession) and self.session.isInvalid():
+        if isinstance(self.session, MockHttpSession) and \
+                self.session.isInvalid():
             self.session = None
         if self.session is None and create:
             self.session = MockHttpSession(self.servletContext)
@@ -675,19 +716,28 @@ class MockHttpServletRequest():
             return self.session.changeSessionId()
         return self.session.getId()
 
-    def set_requested_session_id_valid(self, requestedSessionIdValid: bool) -> None:
+    def set_requested_session_id_valid(
+        self,
+        requestedSessionIdValid: bool
+    ) -> None:
         self.requestedSessionIdValid = requestedSessionIdValid
 
     def is_requested_session_id_valid(self) -> bool:
         return self.isRequestedSessionIdValid
 
-    def set_requested_session_id_from_cookie(self, requestedSessionIdFromCookie) -> None:
+    def set_requested_session_id_from_cookie(
+        self,
+        requestedSessionIdFromCookie
+    ) -> None:
         self.requestedSessionIdFromCookie = requestedSessionIdFromCookie
 
     def is_requested_session_id_from_cookie(self) -> bool:
         return self.isRequestedSessionIdFromCookie
 
-    def set_requested_session_id_from_url(self, requestedSessionIdFromURL: bool) -> None:
+    def set_requested_session_id_from_url(
+        self,
+        requestedSessionIdFromURL: bool
+    ) -> None:
         self.requestedSessionIdFromURL = requestedSessionIdFromURL
 
     def is_requested_session_id_from_url(self) -> bool:

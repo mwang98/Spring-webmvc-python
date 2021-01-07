@@ -1,8 +1,7 @@
 
 
 class HeaderValueHolder():
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
         self.values = list()
 
     def set_value(self, value=None) -> None:

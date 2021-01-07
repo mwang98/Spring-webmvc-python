@@ -110,37 +110,59 @@ class MockCookie(Cookie):
     def parse(self, setCookieHeader: str):
         assert setCookieHeader, "Set-Cookie header must not be null"
         cookieParts = re.split("\\s*=\\s*", setCookieHeader, 2)
-        assert len(cookieParts) == 2, f"Invalid Set-Cookie header '{setCookieHeader}'"
+        assert len(cookieParts) == 2,\
+            f"Invalid Set-Cookie header '{setCookieHeader}'"
         name = cookieParts[0]
         valueAndAttributes = re.split("\\s*;\\s*", cookieParts[1], 2)
         value = valueAndAttributes[0]
-        attributes = re.split("\\s*;\\s*", valueAndAttributes[1]) if len(valueAndAttributes) > 1 else ""
+        if len(valueAndAttributes) > 1:
+            attributes = re.split("\\s*;\\s*", valueAndAttributes[1])
+        else:
+            attributes = ""
 
         cookie = MockCookie(name, value)
         for attribute in attributes:
             if attribute.casefold() == "Domain":
-                cookie.set_domain(self.extract_attribute_value(attribute, setCookieHeader))
+                cookie.set_domain(self.extract_attribute_value(
+                    attribute,
+                    setCookieHeader
+                ))
             elif attribute.casefold() == "Max-Age":
-                cookie.set_max_age(int(self.extract_attribute_value(attribute, setCookieHeader)))
+                cookie.set_max_age(int(self.extract_attribute_value(
+                    attribute,
+                    setCookieHeader)
+                ))
             elif attribute.casefold() == "Expires":
                 try:
-                    attributeValues = self.extract_attribute_value(attribute, setCookieHeader)
+                    attributeValues = self.extract_attribute_value(
+                        attribute,
+                        setCookieHeader
+                    )
                     RFC_1123_DATE_TIME_FORMAT = "%a, %-d %b %Y %I:%M:%S %Z"
-                    cookie.set_expires(datetime.strptime(attributeValues, RFC_1123_DATE_TIME_FORMAT))
+                    cookie.set_expires(datetime.strptime(
+                        attributeValues,
+                        RFC_1123_DATE_TIME_FORMAT)
+                    )
                 except Exception:
                     pass
             elif attribute.casefold() == "Path":
-                cookie.set_path(self.extract_attribute_value(attribute, setCookieHeader))
+                cookie.set_path(
+                    self.extract_attribute_value(attribute, setCookieHeader)
+                )
             elif attribute.casefold() == "Secure":
                 cookie.set_secure(True)
             elif attribute.casefold() == "HttpOnly":
                 cookie.set_http_only(True)
             elif attribute.casefold() == "SameSite":
-                cookie.set_same_site(self.extract_attribute_value(attribute, setCookieHeader))
+                cookie.set_same_site(
+                    self.extract_attribute_value(attribute, setCookieHeader)
+                )
 
         return cookie
 
     def extract_attribute_value(self, attribute: str, header: str) -> str:
         nameAndValue = attribute.split('=')
-        assert len(nameAndValue) == 2, f"No value in attribute '{nameAndValue[0]}' for Set-Cookie header '{header}'"
+        assert len(nameAndValue) == 2,\
+            f"""No value in attribute '{nameAndValue[0]}' for
+             Set-Cookie header '{header}'"""
         return nameAndValue[1]
