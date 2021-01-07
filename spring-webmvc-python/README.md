@@ -19,3 +19,18 @@ Start the projects by using `Makefile` commands.
 ```
 make start-spring-webmvc-local
 ```
+
+Run style check
+```
+make style
+```
+
+Run Test
+```
+make test
+```
+
+Open document in browser
+```
+make doc
+```

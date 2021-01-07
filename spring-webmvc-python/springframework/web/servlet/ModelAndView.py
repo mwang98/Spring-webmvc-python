@@ -1,5 +1,5 @@
 from springframework.web.servlet import View
-from springframework.utils.mock.inst import HttpStatus
+from springframework.utils.mock.type import HttpStatus
 from springframework.utils.mock.inst import ModelMap
 
 # ModelMap important ; need implement
@@ -14,7 +14,7 @@ class ModelAndView():
 
     def __init__(self, view=None, arg2=None, arg3=None):
         self._view = view
-        if arg2 != None and arg3 != None:
+        if arg2 is not None and arg3 is not None:
             if isinstance(arg2, dict) and arg2:
                 self.get_model_map().addAllAttributes(arg2)
             if isinstance(arg2, HttpStatus):
@@ -62,10 +62,10 @@ class ModelAndView():
     def add_object(self, attributeName: str, attributeValue: object = None):
         if attributeValue is None and isinstance(attributeName, object):
             attributeValue = attributeName
-            #self.get_model_map().addAttribute(attributeValue)
+            # self.get_model_map().addAttribute(attributeValue)
             self.get_model_map()[attributeName] = attributeValue
         else:
-            #self.get_model_map().addAttribute(attributeName, attributeValue)
+            # self.get_model_map().addAttribute(attributeName, attributeValue)
             self.get_model_map()[attributeName] = attributeValue
         return self
 

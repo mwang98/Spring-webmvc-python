@@ -19,3 +19,6 @@ AsyncHandlerInterceptor = type(
     {}
 )
 Servlet = type("Servlet", (mock.MagicMock,), {})
+HttpServletRequest = type("HttpServletRequest", (), {})
+HttpServletResponse = type("HttpServletResponse", (), {})
+HttpStatus = type("HttpStatus", (), {})

@@ -18,6 +18,17 @@ init-python:
 test:
 	python -m pytest
 
+doc:
+	python -m pydoc -b
+
+style: flake8 black
+
+flake8:
+	python -m flake8
+
+black:
+	python -m black --target-version=py37 --check ./	
+
 install:
 	pipenv install --dev
 	pipenv run flake8 --version

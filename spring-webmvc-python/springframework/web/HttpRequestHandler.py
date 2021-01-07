@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from springframework.utils.mock.inst import HttpServletRequest
-from springframework.utils.mock.inst import HttpServletResponse
+from springframework.utils.mock.type import HttpServletRequest
+from springframework.utils.mock.type import HttpServletResponse
 
 
 class HttpRequestHandler(ABC):
@@ -8,7 +8,7 @@ class HttpRequestHandler(ABC):
     @abstractmethod
     def handleRequest(
         self,
-        request: HttpServletRequest,
-        response: HttpServletResponse
+        request: "HttpServletRequest",
+        response: "HttpServletResponse"
     ) -> None:
         pass
