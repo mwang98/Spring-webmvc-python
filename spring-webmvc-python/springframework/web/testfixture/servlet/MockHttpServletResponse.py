@@ -5,21 +5,28 @@ import time
 from unittest import mock
 
 from springframework.web.util.WebUtils import WebUtils
-from springframework.web.testfixture.servlet.MockCookie import \
-    Cookie, MockCookie
-from springframework.web.testfixture.servlet.HeaderValueHolder import \
-    HeaderValueHolder
-from springframework.utils.mock.inst import ByteArrayOutputStream, \
-    ResponseServletOutputStream, HttpHeaders, ServletOutputStream, MediaType, \
-    Locale
+from springframework.web.testfixture.servlet.MockCookie import (
+    Cookie,
+    MockCookie,
+)
+from springframework.web.testfixture.servlet.HeaderValueHolder import (
+    HeaderValueHolder,
+)
+from springframework.utils.mock.inst import (
+    ByteArrayOutputStream,
+    ResponseServletOutputStream,
+    HttpHeaders,
+    ServletOutputStream,
+    MediaType,
+    Locale,
+)
 
 
 class MockHttpServletResponse:
-
     def __init__(self):
         self.CHARSET_PREFIX = "charset="
         self.DATE_FORMAT = "%a %b %d %H:%M:%S %Y"
-        self.GMT = pytz.timezone('GMT')
+        self.GMT = pytz.timezone("GMT")
 
         # ServletResponse properties
         self.outputStreamAccessAllowed = True
@@ -46,8 +53,7 @@ class MockHttpServletResponse:
 
     # ServletResponse interface
     def set_output_stream_access_allowed(
-        self,
-        outputStreamAccessAllowed: bool
+        self, outputStreamAccessAllowed: bool
     ) -> None:
         self.outputStreamAccessAllowed = outputStreamAccessAllowed
 
@@ -71,13 +77,12 @@ class MockHttpServletResponse:
     def update_content_type_property_and_header(self) -> None:
         if self.contentType is not None:
             value = self.contentType
-            if (self.charset and
-                    self.CHARSET_PREFIX not in self.contentType.lower()):
+            if (
+                self.charset
+                and self.CHARSET_PREFIX not in self.contentType.lower()
+            ):
                 value = (
-                    value +
-                    ";" +
-                    self.CHARSET_PREFIX +
-                    self.characterEncoding
+                    value + ";" + self.CHARSET_PREFIX + self.characterEncoding
                 )
                 self.contentType = value
             self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
@@ -86,11 +91,12 @@ class MockHttpServletResponse:
         return self.characterEncoding
 
     def get_output_stream(self) -> ServletOutputStream:
-        assert self.outputStreamAccessAllowed,\
-            "OutputStream access not allowed"
+        assert (
+            self.outputStreamAccessAllowed
+        ), "OutputStream access not allowed"
         return self.outputStream
 
-    '''
+    """
     @Override
     public PrintWriter getWriter() throws UnsupportedEncodingException {
         Assert.state(self.writerAccessAllowed, "Writer access not allowed");
@@ -107,7 +113,7 @@ class MockHttpServletResponse:
     public byte[] getContentAsByteArray(self) -> :
         return self.content.toByteArray();
     }
-    '''
+    """
 
     def get_content_as_string(self) -> str:
         if self.characterEncoding is not None:
@@ -124,9 +130,7 @@ class MockHttpServletResponse:
     def set_content_length(self, contentLength: int) -> None:
         self.contentLength = contentLength
         self.do_add_header_value(
-            HttpHeaders.CONTENT_LENGTH,
-            contentLength,
-            True
+            HttpHeaders.CONTENT_LENGTH, contentLength, True
         )
 
     def get_content_length(self) -> int:
@@ -135,9 +139,7 @@ class MockHttpServletResponse:
     def set_content_length_long(self, contentLength: int) -> None:
         self.contentLength = contentLength
         self.do_add_header_value(
-            HttpHeaders.CONTENT_LENGTH,
-            contentLength,
-            True
+            HttpHeaders.CONTENT_LENGTH, contentLength, True
         )
 
     def get_content_length_long(self) -> int:
@@ -154,9 +156,10 @@ class MockHttpServletResponse:
             except Exception:
                 try:
                     charsetIndex = contentType.lower().index(
-                        self.CHARSET_PREFIX)
+                        self.CHARSET_PREFIX
+                    )
                     self.characterEncoding = contentType[
-                        charsetIndex + len(self.CHARSET_PREFIX):
+                        charsetIndex + len(self.CHARSET_PREFIX) :
                     ]
                     self.charset = True
                 except Exception:
@@ -177,8 +180,9 @@ class MockHttpServletResponse:
         self.set_committed(True)
 
     def reset_buffer(self) -> None:
-        assert not self.is_committed(),\
-            "Cannot reset buffer - response is already committed"
+        assert (
+            not self.is_committed()
+        ), "Cannot reset buffer - response is already committed"
         self.content.reset()
 
     def set_committed_if_buffer_size_exceeded(self) -> None:
@@ -207,9 +211,7 @@ class MockHttpServletResponse:
     def set_locale(self, locale: Locale) -> None:
         self.locale = locale
         self.do_add_header_value(
-            HttpHeaders.CONTENT_LANGUAGE,
-            locale.toLanguageTag(),
-            True
+            HttpHeaders.CONTENT_LANGUAGE, locale.toLanguageTag(), True
         )
 
     def get_locale(self) -> Locale:
@@ -220,14 +222,12 @@ class MockHttpServletResponse:
         assert cookie, "Cookie must not be null"
         self.cookies.append(cookie)
         self.do_add_header_value(
-            HttpHeaders.SET_COOKIE,
-            self.get_cookie_header(cookie),
-            False
+            HttpHeaders.SET_COOKIE, self.get_cookie_header(cookie), False
         )
 
     def get_cookie_header(self, cookie: Cookie) -> str:
-        buf = ''
-        buf += cookie.get_name() + '='
+        buf = ""
+        buf += cookie.get_name() + "="
         if cookie.get_value() is None:
             buf += ""
         else:
@@ -321,21 +321,24 @@ class MockHttpServletResponse:
         return self.encode_url(url)
 
     def send_error(self, status: int, errorMessage: str) -> None:
-        assert not self.is_committed(),\
-            "Cannot set error status - response is already committed"
+        assert (
+            not self.is_committed()
+        ), "Cannot set error status - response is already committed"
         self.status = status
         self.errorMessage = errorMessage
         self.set_committed(True)
 
     def send_error(self, status: int) -> None:
-        assert not self.is_committed(),\
-            "Cannot set error status - response is already committed"
+        assert (
+            not self.is_committed()
+        ), "Cannot set error status - response is already committed"
         self.status = status
         self.set_committed(True)
 
     def send_redirect(self, url: str) -> None:
-        assert not self.is_committed(),\
-            "Cannot set error status - response is already committed"
+        assert (
+            not self.is_committed()
+        ), "Cannot set error status - response is already committed"
         assert url, "Redirect URL must not be null"
         self.set_header(HttpHeaders.LOCATION, url)
         self.set_status(302)  # HttpServletResponse.SC_MOVED_TEMPORARILY
@@ -355,8 +358,9 @@ class MockHttpServletResponse:
         if headerValue is None:
             return -1
         try:
-            return self.new_date_format().parse(
-                self.get_header(name)).getTime()
+            return (
+                self.new_date_format().parse(self.get_header(name)).getTime()
+            )
         except Exception:
             raise ValueError(
                 f"Value for header {name} is not a valid Date: {headerValue}"
@@ -397,10 +401,7 @@ class MockHttpServletResponse:
         self.do_add_header_value(name, value, replaceHeader)
 
     def set_special_header(
-        self,
-        name: str,
-        value,
-        replaceHeader: bool
+        self, name: str, value, replaceHeader: bool
     ) -> bool:
         if isinstance(HttpHeaders, mock.MagicMock):
             return False
@@ -417,9 +418,7 @@ class MockHttpServletResponse:
             language = headers.getContentLanguage()
             self.set_locale(language if language is not None else Locale)
             self.do_add_header_value(
-                HttpHeaders.CONTENT_LANGUAGE,
-                contentLanguages,
-                True
+                HttpHeaders.CONTENT_LANGUAGE, contentLanguages, True
             )
             return True
         elif HttpHeaders.SET_COOKIE.equalsIgnoreCase(name):
@@ -433,10 +432,7 @@ class MockHttpServletResponse:
             return False
 
     def do_add_header_value(
-        self,
-        name: str,
-        value: object,
-        replace: bool
+        self, name: str, value: object, replace: bool
     ) -> None:
         assert value, "Header value must not be null"
 
@@ -453,9 +449,7 @@ class MockHttpServletResponse:
         self.cookies.clear()
         self.cookies.append(cookie)
         self.do_add_header_value(
-            HttpHeaders.SET_COOKIE,
-            self.get_cookie_header(cookie),
-            True
+            HttpHeaders.SET_COOKIE, self.get_cookie_header(cookie), True
         )
 
     def set_status(self, status: int, errorMessage: str = None) -> None:
@@ -483,7 +477,9 @@ class MockHttpServletResponse:
 
     def get_included_url(self) -> str:
         count = len(self.includedUrls)
-        assert count <= 1, f"""More than 1 URL included - check getIncludedUrls\
+        assert (
+            count <= 1
+        ), f"""More than 1 URL included - check getIncludedUrls\
          instead: {self.includedUrls}"""
         return self.includedUrls[0] if count == 1 else None
 

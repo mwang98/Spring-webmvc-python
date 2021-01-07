@@ -1,10 +1,14 @@
 import logging
-from springframework.web.servlet.handler.SimpleUrlHandlerMapping import SimpleUrlHandlerMapping
-from springframework.utils.mock.inst import HttpServletRequest, HttpServletResponse
+from springframework.web.servlet.handler.SimpleUrlHandlerMapping import (
+    SimpleUrlHandlerMapping,
+)
+from springframework.utils.mock.inst import (
+    HttpServletRequest,
+    HttpServletResponse,
+)
 
 
 class CustomSimpleUrlHandlerMapping(SimpleUrlHandlerMapping):
-
     def __init__(self, urlMap: dict(), mockLookupPath: str):
         super().__init__(urlMap)
 

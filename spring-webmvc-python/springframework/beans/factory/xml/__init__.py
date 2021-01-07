@@ -5,5 +5,5 @@ from .ParserContext import ParserContext
 __all__ = [
     "BeanDefinitionParser",
     "AbstractBeanDefinitionParser",
-    "ParserContext"
+    "ParserContext",
 ]

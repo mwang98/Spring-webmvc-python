@@ -2,23 +2,36 @@ import os
 import logging
 import tempfile
 from unittest import mock
-from springframework.utils.mock.inst import SessionTrackingMode, \
-    DefaultResourceLoader, MediaTypeFactory, MediaType, Resource, RequestDispatcher
+from springframework.utils.mock.inst import (
+    SessionTrackingMode,
+    DefaultResourceLoader,
+    MediaTypeFactory,
+    MediaType,
+    Resource,
+    RequestDispatcher,
+)
 
-from springframework.utils.mock.inst import SessionCookieConfig as MockSessionCookieConfig
+from springframework.utils.mock.inst import (
+    SessionCookieConfig as MockSessionCookieConfig,
+)
+
 # from springframework.web.testfixture.servlet import MockSessionCookieConfig
-from springframework.web.testfixture.servlet.MockRequestDispatcher import MockRequestDispatcher
+from springframework.web.testfixture.servlet.MockRequestDispatcher import (
+    MockRequestDispatcher,
+)
 
 
-class MockServletContext():
+class MockServletContext:
 
     COMMON_DEFAULT_SERVLET_NAME: str = "default"
     TEMP_DIR_SYSTEM_PROPERTY: str = tempfile.gettempdir()
-    DEFAULT_SESSION_TRACKING_MODES = set([
-        SessionTrackingMode.COOKIE,
-        SessionTrackingMode.URL,
-        SessionTrackingMode.SSL
-    ])
+    DEFAULT_SESSION_TRACKING_MODES = set(
+        [
+            SessionTrackingMode.COOKIE,
+            SessionTrackingMode.URL,
+            SessionTrackingMode.SSL,
+        ]
+    )
 
     logger = logging.getLogger()
     resourceLoader = None
@@ -42,7 +55,9 @@ class MockServletContext():
     responseCharacterEncoding: str = None
     mimeTypes = dict()
 
-    def __init__(self, resourceBasePath: str = None, resourceLoader=None) -> None:
+    def __init__(
+        self, resourceBasePath: str = None, resourceLoader=None
+    ) -> None:
         if isinstance(resourceBasePath, str):
             self.resourceBasePath = resourceBasePath
             if resourceLoader is not None:
@@ -56,10 +71,13 @@ class MockServletContext():
             self.resourceBasePath = ""
             self.resourceLoader = resourceBasePath
 
-        self.register_named_dispatcher(self.defaultServletName, MockRequestDispatcher(self.defaultServletName))
+        self.register_named_dispatcher(
+            self.defaultServletName,
+            MockRequestDispatcher(self.defaultServletName),
+        )
 
     def get_resource_location(self, path: str) -> str:
-        if not path.startswith('/'):
+        if not path.startswith("/"):
             path = "/" + path
         return self.resourceBasePath + path
 
@@ -107,7 +125,7 @@ class MockServletContext():
         self.mimeTypes[fileExtension] = mimeType
 
     def get_resource_paths(self, path: str) -> set:
-        actualPath = path if path.endswith("/") else path + '/'
+        actualPath = path if path.endswith("/") else path + "/"
         resourceLocation = self.get_resource_location(actualPath)
         resource: Resource = None
         try:
@@ -126,7 +144,9 @@ class MockServletContext():
 
         except IOError as e:
             resource = resource if resource is not None else resourceLocation
-            self.logger.warning(f"Could not get resource paths for {resource}. {str(e)}")
+            self.logger.warning(
+                f"Could not get resource paths for {resource}. {str(e)}"
+            )
             return None
 
     def get_resource(self, path: str):
@@ -139,7 +159,9 @@ class MockServletContext():
             return resource.getURL()
         except IOError as e:
             resource = resource if resource is not None else resourceLocation
-            self.logger.warning(f"Could not get URL for resource {resource}. {str(e)}")
+            self.logger.warning(
+                f"Could not get URL for resource {resource}. {str(e)}"
+            )
             return None
 
     def get_resource_as_stream(self, path: str):
@@ -152,19 +174,27 @@ class MockServletContext():
             return resource.getInputStream()
         except IOError as e:
             resource = resource if resource is not None else resourceLocation
-            self.logger.warning(f"Could not get URL for resource {resource}. {str(e)}")
+            self.logger.warning(
+                f"Could not get URL for resource {resource}. {str(e)}"
+            )
             return None
 
     def get_request_dispatcher(self, path: str) -> RequestDispatcher:
-        assert path.startswith('/'), f"RequestDispatcher path [ {path} ] at ServletContext level must start with '/'"
+        assert path.startswith(
+            "/"
+        ), f"RequestDispatcher path [ {path} ] at ServletContext level must start with '/'"
         return MockRequestDispatcher(path)
 
     def get_named_dispatcher(self, path: str) -> RequestDispatcher:
         return self.namedRequestDispatchers.get(path)
 
-    def register_named_dispatcher(self, name: str, requestDispatcher: RequestDispatcher) -> None:
+    def register_named_dispatcher(
+        self, name: str, requestDispatcher: RequestDispatcher
+    ) -> None:
         assert name is not None, "RequestDispatcher name must not be null"
-        assert requestDispatcher is not None, "RequestDispatcher must not be null"
+        assert (
+            requestDispatcher is not None
+        ), "RequestDispatcher must not be null"
         self.namedRequestDispatchers[name] = requestDispatcher
 
     def unregister_named_dispatcher(self, name: str) -> None:
@@ -175,10 +205,14 @@ class MockServletContext():
         return self.defaultServletName
 
     def set_default_servlet_name(self, defaultServletName: str):
-        assert defaultServletName, "defaultServletName must not be null or empty"
+        assert (
+            defaultServletName
+        ), "defaultServletName must not be null or empty"
         self.unregister_named_dispatcher(self.defaultServletName)
         self.defaultServletName = defaultServletName
-        self.register_named_dispatcher(defaultServletName, MockRequestDispatcher(defaultServletName))
+        self.register_named_dispatcher(
+            defaultServletName, MockRequestDispatcher(defaultServletName)
+        )
 
     def get_servlet(self, name: str):
         return None
@@ -200,7 +234,9 @@ class MockServletContext():
             return resource.getFile().getAbsolutePath()
         except IOError as e:
             resource = resource if resource is not None else resourceLocation
-            self.logger.warning(f"Could not determine real path of resource {resource}. {str(e)}")
+            self.logger.warning(
+                f"Could not determine real path of resource {resource}. {str(e)}"
+            )
             return None
 
     def get_server_info(self) -> str:
@@ -281,13 +317,17 @@ class MockServletContext():
     def get_session_timeout(self) -> int:
         return self.sessionTimeout
 
-    def set_request_character_rncoding(self, requestCharacterEncoding: str = None) -> None:
+    def set_request_character_rncoding(
+        self, requestCharacterEncoding: str = None
+    ) -> None:
         self.requestCharacterEncoding = requestCharacterEncoding
 
     def get_request_character_rncoding(self) -> str:
         self.requestCharacterEncoding
 
-    def set_response_character_encoding(self, responseCharacterEncoding: str = None) -> None:
+    def set_response_character_encoding(
+        self, responseCharacterEncoding: str = None
+    ) -> None:
         self.responseCharacterEncoding = responseCharacterEncoding
 
     def get_response_character_encoding(self) -> str:

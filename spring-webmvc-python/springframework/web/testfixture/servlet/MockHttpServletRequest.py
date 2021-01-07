@@ -11,9 +11,16 @@ from springframework.web.testfixture.servlet import MockAsyncContext
 from springframework.web.testfixture.servlet import MockHttpSession
 from springframework.web.testfixture.servlet import HeaderValueHolder
 
-from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
-    DispatcherType, DelegatingServletInputStream, InputStreamReader,\
-    MediaType, ByteArrayInputStream, Locale
+from springframework.utils.mock.inst import (
+    HttpHeaders,
+    BufferedReader,
+    DispatcherType,
+    DelegatingServletInputStream,
+    InputStreamReader,
+    MediaType,
+    ByteArrayInputStream,
+    Locale,
+)
 
 # mock class
 # ---------------------------------------------------------------------
@@ -32,18 +39,18 @@ from springframework.utils.mock.inst import HttpHeaders, BufferedReader, \
 
 
 # inherit HttpServletRequestInterface
-class MockHttpServletRequest():
+class MockHttpServletRequest:
 
     HTTP = "http"
     HTTPS = "https"
     CHARSET_PREFIX = "charset"
-    GMT = pytz.timezone('GMT')
+    GMT = pytz.timezone("GMT")
     EMPTY_SERVLET_INPUT_STREAM = DelegatingServletInputStream()
     EMPTY_BUFFERED_READER = BufferedReader()
     DATE_FORMATS = [
         "%a %b %d %H:%M:%S %Y",
         "%a, %d-%b-%y %H:%M:%S %Z",
-        "%a, %d %b %Y %H:%M:%S %Z"
+        "%a, %d %b %Y %H:%M:%S %Z",
     ]
 
     # Public constants
@@ -105,10 +112,7 @@ class MockHttpServletRequest():
     parts = dict()
 
     def __init__(
-        self,
-        servletContext=None,
-        method: str = None,
-        requestURI: str = None
+        self, servletContext=None, method: str = None, requestURI: str = None
     ):
         if servletContext is None:
             self.servletContext = MockServletContext()
@@ -157,8 +161,9 @@ class MockHttpServletRequest():
     def update_content_type_header(self) -> None:
         if self.contentType is not None:
             value = self.contentType
-            if (self.characterEncoding is not None) and \
-                    (self.CHARSET_PREFIX not in self.contentType.lower()):
+            if (self.characterEncoding is not None) and (
+                self.CHARSET_PREFIX not in self.contentType.lower()
+            ):
                 value += f";{self.CHARSET_PREFIX}{self.characterEncoding}"
             self.do_add_header_value(HttpHeaders.CONTENT_TYPE, value, True)
 
@@ -195,10 +200,12 @@ class MockHttpServletRequest():
                     self.characterEncoding = mediaType.getCharset().name()
             except Exception:
                 try:
-                    charsetIndex = contentType.lower()\
-                        .index(self.CHARSET_PREFIX)
-                    self.characterEncoding = \
-                        contentType[charsetIndex + len(self.CHARSET_PREFIX):]
+                    charsetIndex = contentType.lower().index(
+                        self.CHARSET_PREFIX
+                    )
+                    self.characterEncoding = contentType[
+                        charsetIndex + len(self.CHARSET_PREFIX) :
+                    ]
                 except Exception:
                     pass
 
@@ -310,12 +317,12 @@ class MockHttpServletRequest():
         host = rawHostHeader
         if host is not None:
             host = host.strip()
-            if host.startswith('['):
-                assert ']' in host, f"Invalid Host header: {rawHostHeader}"
-                indexOfClosingBracket = host.index('[')
-                host = host[:indexOfClosingBracket + 1]
-            elif ':' in host:
-                host = host = host[:, host.index(':') + 1]
+            if host.startswith("["):
+                assert "]" in host, f"Invalid Host header: {rawHostHeader}"
+                indexOfClosingBracket = host.index("[")
+                host = host[: indexOfClosingBracket + 1]
+            elif ":" in host:
+                host = host = host[:, host.index(":") + 1]
             return host
 
         return self.serverName
@@ -328,15 +335,15 @@ class MockHttpServletRequest():
         host = rawHostHeader
         if host is not None:
             host = host.strip()
-            if host.startswith('['):
-                assert ']' in host, f"Invalid Host header: {rawHostHeader}"
-                indexOfClosingBracket = host.index(']')
-                if ':' in host:
-                    idx = host[indexOfClosingBracket:].index(':')
-                    return host[idx + 1:]
-            elif ':' in host:
-                idx = host.index(':')
-                return host[idx + 1:]
+            if host.startswith("["):
+                assert "]" in host, f"Invalid Host header: {rawHostHeader}"
+                indexOfClosingBracket = host.index("]")
+                if ":" in host:
+                    idx = host[indexOfClosingBracket:].index(":")
+                    return host[idx + 1 :]
+            elif ":" in host:
+                idx = host.index(":")
+                return host[idx + 1 :]
 
         return self.serverPort
 
@@ -353,8 +360,7 @@ class MockHttpServletRequest():
             sourceStream = ByteArrayInputStream(self.content)
             if self.characterEncoding is not None:
                 sourceReader = InputStreamReader(
-                    sourceStream,
-                    self.characterEncoding
+                    sourceStream, self.characterEncoding
                 )
             else:
                 sourceReader = InputStreamReader(sourceStream)
@@ -407,7 +413,8 @@ class MockHttpServletRequest():
         headers.setAcceptLanguageAsLocales(self.locales)
         self.do_add_header_value(
             HttpHeaders.ACCEPT_LANGUAGE,
-            headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE), True
+            headers.getFirst(HttpHeaders.ACCEPT_LANGUAGE),
+            True,
         )
 
     def get_locale(self):
@@ -498,9 +505,7 @@ class MockHttpServletRequest():
         self.cookies = cookies
         if cookies:
             self.do_add_header_value(
-                HttpHeaders.COOKIE,
-                self.encode_cookies(self.cookies),
-                True
+                HttpHeaders.COOKIE, self.encode_cookies(self.cookies), True
             )
         else:
             self.remove_header(HttpHeaders.COOKIE)
@@ -516,11 +521,15 @@ class MockHttpServletRequest():
         return self.cookies
 
     def add_header(self, name: str, value) -> None:
-        if HttpHeaders.CONTENT_TYPE == name and \
-                HttpHeaders.CONTENT_TYPE not in self.headers:
+        if (
+            HttpHeaders.CONTENT_TYPE == name
+            and HttpHeaders.CONTENT_TYPE not in self.headers
+        ):
             self.set_content_type(str(value))
-        elif HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(name) and \
-                HttpHeaders.ACCEPT_LANGUAGE not in self.headers:
+        elif (
+            HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(name)
+            and HttpHeaders.ACCEPT_LANGUAGE not in self.headers
+        ):
             try:
                 headers = HttpHeaders()
                 headers.add(HttpHeaders.ACCEPT_LANGUAGE, str())
@@ -652,9 +661,10 @@ class MockHttpServletRequest():
         self.userRoles.add(role)
 
     def is_user_in_role(self, role: str) -> bool:
-        return role in self.userRoles or \
-            (isinstance(MockServletContext, self.servletContext) and
-                self.servletContext.getDeclaredRoles().contains(role))
+        return role in self.userRoles or (
+            isinstance(MockServletContext, self.servletContext)
+            and self.servletContext.getDeclaredRoles().contains(role)
+        )
 
     def set_user_principal(self, userPrincipal=None) -> None:
         self.userPrincipal = userPrincipal
@@ -681,9 +691,11 @@ class MockHttpServletRequest():
         uri = self.get_request_uri()
 
         url = scheme + "://" + server
-        if port > 0 and \
-            (self.HTTP.casefold() == scheme.casefold() and port != 80) or \
-                (self.HTTPS.casefold() == scheme.casefold() and port != 443):
+        if (
+            port > 0
+            and (self.HTTP.casefold() == scheme.casefold() and port != 80)
+            or (self.HTTPS.casefold() == scheme.casefold() and port != 443)
+        ):
             url += f":{port}"
         if uri:
             url += uri
@@ -703,8 +715,10 @@ class MockHttpServletRequest():
 
     def get_session(self, create: bool = True):
         self.check_active()
-        if isinstance(self.session, MockHttpSession) and \
-                self.session.isInvalid():
+        if (
+            isinstance(self.session, MockHttpSession)
+            and self.session.isInvalid()
+        ):
             self.session = None
         if self.session is None and create:
             self.session = MockHttpSession(self.servletContext)
@@ -717,8 +731,7 @@ class MockHttpServletRequest():
         return self.session.getId()
 
     def set_requested_session_id_valid(
-        self,
-        requestedSessionIdValid: bool
+        self, requestedSessionIdValid: bool
     ) -> None:
         self.requestedSessionIdValid = requestedSessionIdValid
 
@@ -726,8 +739,7 @@ class MockHttpServletRequest():
         return self.isRequestedSessionIdValid
 
     def set_requested_session_id_from_cookie(
-        self,
-        requestedSessionIdFromCookie
+        self, requestedSessionIdFromCookie
     ) -> None:
         self.requestedSessionIdFromCookie = requestedSessionIdFromCookie
 
@@ -735,8 +747,7 @@ class MockHttpServletRequest():
         return self.isRequestedSessionIdFromCookie
 
     def set_requested_session_id_from_url(
-        self,
-        requestedSessionIdFromURL: bool
+        self, requestedSessionIdFromURL: bool
     ) -> None:
         self.requestedSessionIdFromURL = requestedSessionIdFromURL
 

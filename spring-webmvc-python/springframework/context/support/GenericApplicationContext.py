@@ -1,4 +1,7 @@
-from springframework.context.support.AbstractApplicationContext import AbstractApplicationContext
+from springframework.context.support.AbstractApplicationContext import (
+    AbstractApplicationContext,
+)
+
 # BeanDefinitionRegistry
 
 

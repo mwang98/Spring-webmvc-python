@@ -1,4 +1,3 @@
-class PathPattern():
-
+class PathPattern:
     def __init__(self):
         return

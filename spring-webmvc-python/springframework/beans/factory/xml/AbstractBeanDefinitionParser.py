@@ -13,35 +13,34 @@ from xml.etree.ElementTree import Element
 
 
 class AbstractBeanDefinitionParser(BeanDefinitionParser):
-
     def __init__(self):
         self.ID_ATTRIBUTE = "id"
         self.NAME_ATTRIBUTE = "name"
 
     def parse(
-        self,
-        element: Element,
-        parserContext: ParserContext
+        self, element: Element, parserContext: ParserContext
     ) -> BeanDefinitionInterface:
         definition = self.parseInternal(element, parserContext)
         if (definition is not None) and (not parserContext.isNested()):
             try:
                 pass
             except Exception as e:  # BeanDefinitionStoreException
-                msg = getattr(e, 'message', repr(e))
+                msg = getattr(e, "message", repr(e))
                 parserContext.getReaderContext().error(msg, element)
 
         return definition
 
     def resolve_id(self, element, definition, parserContext) -> str:
-        if(self.shouldGenerateId()):
-            return parserContext.get_reader_context().\
-                generate_bean_name(definition)
+        if self.shouldGenerateId():
+            return parserContext.get_reader_context().generate_bean_name(
+                definition
+            )
         else:
             Id = getattr(element, "ID_ATTRIBUTE")
             if (not Id) and self.shouldGenerateIdAsFallback():
-                Id = parserContext.get_reader_context().\
-                    generate_bean_name(definition)
+                Id = parserContext.get_reader_context().generate_bean_name(
+                    definition
+                )
             return Id
 
     def register_bean_definition(self, definition, registry):

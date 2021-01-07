@@ -1,3 +1,3 @@
 # interface
-class ResourceLoader():
+class ResourceLoader:
     pass

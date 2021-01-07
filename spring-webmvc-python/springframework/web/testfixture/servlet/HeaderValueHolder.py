@@ -1,6 +1,4 @@
-
-
-class HeaderValueHolder():
+class HeaderValueHolder:
     def __init__(self):
         self.values = list()
 

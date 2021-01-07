@@ -1,22 +1,16 @@
 from unittest import mock
 
 HttpSessionBindingListener = type(
-    "HttpSessionBindingListener",
-    (mock.MagicMock,),
-    {}
+    "HttpSessionBindingListener", (mock.MagicMock,), {}
 )
 Serializable = type("Serializable", (mock.MagicMock,), {})
 HttpServletResponseWrapper = type(
-    "HttpServletResponseWrapper",
-    (mock.MagicMock,),
-    {}
+    "HttpServletResponseWrapper", (mock.MagicMock,), {}
 )
 JstlView = type("JstlView", (mock.MagicMock,), {})
 ServletRequestWrapper = type("ServletRequestWrapper", (mock.MagicMock,), {})
 AsyncHandlerInterceptor = type(
-    "AsyncHandlerInterceptor",
-    (mock.MagicMock,),
-    {}
+    "AsyncHandlerInterceptor", (mock.MagicMock,), {}
 )
 Servlet = type("Servlet", (mock.MagicMock,), {})
 HttpServletRequest = type("HttpServletRequest", (), {})

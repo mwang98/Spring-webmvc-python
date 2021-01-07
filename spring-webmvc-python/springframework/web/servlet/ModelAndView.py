@@ -5,7 +5,7 @@ from springframework.utils.mock.inst import ModelMap
 # ModelMap important ; need implement
 
 
-class ModelAndView():
+class ModelAndView:
 
     _view = None
     _model = None
@@ -47,7 +47,7 @@ class ModelAndView():
 
     def get_model_map(self):
         if self._model is None:
-            self._model = {}#ModelMap()
+            self._model = {}  # ModelMap()
         return self._model
 
     def get_model(self) -> dict:
@@ -79,7 +79,7 @@ class ModelAndView():
         self._cleared = True
 
     def is_empty(self) -> bool:
-        return ((self.view is None) and (not self.model))
+        return (self.view is None) and (not self.model)
 
     def was_cleared(self) -> bool:
         return self._cleared and self.is_empty()
@@ -88,4 +88,4 @@ class ModelAndView():
         return f"ModelAndView [view={self.formatView()}; model={self.model}]"
 
     def formatView(self) -> str:
-        return f"\"{self.view}\"" if self.is_reference() else "[{self.view}]"
+        return f'"{self.view}"' if self.is_reference() else "[{self.view}]"

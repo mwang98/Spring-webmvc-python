@@ -1,5 +1,12 @@
 from mock.inst import Locale
-from springframework.utils.mock.inst import HttpStatus, ServerWebExchange, HandlerMapping, UriComponentsBuilder, Pattern, UriUtils
+from springframework.utils.mock.inst import (
+    HttpStatus,
+    ServerWebExchange,
+    HandlerMapping,
+    UriComponentsBuilder,
+    Pattern,
+    UriUtils,
+)
 
 
 class RedirectView(AbstractUrlBasedView):
@@ -44,10 +51,14 @@ class RedirectView(AbstractUrlBasedView):
     def check_resource_exists(self, locale: Locale) -> bool:
         return True
 
-    def render_internal(self, model: dict, contentType: object, exchange: ServerWebExchange) -> dict:
+    def render_internal(
+        self, model: dict, contentType: object, exchange: ServerWebExchange
+    ) -> dict:
         return self.send_redirect(targetUrl, exchange)
 
-    def create_target_url(self, model: dict, exchange: ServerWebExchange) -> str:
+    def create_target_url(
+        self, model: dict, exchange: ServerWebExchange
+    ) -> str:
         url = self.get_url()
         assert url is not None, "'url' not set"
 
@@ -77,8 +88,9 @@ class RedirectView(AbstractUrlBasedView):
     def is_remote_host(self, targetUrl: str) -> bool:
         if self.hosts is not None:
             return False
-        targetHost = UriComponentsBuilder.fromUriString(
-            targetUrl).build().getHost()
+        targetHost = (
+            UriComponentsBuilder.fromUriString(targetUrl).build().getHost()
+        )
         if targetHost is not None:
             return False
 

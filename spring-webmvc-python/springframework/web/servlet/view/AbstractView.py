@@ -2,15 +2,19 @@ from unittest import mock
 import logging
 from abc import abstractmethod, ABC
 
-from springframework.web.context.support.WebApplicationObjectSupport import WebApplicationObjectSupport
+from springframework.web.context.support.WebApplicationObjectSupport import (
+    WebApplicationObjectSupport,
+)
 from springframework.beans.factory.BeanNameAware import BeanNameAware
 from springframework.web.servlet.View import View
 
 # mock objects
 RequestContext = mock.MagicMock()
-RequestContext.configure_mock(name='RequestContext')
+RequestContext.configure_mock(name="RequestContext")
 ContextExposingHttpServletRequest = mock.MagicMock()
-ContextExposingHttpServletRequest.configure_mock(name='ContextExposingHttpServletRequest')
+ContextExposingHttpServletRequest.configure_mock(
+    name="ContextExposingHttpServletRequest"
+)
 mediaType = mock.MagicMock()
 mediaType.configure_mock(name="mediaType")
 
@@ -35,7 +39,9 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     def get_content_type(self) -> str:
         return self.contentType
 
-    def set_request_context_attribute(self, requestContextAttribute: str) -> None:
+    def set_request_context_attribute(
+        self, requestContextAttribute: str
+    ) -> None:
         self.requestContextAttribute = requestContextAttribute
 
     def get_request_context_attribute(self) -> str:
@@ -43,15 +49,22 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
     def set_attributes_csv(self, propString: str = None) -> None:
         if propString is not None:
-            token_list = propString.split(',')
+            token_list = propString.split(",")
             for token in token_list:
                 if not token:
                     continue
                 if "=" not in token:
-                    raise ValueError("Expected '=' in attributes CSV string '" + propString + "'")
+                    raise ValueError(
+                        "Expected '=' in attributes CSV string '"
+                        + propString
+                        + "'"
+                    )
                 if token.index("=") >= (len(token) - 2):
                     raise ValueError(
-                        "At least 2 characters ([]) required in attributes CSV string '" + propString + "'")
+                        "At least 2 characters ([]) required in attributes CSV string '"
+                        + propString
+                        + "'"
+                    )
                 name, value = token.split("=")
                 value = value[1:-1]
                 self.add_static_attribute(name, value)
@@ -81,10 +94,14 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
     def is_expose_path_variables(self) -> bool:
         return self.exposePathVariables
 
-    def set_expose_context_beans_as_attributes(self, exposeContextBeansAsAttributes: bool) -> None:
+    def set_expose_context_beans_as_attributes(
+        self, exposeContextBeansAsAttributes: bool
+    ) -> None:
         self.exposeContextBeansAsAttributes = exposeContextBeansAsAttributes
 
-    def set_exposed_context_bean_names(self, exposedContextBeanNames: list) -> None:
+    def set_exposed_context_bean_names(
+        self, exposedContextBeanNames: list
+    ) -> None:
         self.exposedContextBeanNames = set(exposedContextBeanNames)
 
     def set_bean_name(self, beanName: str) -> None:
@@ -95,17 +112,21 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
     def render(self, model, request, response) -> None:
         logging.info(
-            "View " +
-            self.format_view_name() +
-            ", model " +
-            str((dict() if model is None else model)) +
-            f", static attributes {self.staticAttributes if self.staticAttributes else ''}"
+            "View "
+            + self.format_view_name()
+            + ", model "
+            + str((dict() if model is None else model))
+            + f", static attributes {self.staticAttributes if self.staticAttributes else ''}"
         )
         mergedModel = self.create_merged_output_model(model, request, response)
         self.prepare_response(request, response)
-        self.render_merged_output_model(mergedModel, self.get_request_to_expose(request), response)
+        self.render_merged_output_model(
+            mergedModel, self.get_request_to_expose(request), response
+        )
 
-    def create_merged_output_model(self, model: dict, request, response) -> dict:
+    def create_merged_output_model(
+        self, model: dict, request, response
+    ) -> dict:
         pathVars = None
         if self.exposePathVariables:
             pathVars = request.get_attribute(View.PATH_VARIABLES)
@@ -128,9 +149,13 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
 
         return mergedModel
 
-    def create_request_context(self, request, response, model: dict) -> RequestContext:
+    def create_request_context(
+        self, request, response, model: dict
+    ) -> RequestContext:
         # RequestContext use mock
-        return RequestContext(request, response, self.get_servlet_context(), model)
+        return RequestContext(
+            request, response, self.get_servlet_context(), model
+        )
 
     def prepare_response(self, request, response) -> None:
         if self.generates_download_content():
@@ -147,7 +172,9 @@ class AbstractView(WebApplicationObjectSupport, View, BeanNameAware, ABC):
             wac = self.get_web_application_context()
             assert wac is None, "No WebApplicationContext"
             # ContextExposingHttpServletRequest use mock
-            return ContextExposingHttpServletRequest(originalRequest, wac, self.exposedContextBeanNames)
+            return ContextExposingHttpServletRequest(
+                originalRequest, wac, self.exposedContextBeanNames
+            )
         return originalRequest
 
     @abstractmethod

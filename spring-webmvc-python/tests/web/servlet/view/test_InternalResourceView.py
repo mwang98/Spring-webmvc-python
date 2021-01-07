@@ -1,17 +1,23 @@
 from unittest import TestCase
 from springframework.web.servlet import View
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
-from springframework.web.testfixture.servlet import MockServletContext, MockRequestDispatcher
+from springframework.web.testfixture.servlet import (
+    MockHttpServletRequest as HttpServletRequest,
+)
+from springframework.web.testfixture.servlet import (
+    MockHttpServletResponse as HttpServletResponse,
+)
+from springframework.web.testfixture.servlet import (
+    MockServletContext,
+    MockRequestDispatcher,
+)
 from springframework.web.servlet.view import InternalResourceView
 from springframework.web.util.WebUtils import WebUtils
 
 
 class TestInternalResourceView(TestCase):
-
     def setUp(self) -> None:
-        self.model = {'foo': 'bar', 'I': 1}
-        self.url = 'forward-to'
+        self.model = {"foo": "bar", "I": 1}
+        self.url = "forward-to"
         self.request = HttpServletRequest()
         self.response = HttpServletResponse()
         self.view = InternalResourceView()
@@ -29,9 +35,9 @@ class TestInternalResourceView(TestCase):
         self.skipTest("TODO")
         # self.fail()
 
-###########
-# DADA ADD
-###########
+    ###########
+    # DADA ADD
+    ###########
 
     def test_reject_null_url(self):
         with self.assertRaises(Exception):
@@ -60,7 +66,7 @@ class TestInternalResourceView(TestCase):
         # DADA modify to compare resource :)
         self.assertEqual(
             self.request.get_request_dispatcher(self.url).resource,
-            MockRequestDispatcher(self.url).resource
+            MockRequestDispatcher(self.url).resource,
         )
 
         self.view.set_url(self.url)
@@ -75,16 +81,19 @@ class TestInternalResourceView(TestCase):
     def test_include_attribute(self):
         self.response = HttpServletResponse()
         self.assertIsNone(self.request.get_attribute(View.PATH_VARIABLES))
-        self.assertIsNone(self.request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE))
+        self.assertIsNone(
+            self.request.get_attribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)
+        )
         # DADA modify to compare resource :)
         self.assertEqual(
             self.request.get_request_dispatcher(self.url).resource,
-            MockRequestDispatcher(self.url).resource
+            MockRequestDispatcher(self.url).resource,
         )
 
         self.response.set_committed(True)
         self.view.set_url(self.url)
         import logging
+
         logging.error(self.response.includedUrls)
 
         # Can now try multiple tests

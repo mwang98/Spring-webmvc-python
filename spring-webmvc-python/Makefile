@@ -21,26 +21,27 @@ test:
 doc:
 	python -m pydoc -b
 
-style: flake8 black
+style: black flake8
 
 flake8:
 	python -m flake8
 
 black:
-	python -m black --target-version=py37 --check ./	
+	python -m black --line-length 79 --target-version=py37 --check ./	
 
 install:
 	pipenv install --dev
-	pipenv run flake8 --version
-	pipenv run pytest --version
 
 shell:
 	pipenv shell
 
 clean:
-	pipenv clean
-	pipenv --rm
+	find . -name "*.py[co]" -delete
+	find . -name "*~" -delete
+	find . -name "__pycache__" -delete
 
 uninstall:
+	pipenv clean
+	pipenv --rm
 	rm -rf ~/.pyenv
 	pip3 uninstall pipenv

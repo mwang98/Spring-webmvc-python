@@ -8,8 +8,7 @@ from .ViewResolver import ViewResolver
 __all__ = [
     "HandlerMapping",
     "HandlerInterceptor",
-    "HandlerAdapter"
-    "SmartView",
+    "HandlerAdapter" "SmartView",
     "View",
-    "ViewResolver"
+    "ViewResolver",
 ]

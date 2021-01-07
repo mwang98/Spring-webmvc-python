@@ -7,9 +7,13 @@ class View(ABC):
     SELECTED_CONTENT_TYPE = "View" + ".selectedContentType"
 
     def __init__(self):
-        View.RESPONSE_STATUS_ATTRIBUTE = self.__class__.__name__ + ".responseStatus"
+        View.RESPONSE_STATUS_ATTRIBUTE = (
+            self.__class__.__name__ + ".responseStatus"
+        )
         View.PATH_VARIABLES = self.__class__.__name__ + ".pathVariables"
-        View.SELECTED_CONTENT_TYPE = self.__class__.__name__ + ".selectedContentType"
+        View.SELECTED_CONTENT_TYPE = (
+            self.__class__.__name__ + ".selectedContentType"
+        )
 
     def get_content_type(self):
         return None

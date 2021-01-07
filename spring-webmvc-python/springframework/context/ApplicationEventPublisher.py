@@ -1,2 +1,2 @@
-class ApplicationEventPublisher():
+class ApplicationEventPublisher:
     pass

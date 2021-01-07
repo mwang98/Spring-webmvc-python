@@ -16,5 +16,5 @@ __all__ = [
     "InternalResourceViewResolver",
     "RedirectView",
     "UrlBasedViewResolver",
-    "JstlView"
+    "JstlView",
 ]

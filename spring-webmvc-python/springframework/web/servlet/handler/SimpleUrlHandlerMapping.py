@@ -3,7 +3,6 @@ from springframework.web.servlet.handler import AbstractUrlHandlerMapping
 
 
 class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
-
     def __init__(self, urlMap: dict = None, order: int = None):
         super().__init__()
         self.urlMap = dict()
@@ -32,8 +31,8 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
         else:
             for url, handler in urlMap.items():
                 # Prepend with slash if not already present.
-                if not url.startswith('/'):
-                    url = '/' + url
+                if not url.startswith("/"):
+                    url = "/" + url
                 # Remove whitespace from handler bean name.
                 if isinstance(handler, str):
                     handler = handler.strip()
@@ -41,8 +40,10 @@ class SimpleUrlHandlerMapping(AbstractUrlHandlerMapping):
 
             patterns = list()
             if self.get_root_handler() is not None:
-                patterns.append('/')
+                patterns.append("/")
             if self.get_default_handler() is not None:
-                patterns.append('/**')
+                patterns.append("/**")
             patterns.extend(list(self.get_handler_map().keys()))
-            logging.debug(f"Patterns {patterns} in {self.format_mapping_name()}")
+            logging.debug(
+                f"Patterns {patterns} in {self.format_mapping_name()}"
+            )

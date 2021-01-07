@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, ClassVar
 from springframework.function.support.overload import overload
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class PropertyResolver(ABC):
@@ -18,10 +18,7 @@ class PropertyResolver(ABC):
     @abstractmethod
     @overload
     def get_property(
-        self,
-        key: str,
-        target_type: ClassVar[T],
-        defaultValue: T
+        self, key: str, target_type: ClassVar[T], defaultValue: T
     ) -> T:
         raise NotImplementedError
 

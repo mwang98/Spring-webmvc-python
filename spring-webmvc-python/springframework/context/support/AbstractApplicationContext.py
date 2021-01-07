@@ -1,13 +1,13 @@
-from springframework.context.ConfigurableApplicationContext import ConfigurableApplicationContext
+from springframework.context.ConfigurableApplicationContext import (
+    ConfigurableApplicationContext,
+)
 from springframework.core.io.DefaultResourceLoader import DefaultResourceLoader
 from springframework.context.ApplicationContext import ApplicationContext
 
 
 class AbstractApplicationContext(
-    DefaultResourceLoader,
-    ConfigurableApplicationContext
+    DefaultResourceLoader, ConfigurableApplicationContext
 ):
-
     def __init__(self):
         super().__init__()
         self.id: str = None

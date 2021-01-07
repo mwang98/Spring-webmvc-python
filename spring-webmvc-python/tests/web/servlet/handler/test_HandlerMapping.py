@@ -1,11 +1,14 @@
 from unittest import TestCase, mock
 from springframework.web.servlet.handler import AbstractHandlerMapping
-from springframework.web.servlet.HandlerInterceptor import HandlerInterceptorInterface as HandlerInterceptor
-from springframework.web.context.support.StaticWebApplicationContext import StaticWebApplicationContext
+from springframework.web.servlet.HandlerInterceptor import (
+    HandlerInterceptorInterface as HandlerInterceptor,
+)
+from springframework.web.context.support.StaticWebApplicationContext import (
+    StaticWebApplicationContext,
+)
 
 
 class TestHandlerMapping(TestCase):
-
     def setUp(self):
         pass
 

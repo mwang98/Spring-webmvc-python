@@ -3,14 +3,21 @@ from springframework.utils.mock.inst import Locale
 from springframework.web.testfixture.servlet import MockServletContext
 from springframework.web.testfixture.servlet import MockHttpServletRequest
 from springframework.web.testfixture.servlet import MockHttpServletResponse
-from springframework.web.context.support.StaticWebApplicationContext import StaticWebApplicationContext
+from springframework.web.context.support.StaticWebApplicationContext import (
+    StaticWebApplicationContext,
+)
 from springframework.web.servlet.DispatcherServlet import DispatcherServlet
-from springframework.web.servlet.view import UrlBasedViewResolver, AbstractCachingViewResolver, \
-    InternalResourceViewResolver, InternalResourceView, JstlView, RedirectView
+from springframework.web.servlet.view import (
+    UrlBasedViewResolver,
+    AbstractCachingViewResolver,
+    InternalResourceViewResolver,
+    InternalResourceView,
+    JstlView,
+    RedirectView,
+)
 
 
 class TestViewResolver(TestCase):
-
     def setUp(self):
         self.wac = StaticWebApplicationContext()
         self.sc = MockServletContext()
@@ -29,12 +36,18 @@ class TestViewResolver(TestCase):
         self.do_test_url_based_view_resolver_with_prefixes(vr)
 
     def test_internal_resource_view_resolver_without_prefixes(self):
-        self.do_test_url_based_view_resolver_without_prefixes(InternalResourceViewResolver())
+        self.do_test_url_based_view_resolver_without_prefixes(
+            InternalResourceViewResolver()
+        )
 
     def test_internal_resource_view_resolver_with_prefixes(self):
-        self.do_test_url_based_view_resolver_with_prefixes(InternalResourceViewResolver())
+        self.do_test_url_based_view_resolver_with_prefixes(
+            InternalResourceViewResolver()
+        )
 
-    def do_test_url_based_view_resolver_without_prefixes(self, vr: UrlBasedViewResolver):
+    def do_test_url_based_view_resolver_without_prefixes(
+        self, vr: UrlBasedViewResolver
+    ):
         self.wac.refresh()
         vr.set_application_context(self.wac)
         vr.set_content_type("myContentType")
@@ -43,12 +56,16 @@ class TestViewResolver(TestCase):
         view = vr.resolve_view_name("example1", Locale.get_default())
         assert isinstance(view, JstlView), "Incorrect view class"
         assert view.get_url() == "example1", "Incorrect URL"
-        assert view.get_content_type() == "myContentType", "Incorrect textContentType"
+        assert (
+            view.get_content_type() == "myContentType"
+        ), "Incorrect textContentType"
 
         view = vr.resolve_view_name("example2", Locale.get_default())
         assert isinstance(view, JstlView), "Incorrect view class"
         assert view.get_url() == "example2", "Incorrect URL"
-        assert view.get_content_type() == "myContentType", "Incorrect textContentType"
+        assert (
+            view.get_content_type() == "myContentType"
+        ), "Incorrect textContentType"
 
         # TODO: self.request.set_attribute
 
@@ -144,7 +161,11 @@ class TestViewResolver(TestCase):
 
         # def cache_filter(view, viewName, locale):
         #     return False
-        cache_filter = type("cache_filter", (), {"filter": (lambda view, viewName, locale : False)})
+        cache_filter = type(
+            "cache_filter",
+            (),
+            {"filter": (lambda view, viewName, locale: False)},
+        )
         viewResolver.set_cache_filter(cache_filter)
 
         viewResolver.resolve_view_name("view", Locale.getDefault())
@@ -183,4 +204,6 @@ class testView(InternalResourceView):
     def set_location(self, location):
         ServletContextResource = mock.MagicMock(name="ServletContextResource")
         if not isinstance(location, ServletContextResource):
-            raise Exception(f"Expecting ServletContextResource, not {location.__class__.__name__}")
+            raise Exception(
+                f"Expecting ServletContextResource, not {location.__class__.__name__}"
+            )

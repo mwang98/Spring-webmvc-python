@@ -1,5 +1,3 @@
 from .BeanMetadataElement import BeanMetadataElement
 
-__all__ = [
-    "BeanMetadataElement"
-]
+__all__ = ["BeanMetadataElement"]

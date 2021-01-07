@@ -3,9 +3,9 @@ from datetime import datetime
 from springframework.utils.mock.inst import ResourceBundle
 
 
-class Cookie():
+class Cookie:
 
-    TSPECIALS: str = "/()<>@,;:\\\"[]?={} \t"
+    TSPECIALS: str = '/()<>@,;:\\"[]?={} \t'
     LSTRING_FILE: str = "javax.servlet.http.LocalStrings"
     lStrings = ResourceBundle.getBundle(LSTRING_FILE)
     name = ""
@@ -21,9 +21,21 @@ class Cookie():
     def __init__(self, name: str, value: str):
         if name is None or not name:
             raise ValueError("cookie_name_blank")
-        if name.casefold() in ["Comment", "Discard", "Domain", "Expires",
-                               "Max-Age", "Path", "Secure", "Version"] or \
-                name.startswith('$') or self.is_token(name):
+        if (
+            name.casefold()
+            in [
+                "Comment",
+                "Discard",
+                "Domain",
+                "Expires",
+                "Max-Age",
+                "Path",
+                "Secure",
+                "Version",
+            ]
+            or name.startswith("$")
+            or self.is_token(name)
+        ):
             raise ValueError("cookie_name_is_token")
         self.name = name
         self.value = value
@@ -75,7 +87,7 @@ class Cookie():
 
     def is_token(self, value: str) -> bool:
         for c in value:
-            if (c < 0x20 or c >= 0x7f or c in self.TSPECIALS):
+            if c < 0x20 or c >= 0x7F or c in self.TSPECIALS:
                 return False
         return True
 
@@ -110,8 +122,9 @@ class MockCookie(Cookie):
     def parse(self, setCookieHeader: str):
         assert setCookieHeader, "Set-Cookie header must not be null"
         cookieParts = re.split("\\s*=\\s*", setCookieHeader, 2)
-        assert len(cookieParts) == 2,\
-            f"Invalid Set-Cookie header '{setCookieHeader}'"
+        assert (
+            len(cookieParts) == 2
+        ), f"Invalid Set-Cookie header '{setCookieHeader}'"
         name = cookieParts[0]
         valueAndAttributes = re.split("\\s*;\\s*", cookieParts[1], 2)
         value = valueAndAttributes[0]
@@ -123,25 +136,27 @@ class MockCookie(Cookie):
         cookie = MockCookie(name, value)
         for attribute in attributes:
             if attribute.casefold() == "Domain":
-                cookie.set_domain(self.extract_attribute_value(
-                    attribute,
-                    setCookieHeader
-                ))
+                cookie.set_domain(
+                    self.extract_attribute_value(attribute, setCookieHeader)
+                )
             elif attribute.casefold() == "Max-Age":
-                cookie.set_max_age(int(self.extract_attribute_value(
-                    attribute,
-                    setCookieHeader)
-                ))
+                cookie.set_max_age(
+                    int(
+                        self.extract_attribute_value(
+                            attribute, setCookieHeader
+                        )
+                    )
+                )
             elif attribute.casefold() == "Expires":
                 try:
                     attributeValues = self.extract_attribute_value(
-                        attribute,
-                        setCookieHeader
+                        attribute, setCookieHeader
                     )
                     RFC_1123_DATE_TIME_FORMAT = "%a, %-d %b %Y %I:%M:%S %Z"
-                    cookie.set_expires(datetime.strptime(
-                        attributeValues,
-                        RFC_1123_DATE_TIME_FORMAT)
+                    cookie.set_expires(
+                        datetime.strptime(
+                            attributeValues, RFC_1123_DATE_TIME_FORMAT
+                        )
                     )
                 except Exception:
                     pass
@@ -161,8 +176,9 @@ class MockCookie(Cookie):
         return cookie
 
     def extract_attribute_value(self, attribute: str, header: str) -> str:
-        nameAndValue = attribute.split('=')
-        assert len(nameAndValue) == 2,\
-            f"""No value in attribute '{nameAndValue[0]}' for
+        nameAndValue = attribute.split("=")
+        assert (
+            len(nameAndValue) == 2
+        ), f"""No value in attribute '{nameAndValue[0]}' for
              Set-Cookie header '{header}'"""
         return nameAndValue[1]

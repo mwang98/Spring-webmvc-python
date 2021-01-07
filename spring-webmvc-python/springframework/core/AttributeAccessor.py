@@ -1,2 +1,2 @@
-class AttributeAccessor():
+class AttributeAccessor:
     pass

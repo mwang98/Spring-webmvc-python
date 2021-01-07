@@ -1,11 +1,12 @@
 from unittest import TestCase
 from springframework.web.servlet.handler import BeanNameUrlHandlerMapping
-from springframework.web.context.support.StaticWebApplicationContext import StaticWebApplicationContext
+from springframework.web.context.support.StaticWebApplicationContext import (
+    StaticWebApplicationContext,
+)
 from springframework.web.testfixture.servlet import MockServletContext
 
 
 class TestBeanNameUrlHandlerMapping(TestCase):
-
     def setUp(self):
         self.CONF: str = "/org/springframework/web/servlet/handler/map1.xml"
         self.sc = MockServletContext("")

@@ -1,5 +1,7 @@
 import logging
-from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
+from springframework.web.servlet.view.AbstractUrlBasedView import (
+    AbstractUrlBasedView,
+)
 
 
 class InternalResourceView(AbstractUrlBasedView):
@@ -19,7 +21,9 @@ class InternalResourceView(AbstractUrlBasedView):
     def is_context_required(self) -> bool:
         return False
 
-    def render_merged_output_model(self, model: dict, request, response) -> None:
+    def render_merged_output_model(
+        self, model: dict, request, response
+    ) -> None:
         # Expose the model object as request attributes.
         self.expose_model_as_request_attributes(model, request)
 
@@ -34,8 +38,10 @@ class InternalResourceView(AbstractUrlBasedView):
         # rd type: RequestDispatcher
         rd = self.get_request_dispatcher(request, dispatcherPath)
         if rd is None:
-            raise ValueError(f"""Could not get RequestDispatcher for [{self.get_url()}
-            ]: Check that the corresponding file exists within your web application archive!""")
+            raise ValueError(
+                f"""Could not get RequestDispatcher for [{self.get_url()}
+            ]: Check that the corresponding file exists within your web application archive!"""
+            )
 
         # If already included or response already committed, perform include, else forward.
         if self.use_include(request, response):
@@ -57,7 +63,7 @@ class InternalResourceView(AbstractUrlBasedView):
         if self.preventDispatchLoop:
             uri: str = request.get_request_uri()
             if path.startswith("/"):
-                state = (uri == path)
+                state = uri == path
             else:
                 # TODO: ignore
                 # state = uri.equals(StringUtils.applyRelativePath(uri, path))

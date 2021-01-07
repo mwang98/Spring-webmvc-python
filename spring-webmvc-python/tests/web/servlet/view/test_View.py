@@ -1,5 +1,7 @@
 from unittest import TestCase, mock
-from springframework.web.context.support.WebApplicationContext import WebApplicationContext
+from springframework.web.context.support.WebApplicationContext import (
+    WebApplicationContext,
+)
 from springframework.web.testfixture.servlet import MockServletContext
 from springframework.web.testfixture.servlet import MockHttpServletRequest
 from springframework.web.testfixture.servlet import MockHttpServletResponse
@@ -8,7 +10,6 @@ from springframework.web.servlet.view import AbstractView
 
 
 class TestView(TestCase):
-
     def setUp(self):
         pass
 
@@ -25,10 +26,7 @@ class TestView(TestCase):
         view.set_application_context(wac)
         view.set_application_context(wac)
 
-        model = {
-            "foo": "bar",
-            "something": object()
-        }
+        model = {"foo": "bar", "something": object()}
         view.render(model, request, response)
         self.assertEqual(dict(view.model, **model), view.model)
         self.assertTrue(view.initialized)
@@ -42,15 +40,9 @@ class TestView(TestCase):
         view = testView(wac)
         view.set_application_context(wac)
 
-        properties = {
-            "foo": "bar",
-            "something": "else"
-        }
+        properties = {"foo": "bar", "something": "else"}
         view.set_attributes(properties)
-        model = {
-            "one": {},
-            "two": object()
-        }
+        model = {"one": {}, "two": object()}
         view.render(model, request, response)
 
         self.assertEqual(dict(view.model, **model), view.model)
@@ -66,15 +58,9 @@ class TestView(TestCase):
         view = testView(wac)
         view.set_application_context(wac)
 
-        properties = {
-            "one": "bar",
-            "something": "else"
-        }
+        properties = {"one": "bar", "something": "else"}
         view.set_attributes(properties)
-        pathVars = {
-            "one": {},
-            "two": object()
-        }
+        pathVars = {"one": {}, "two": object()}
         request.set_attribute(View.PATH_VARIABLES, pathVars)
 
         view.render({}, request, response)
@@ -93,15 +79,9 @@ class TestView(TestCase):
         view = testView(wac)
         view.set_application_context(wac)
 
-        properties = {
-            "one": "bar",
-            "something": "else"
-        }
+        properties = {"one": "bar", "something": "else"}
         view.set_attributes(properties)
-        model = {
-            "one": {},
-            "two": object()
-        }
+        model = {"one": {}, "two": object()}
         view.render(model, request, response)
 
         self.assertEqual(len(view.model), 3)
@@ -117,15 +97,9 @@ class TestView(TestCase):
         view = testView(wac)
         view.set_application_context(wac)
 
-        pathVars = {
-            "one": "bar",
-            "something": "else"
-        }
+        pathVars = {"one": "bar", "something": "else"}
         request.set_attribute(View.PATH_VARIABLES, pathVars)
-        model = {
-            "one": {},
-            "two": object()
-        }
+        model = {"one": {}, "two": object()}
         view.render(model, request, response)
 
         self.assertEqual(dict(view.model, **model), view.model)
@@ -147,8 +121,8 @@ class TestView(TestCase):
         view = ConcreteView()
         view.set_attributes_csv("foo=[bar],king=[kong]")
         self.assertEqual(len(view.get_static_attributes()), 2)
-        self.assertEqual(view.get_static_attributes().get('foo'), "bar")
-        self.assertEqual(view.get_static_attributes().get('king'), "kong")
+        self.assertEqual(view.get_static_attributes().get("foo"), "bar")
+        self.assertEqual(view.get_static_attributes().get("king"), "kong")
 
     def test_attribute_csv_parsing_valid_with_weird_characters(self):
         view = ConcreteView()
@@ -157,8 +131,8 @@ class TestView(TestCase):
         kingval = ""
         view.set_attributes_csv(f"foo=({fooval}),king={{{kingval}}},f1=[we]")
         self.assertEqual(len(view.get_static_attributes()), 3)
-        self.assertEqual(view.get_static_attributes().get('foo'), fooval)
-        self.assertEqual(view.get_static_attributes().get('king'), kingval)
+        self.assertEqual(view.get_static_attributes().get("foo"), fooval)
+        self.assertEqual(view.get_static_attributes().get("king"), kingval)
 
     def test_attribute_csv_parsing_ignore_trailing_comma(self):
         view = ConcreteView()
@@ -172,7 +146,6 @@ class ConcreteView(AbstractView):
 
 
 class testView(AbstractView):
-
     def __init__(self, wac=None):
         super().__init__()
         self.wac = wac

@@ -1,13 +1,14 @@
 import inspect
 from copy import deepcopy
 from typing import TypeVar, ClassVar
-T = TypeVar('T')
+
+T = TypeVar("T")
 C = ClassVar[T]
 
 
 class Function(object):
-    """Function is a wrap over standard python function.
-    """
+    """Function is a wrap over standard python function."""
+
     def __init__(self, fn):
         self.fn = fn
         self.signatures = []
@@ -21,8 +22,10 @@ class Function(object):
         # through the arguments.
         fn = Namespace.get_instance().get(self.fn, *args)
         if not fn:
-            raise Exception(f"no matching function signature found. \
-                signature:[{self.key(args)[0]}]")
+            raise Exception(
+                f"no matching function signature found. \
+                signature:[{self.key(args)[0]}]"
+            )
         return fn(*args, **kwargs)
 
     def _register(self, types):
@@ -33,20 +36,20 @@ class Function(object):
         # Build a type signature from the method's annotations
         types = [[]]
         for name, parm in sig.parameters.items():
-            if name == 'self':
+            if name == "self":
                 continue
             if parm.annotation is inspect.Parameter.empty:
                 raise TypeError(
-                    f'Argument {name} must be annotated with a type.'
+                    f"Argument {name} must be annotated with a type."
                 )
             if not (
-                isinstance(parm.annotation, type) or
-                isinstance(parm.annotation, type(ClassVar[T])) or
-                isinstance(parm.annotation, type(TypeVar('T')))
+                isinstance(parm.annotation, type)
+                or isinstance(parm.annotation, type(ClassVar[T]))
+                or isinstance(parm.annotation, type(TypeVar("T")))
             ):
                 raise TypeError(
-                    f'''Argument {name} annotation must be a type.
-                    It is a {parm.annotation}'''
+                    f"""Argument {name} annotation must be a type.
+                    It is a {parm.annotation}"""
                 )
             if parm.default is not inspect.Parameter.empty:
                 for i in types:
@@ -59,8 +62,10 @@ class Function(object):
                 i.append(parm.annotation)
 
             # append None type
-            if parm.default is not inspect.Parameter.empty and \
-                    parm.default is None:
+            if (
+                parm.default is not inspect.Parameter.empty
+                and parm.default is None
+            ):
                 for i in new:
                     i.append(type(None))
                 types += new
@@ -75,25 +80,35 @@ class Function(object):
         # when register, extract the declare arguments as signature
         # when call, use passed argument as signature
         if args is None:
-            return [tuple([
-                self.fn.__module__,
-                self.fn.__class__,
-                self.fn.__name__,
-                sig,
-            ]) for sig in self.signatures]
+            return [
+                tuple(
+                    [
+                        self.fn.__module__,
+                        self.fn.__class__,
+                        self.fn.__name__,
+                        sig,
+                    ]
+                )
+                for sig in self.signatures
+            ]
         else:
-            return [tuple([
-                self.fn.__module__,
-                self.fn.__class__,
-                self.fn.__name__,
-                tuple([type(i) for i in args]),
-            ])]
+            return [
+                tuple(
+                    [
+                        self.fn.__module__,
+                        self.fn.__class__,
+                        self.fn.__name__,
+                        tuple([type(i) for i in args]),
+                    ]
+                )
+            ]
 
 
 class Namespace(object):
     """Namespace is the singleton class that is responsible
     for holding all the functions.
     """
+
     __instance = None
 
     def __init__(self):
@@ -118,10 +133,12 @@ class Namespace(object):
         for key in func.key():
             if key in self.function_map:
                 continue  # if duplicate, let it go. user's fault.
-                raise Exception(f"""duplicate signature:
+                raise Exception(
+                    f"""duplicate signature:
                                 [{self.function_map[key]}]
                                 [{key}]
-                                """)
+                                """
+                )
             self.function_map[key] = fn
         return func
 

@@ -1,12 +1,15 @@
 from unittest import TestCase
 from springframework.web.servlet.handler import SimpleUrlHandlerMapping
 from springframework.web.servlet import HandlerExecutionChain, HandlerMapping
-from springframework.web.testfixture.servlet import MockHttpServletRequest as HttpServletRequest
-from springframework.web.testfixture.servlet import MockHttpServletResponse as HttpServletResponse
+from springframework.web.testfixture.servlet import (
+    MockHttpServletRequest as HttpServletRequest,
+)
+from springframework.web.testfixture.servlet import (
+    MockHttpServletResponse as HttpServletResponse,
+)
 
 
-
-class MockController():
+class MockController:
     def __init__(self, name: str):
         self.name = name
 
@@ -24,10 +27,16 @@ class MockSimpleUrlHandlerMapping(SimpleUrlHandlerMapping):
 
 
 class TestSimpleURLHandlerMapping(TestCase):
-
     def setUp(self):
-        self.urlMap = {"/": MockController("/"), "test": MockController("test")}
-        self.request = HttpServletRequest(servletContext = "Context", method="GET", requestURI="/mycontext/myservlet/test")
+        self.urlMap = {
+            "/": MockController("/"),
+            "test": MockController("test"),
+        }
+        self.request = HttpServletRequest(
+            servletContext="Context",
+            method="GET",
+            requestURI="/mycontext/myservlet/test",
+        )
         self.request.set_context_path("/mycontext")
         self.request.set_servlet_path("/myservlet")
         self.request.set_path_info("/test")
@@ -45,11 +54,15 @@ class TestSimpleURLHandlerMapping(TestCase):
     def test_mapping_directly(self):
         handlerMapping: HandlerMapping = SimpleUrlHandlerMapping(self.urlMap)
         handlerMapping.init_application_context()
-        mappedHandler: HandlerExecutionChain = handlerMapping.get_handler(self.request)
+        mappedHandler: HandlerExecutionChain = handlerMapping.get_handler(
+            self.request
+        )
         ha = mappedHandler.get_handler()
         mappedHandler.apply_post_handle(self.request, self.response, None)
 
     def test_end_to_end(self):
         handlerMapping: HandlerMapping = SimpleUrlHandlerMapping(self.urlMap)
         handlerMapping.init_application_context()
-        mappedHandler: HandlerExecutionChain = handlerMapping.get_handler(self.request)
+        mappedHandler: HandlerExecutionChain = handlerMapping.get_handler(
+            self.request
+        )

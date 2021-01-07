@@ -1,7 +1,4 @@
 from .AntPathMatcher import AntPathMatcher
 from .PathMatcher import PathMatcher
 
-__all__ = [
-    "AntPathMatcher",
-    "PathMatcher"
-]
+__all__ = ["AntPathMatcher", "PathMatcher"]

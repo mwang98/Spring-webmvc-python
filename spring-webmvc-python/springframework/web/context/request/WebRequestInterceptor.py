@@ -3,7 +3,6 @@ from abc import ABC
 
 # dont use abstractmethod cause override is not neccessary
 class WebRequestInterceptorInterface(ABC):
-
     def pre_handle(self, request, response, handler) -> bool:
         raise NotImplementedError
 

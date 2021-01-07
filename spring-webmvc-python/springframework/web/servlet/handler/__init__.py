@@ -1,4 +1,6 @@
-from .AbstractDetectingUrlHandlerMapping import AbstractDetectingUrlHandlerMapping
+from .AbstractDetectingUrlHandlerMapping import (
+    AbstractDetectingUrlHandlerMapping,
+)
 from .AbstractHandlerMapping import AbstractHandlerMapping
 from .AbstractUrlHandlerMapping import AbstractUrlHandlerMapping
 from .BeanNameUrlHandlerMapping import BeanNameUrlHandlerMapping
@@ -15,5 +17,5 @@ __all__ = [
     "MappedInterceptor",
     "MatchableHandlerMapping",
     "SimpleServletHandlerAdapter",
-    "SimpleUrlHandlerMapping"
+    "SimpleUrlHandlerMapping",
 ]

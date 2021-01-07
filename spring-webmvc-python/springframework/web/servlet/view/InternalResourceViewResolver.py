@@ -1,6 +1,12 @@
-from springframework.web.servlet.view.UrlBasedViewResolver import UrlBasedViewResolver
-from springframework.web.servlet.view.AbstractUrlBasedView import AbstractUrlBasedView
-from springframework.web.servlet.view.InternalResourceView import InternalResourceView
+from springframework.web.servlet.view.UrlBasedViewResolver import (
+    UrlBasedViewResolver,
+)
+from springframework.web.servlet.view.AbstractUrlBasedView import (
+    AbstractUrlBasedView,
+)
+from springframework.web.servlet.view.InternalResourceView import (
+    InternalResourceView,
+)
 from springframework.web.servlet.view.JstlView import JstlView
 
 
@@ -36,7 +42,7 @@ class InternalResourceViewResolver(UrlBasedViewResolver):
 
     def build_view(self, viewName: str) -> AbstractUrlBasedView:
         view = super().build_view(viewName)
-        if (self.alwaysInclude is not None):
+        if self.alwaysInclude is not None:
             view.set_always_include(self.alwaysInclude)
 
         view.set_prevent_dispatch_loop(True)

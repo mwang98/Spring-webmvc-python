@@ -2,8 +2,7 @@ import logging
 from springframework.utils.mock.type import AsyncHandlerInterceptor
 
 
-class HandlerExecutionChain():
-
+class HandlerExecutionChain:
     def __init__(self, handler: object, interceptors: list = []):
         self.logger = logging.getLogger(__name__)
         self.interceptorIndex = -1
@@ -47,20 +46,30 @@ class HandlerExecutionChain():
             interceptor.post_handle(request, response, self.handler, mv)
 
     def trigger_after_completion(self, request, response, ex) -> None:
-        for interceptor in self.interceptorList[:self.interceptorIndex][::-1]:
+        for interceptor in self.interceptorList[: self.interceptorIndex][::-1]:
             try:
-                interceptor.after_completion(request, response, self.handler, ex)
+                interceptor.after_completion(
+                    request, response, self.handler, ex
+                )
             except Exception as ex2:
-                self.logger.error("HandlerInterceptor.afterCompletion threw exception", ex2)
+                self.logger.error(
+                    "HandlerInterceptor.afterCompletion threw exception", ex2
+                )
 
-    def apply_after_concurrent_handling_started(self, request, response) -> None:
+    def apply_after_concurrent_handling_started(
+        self, request, response
+    ) -> None:
         for e, interceptor in enumerate(self.interceptorList):
             if isinstance(interceptor, AsyncHandlerInterceptor):
                 try:
                     asyncInterceptor = interceptor
-                    asyncInterceptor.afterConcurrentHandlingStarted(request, response, self.handler)
+                    asyncInterceptor.afterConcurrentHandlingStarted(
+                        request, response, self.handler
+                    )
                 except Exception as ex:
-                    self.logger.error(f"Interceptor [{interceptor}] failed in afterConcurrentHandlingStarted. {ex}")
+                    self.logger.error(
+                        f"Interceptor [{interceptor}] failed in afterConcurrentHandlingStarted. {ex}"
+                    )
 
     def __str__(self):
         return f"HandlerExecutionChain with [{self.get_handler()}] and {len(self.interceptorList)} interceptors"

@@ -3,11 +3,8 @@ from springframework.beans.factory.xml import ParserContext
 from xml.etree.ElementTree import Element
 
 
-class BeanDefinitionParser():
-
+class BeanDefinitionParser:
     def parse(
-        self,
-        element: Element,
-        parserContext: ParserContext
+        self, element: Element, parserContext: ParserContext
     ) -> BeanDefinitionInterface:
         raise NotImplementedError

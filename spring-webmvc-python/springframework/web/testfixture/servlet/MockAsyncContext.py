@@ -1,13 +1,15 @@
 import threading
 from unittest import mock
 from springframework.utils.mock.inst import AsyncEvent
-from springframework.web.testfixture.servlet.MockHttpServletRequest import \
-    MockHttpServletRequest
-from springframework.web.testfixture.servlet.MockHttpServletResponse import \
-    MockHttpServletResponse
+from springframework.web.testfixture.servlet.MockHttpServletRequest import (
+    MockHttpServletRequest,
+)
+from springframework.web.testfixture.servlet.MockHttpServletResponse import (
+    MockHttpServletResponse,
+)
 
 
-class MockAsyncContext():
+class MockAsyncContext:
 
     request = None
     response = None
@@ -35,8 +37,9 @@ class MockAsyncContext():
         return self.response
 
     def hasOriginalRequestAndResponse(self) -> bool:
-        return isinstance(self.request, MockHttpServletRequest) and \
-            isinstance(self.response, MockHttpServletResponse)
+        return isinstance(self.request, MockHttpServletRequest) and isinstance(
+            self.response, MockHttpServletResponse
+        )
 
     def dispatch(self, context, path: str) -> None:
         with threading.Lock():
@@ -53,10 +56,8 @@ class MockAsyncContext():
             mockRequest.setAsyncStarted(False)
         for listener in self.listeners:
             try:
-                listener.onComplete(AsyncEvent(
-                    self,
-                    self.request,
-                    self.response)
+                listener.onComplete(
+                    AsyncEvent(self, self.request, self.response)
                 )
             except Exception as e:
                 raise ValueError(f"AsyncListener failure. {e}")

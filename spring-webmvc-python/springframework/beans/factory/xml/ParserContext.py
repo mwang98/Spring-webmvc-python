@@ -1,8 +1,7 @@
 # from springframework.beans.factory.config import BeanDefinitionInterface
 
 
-class ParserContext():
-
+class ParserContext:
     def __init__(self, readerContext, delegate, containingBeanDefinition=None):
         self._readerContext = readerContext
         self._delegate = delegate
@@ -22,7 +21,7 @@ class ParserContext():
         return self._containingBeanDefinition
 
     def is_nested(self):
-        return (self._containingBeanDefinition is not None)
+        return self._containingBeanDefinition is not None
 
     def is_default_lazy_init(self):
         # TODO

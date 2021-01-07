@@ -11,5 +11,5 @@ __all__ = [
     "CorsProcessor",
     "CorsUtils",
     "DefaultCorsProcessor",
-    "UrlBasedCorsConfigurationSource"
+    "UrlBasedCorsConfigurationSource",
 ]

@@ -1,2 +1,2 @@
-class BeanMetadataElement():
+class BeanMetadataElement:
     pass

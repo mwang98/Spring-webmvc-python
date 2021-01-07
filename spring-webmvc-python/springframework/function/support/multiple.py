@@ -2,14 +2,15 @@ import inspect
 import types
 from copy import deepcopy
 from typing import TypeVar, ClassVar
-T = TypeVar('T')
+
+T = TypeVar("T")
 C = ClassVar[T]
 
 
 class MultiMethod:
-    '''
+    """
     Represents a single multimethod.
-    '''
+    """
 
     def __init__(self, name):
         self._methods = {}
@@ -21,26 +22,27 @@ class MultiMethod:
         self._methods[types] = meth
 
     def register(self, meth):
-        '''
+        """
         Register a new method as a multimethod
-        '''
+        """
         sig = inspect.signature(meth)
 
         # Build a type signature from the method's annotations
         types = [[]]
         for name, parm in sig.parameters.items():
-            if name == 'self':
+            if name == "self":
                 continue
             if parm.annotation is inspect.Parameter.empty:
                 raise TypeError(
-                    'Argument {} must be annotated with a type'.format(name)
+                    "Argument {} must be annotated with a type".format(name)
                 )
-            if not (isinstance(parm.annotation, type) or
-                    isinstance(parm.annotation, type(ClassVar[T])) or
-                    isinstance(parm.annotation, type(TypeVar('T')))
-                    ):
+            if not (
+                isinstance(parm.annotation, type)
+                or isinstance(parm.annotation, type(ClassVar[T]))
+                or isinstance(parm.annotation, type(TypeVar("T")))
+            ):
                 raise TypeError(
-                    'Argument {} annotation must be a type'.format(name)
+                    "Argument {} annotation must be a type".format(name)
                 )
             if parm.default is not inspect.Parameter.empty:
                 for i in types:
@@ -53,8 +55,10 @@ class MultiMethod:
                 i.append(parm.annotation)
 
             # append None type
-            if parm.default is not inspect.Parameter.empty and \
-                    parm.default is None:
+            if (
+                parm.default is not inspect.Parameter.empty
+                and parm.default is None
+            ):
                 for i in new:
                     i.append(type(None))
                 types += new
@@ -63,20 +67,20 @@ class MultiMethod:
             self._register(tuple(i), meth)
 
     def __call__(self, *args):
-        '''
+        """
         Call a method based on type signature of the arguments
-        '''
+        """
         types = tuple(type(arg) for arg in args[1:])
         meth = self._methods.get(types, None)
         if meth:
             return meth(*args)
         else:
-            raise TypeError('No matching method for types {}'.format(types))
+            raise TypeError("No matching method for types {}".format(types))
 
     def __get__(self, instance, cls):
-        '''
+        """
         Descriptor method needed to make calls work in a class
-        '''
+        """
         if instance is not None:
             return types.MethodType(self, instance)
         else:
@@ -84,9 +88,9 @@ class MultiMethod:
 
 
 class MultiDict(dict):
-    '''
+    """
     Special dictionary to build multimethods in a metaclass
-    '''
+    """
 
     def __setitem__(self, key, value):
         if key in self:
@@ -104,9 +108,9 @@ class MultiDict(dict):
 
 
 class MultipleMeta(type):
-    '''
+    """
     Metaclass that allows multiple dispatch of methods
-    '''
+    """
 
     def __new__(cls, clsname, bases, clsdict):
         return type.__new__(cls, clsname, bases, dict(clsdict))

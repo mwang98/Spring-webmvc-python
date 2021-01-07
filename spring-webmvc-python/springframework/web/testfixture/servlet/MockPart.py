@@ -1,7 +1,7 @@
 from springframework.utils.mock.inst import HttpHeaders, ByteArrayInputStream
 
 
-class MockPart():
+class MockPart:
 
     name: str = None
     filename: str = None

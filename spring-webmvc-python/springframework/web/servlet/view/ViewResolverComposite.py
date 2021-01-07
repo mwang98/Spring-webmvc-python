@@ -1,13 +1,20 @@
-
 from springframework.utils.mock.inst import Ordered
 from springframework.beans.factory.InitializingBean import InitializingBean
-from springframework.context.ApplicationContextAware import ApplicationContextAware
+from springframework.context.ApplicationContextAware import (
+    ApplicationContextAware,
+)
 from springframework.web.context.ServletContextAware import ServletContextAware
 from .ViewResolver import ViewResolver
 from .View import View
 
 
-class ViewResolverComposite(ViewResolver, Ordered, InitializingBean, ApplicationContextAware, ServletContextAware):
+class ViewResolverComposite(
+    ViewResolver,
+    Ordered,
+    InitializingBean,
+    ApplicationContextAware,
+    ServletContextAware,
+):
     _viewResolvers = list()
     _order = Ordered.LOWEST_PRECEDENCE
 
@@ -27,12 +34,12 @@ class ViewResolverComposite(ViewResolver, Ordered, InitializingBean, Application
 
     def setServletContext(self, servletContext: ServletContext) -> None:
         for viewResolver in self._viewResolvers:
-            if (isinstance(viewResolver, ServletContextAware)):
+            if isinstance(viewResolver, ServletContextAware):
                 viewResolver.setServletContext(servletContext)
 
     def afterPropertiesSet(self) -> None:
         for viewResolver in self._viewResolvers:
-            if (isinstance(viewResolver, InitializingBean)):
+            if isinstance(viewResolver, InitializingBean):
                 viewResolver.afterPropertiesSet()
 
     def resolveViewName(viewName: str, locale: Locale) -> View:
@@ -40,5 +47,5 @@ class ViewResolverComposite(ViewResolver, Ordered, InitializingBean, Application
             view = viewResolver.resolveViewName(viewName, locale)
             if view is not None:
                 return view
-        
+
         return None

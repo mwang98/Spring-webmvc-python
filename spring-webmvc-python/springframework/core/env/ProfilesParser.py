@@ -1,2 +1,2 @@
-class ProfilesParser():
+class ProfilesParser:
     pass
