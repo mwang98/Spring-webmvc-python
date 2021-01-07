@@ -37,3 +37,8 @@ Open document in browser
 ```
 make doc
 ```
+
+# TODO
+* fix lint
+* add doc pipeline
+* add doc string
