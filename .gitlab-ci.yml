@@ -15,16 +15,9 @@ linter:
   stage: build
   allow_failure: true
   script:
-    - pip install flake8==3.8.4
-    - flake8 spring-webmvc-python/springframework
-
-syntax:
-  stage: test
-  script:
-    - pip install pytest pytest-cov pytest-custom_exit_code
+    - pip install flake8 black
     - cd spring-webmvc-python
-    - pip install -e .
-    - python -m pytest
+    - make style
 
 test:
   stage: test
